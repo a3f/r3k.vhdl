@@ -4,7 +4,7 @@
 #
 #    . ./setenv.sh
 
-I686_TOOLS=`pwd`/cross/`uname -m`/bin
-echo Adding $I686_TOOLS to path
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/cross/$(uname -m)/bin
+echo Adding $DIR to path
 
-export PATH=$I686_TOOLS:$PATH
+export PATH=$DIR:$PATH

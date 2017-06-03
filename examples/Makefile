@@ -1,6 +1,7 @@
 AS = mips-as
 CC = mips-gcc
-LDFLAGS = -nostdlib
+CFLAGS = -O0
+LDFLAGS = -ffreestanding -nostdlib -nostartfiles -Tr3k.vhdl.x -mcpu=r3000
 
 .DEFAULT: examples
 examples: 00-simple.elf 01-simple.elf

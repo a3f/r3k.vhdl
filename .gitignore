@@ -4,3 +4,4 @@ build/
 *.d
 *.o
 *.ko
+*.bin

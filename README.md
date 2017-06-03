@@ -1,21 +1,39 @@
-## r3k.vhdl - MIPS R3000 FPGA implementation using VHDL
+## r3k.vhdl - MIPS R3000 FPGA implementation in VHDL
 
 ### VHDL MIPS Implementation
 
-(to follow)
+Eventually, a VHDL implementation of a MIPS R3000 with 16550-class UART and VGA.
+Supplied Toolchain and BIOS can be used to cross-compile C application to run on it.
+
+The UART is memory-mapped at address 0x1fd003f8. The VGA frame buffer is yet to be
+designed.
+
+(More to follow)
 
 ### VHDL MIPS Simulation
 
 (to follow)
+
+### BIOS
+
+`bios/` contains a simple BIOS that runs a command interpreter on the UART.
+
+### MIPS Emulator
+
+Application can be tested locally in QEMU by running `make` in the root directory.
+This will build the BIOS, applications and start a serial session with the command
+interpreter running inside the emulator.
+
+`make gdb` sets a breakpoint at `0xbfd0_0000` (reset vector) and `make monitor`
+launches QEMU monitor mode. All three modes start a gdb server at port 51234.
+
+`apt-get install gdb-multiarch` for debugging.
 
 ### C Toolchain
 
 `toolchain/` contains Linux i686 and x86-64 cross MIPS toolchain binaries.
 Add them to your PATH with `source toolchain/setenv.sh`
 
-### MIPS Emulator
-
-QEMU (to follow)
 
 ### Copyright and License
 
