@@ -1,6 +1,6 @@
-## r3k.vhdl - MIPS R3000 FPGA implementation in VHDL
+# r3k.vhdl - MIPS R3000 FPGA implementation in VHDL
 
-### VHDL MIPS Implementation
+## VHDL MIPS Implementation
 
 Eventually, a VHDL implementation of a MIPS R3000 with 16550-class UART and VGA.
 Supplied Toolchain and BIOS can be used to cross-compile C application to run on it.
@@ -10,15 +10,15 @@ designed.
 
 (More to follow)
 
-### VHDL MIPS Simulation
+## VHDL MIPS Simulation
 
 (to follow)
 
-### BIOS
+## BIOS
 
 `bios/` contains a simple BIOS that runs a command interpreter on the UART.
 
-### MIPS Emulator
+## MIPS Emulator
 
 Application can be tested locally in QEMU by running `make` in the root directory.
 This will build the BIOS, applications and start a serial session with the command
@@ -29,13 +29,13 @@ launches QEMU monitor mode. All three modes start a gdb server at port 51234.
 
 `apt-get install gdb-multiarch` for debugging.
 
-### C Toolchain
+## C Toolchain
 
 `toolchain/` contains Linux i686 and x86-64 cross MIPS toolchain binaries.
 Add them to your PATH with `source toolchain/setenv.sh`
 
 
-### Copyright and License
+## Copyright and License
 
 Copyright (C) 2017 Aicha Ben Chaouacha, Ahmad Fatoum, Niklas Fuhrberg 
 
