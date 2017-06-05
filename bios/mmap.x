@@ -10,6 +10,9 @@ MEMORY
  
 SECTIONS
 {
+	__uart = ORIGIN(MMIO) + 0x3f8;
+	__vga  = ORIGIN(MMIO) /* + ? */;
+
     . = ORIGIN(ROM);
     .text :
     {
@@ -29,6 +32,11 @@ SECTIONS
         *(.data)
     } > RAM
     . = ALIGN(16);
+	.got : {
+		_gp = ALIGN(16);
+		*(.got*)
+	} > RAM
+    . = ALIGN(16);
     __data_end = .;
  
     .bss :
@@ -41,6 +49,9 @@ SECTIONS
 	. = ALIGN(8);
 	. = . + 0x1000; /* 4k of stack memory */
 	__ss_top = .;
+
+	/DISCARD/ : { *(.reginfo) *(.MIPS.abiflags) }
+
 	/* FIXME make it work
 	. = ALIGN(64);
 	__heap_start = .;
