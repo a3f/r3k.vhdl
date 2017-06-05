@@ -1,0 +1,269 @@
+\include{preamble}
+
+\newcommand\myheading[1]{%
+  \par\bigskip
+  {\Large\bfseries#1}\par\smallskip}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\newcommand{\ebackupbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\ebackupend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
+
+\usepackage{color}
+\usepackage{listings}
+\usepackage{eurosym}
+\usepackage{stfloats}
+\usepackage{subfig}
+
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+\lstset{language=C,
+	basicstyle=\tiny\ttfamily,
+	keywordstyle=\color{javapurple}\bfseries,
+	stringstyle=\color{javared},
+	commentstyle=\color{javagreen},
+	morecomment=[s][\color{javadocblue}]{/**}{*/},
+	numbers=none,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	numbersep=0pt,
+	tabsize=2,
+	showspaces=false,
+	showstringspaces=false}
+
+% unten in der preamble.tex sind noch weitere default-werte
+
+\subtitle{Basispraktikum Technische Informatik}
+\date{05.06.2017}
+
+% Um das blaue Titel-Bild zu entfernen
+%\titleimage{nogo}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+
+\section{MIPS I ISA}
+
+\begin{frame}{Der MIPS R3000}
+\begin{itemize}
+       \item 1988 auf dem Markt gekommen
+       \item 32-bit, RISC Architektur mit 25 Instruktionen
+		\item 32 Register
+		\item 5-Stufige Pipeline
+\end{itemize}
+
+\begin{center}
+\includegraphics[scale=0.22]{R3000.jpg}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{MIPS Befehlssatz}
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.85\paperwidth]{ISA.png}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{MIPS Befehlsformate}
+%% some quote about real-time systems
+\begin{itemize}
+		\item R-Type -- Arithmetik and Logik
+       \item I-Type -- Laden/Speichern, Verzweigen, Direktwert
+       \item J-Format -- Jump
+\end{itemize}
+
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{instruction-formats.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{MIPS Pipeline}
+
+%% leakage currents
+\begin{center}
+
+\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{pipeline.png}
+\end{center}
+
+
+\end{frame}
+
+\section{Unser MIPS System}
+
+\begin{frame}{Hardware-Komponenten}
+
+\begin{itemize}
+\item MIPS R3000
+\item ROM, RAM
+\item NS8250-class UART
+\item VGA Framebuffer
+\end{itemize}
+
+%\myheading{Migration}
+
+%% What's a preemptive Scheduler
+\begin{block}{UART}
+A scheduler is said to be preemptive if it is permitted to interrupt an executing job and have its execution resumed at some point in the future
+\end{block}
+\begin{block}{Migration}
+The preemption of a job and rescheduling thereof on a different processor
+\end{block}
+
+\end{frame}
+
+%% Before delving any deeper.. bla bla
+%%\begin{frame}{Active Resources}\end{frame}
+
+
+
+\begin{frame}{VGA}
+Tasks denoted by 2 parameters:
+\begin{itemize}
+\item Worst case execution time
+\item Period, which is equal to its deadline
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.36]{gantt-chart.png}
+\end{center}
+
+A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
+\end{frame}
+
+\begin{frame}{ROM}
+Tasks denoted by 2 parameters:
+\begin{itemize}
+\item Worst case execution time
+\item Period, which is equal to its deadline
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.36]{gantt-chart.png}
+\end{center}
+
+A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
+\end{frame}
+
+\begin{frame}{RAM}
+Tasks denoted by 2 parameters:
+\begin{itemize}
+\item Worst case execution time
+\item Period, which is equal to its deadline
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.36]{gantt-chart.png} \\
+Not a LL Task: $WCET= 4$, $Period = 8$ but $Deadline = 7$
+\end{center}
+
+A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
+\end{frame}
+
+
+\section{Wie kommt die Software auf den FPGA?}
+
+\begin{frame}{Strom da. Was nun?}
+
+Reset Vektor wird angesprungen. Assembler Code verantwortlich für
+
+\begin{itemize}
+\item Globale Variablen (.BSS) nullen
+\item Daten von ROM in den RAM kopieren
+\item Stack initialisieren
+\item main() im C Code anspringen
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{BIOS (}
+
+Verantwortlich für
+
+\begin{itemize}
+\item Initialisiert UART
+\item Startet Kommandozeilen Interpreter auf UART
+\item Startet Applikationen
+\item Traps und Interrupts?
+\pause
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{C-Toolchain}
+
+\begin{itemize}
+\item GCC 6.2.0 MIPS Barebones Cross-Compiler
+\item \texttt{-ffreestanding -nostdlib -nostartfiles}
+\item Wie kommt das Programm in den Speicher?
+\begin{itemize}
+    \item Linker Script: Spezifiziert Addressvergabe an Symbole
+    \item objcopy: Extrahiert rohen Maschinen Code
+    \item iMPACT: Spielt extrahierte Binärdatei auf ROM
+\end{itemize}
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.10]{gcc.png}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}{Komplexität im Griff behalten?}
+
+\begin{itemize}
+\item Emulation:
+\begin{itemize}
+    \item QEMU mit R3000, UART und VGA
+    \item Code lokal Testebar vor Auspielen auf den FPGA
+\end{itemize}
+    \item Testbenches: z.B. ALU und Instruktionsdecoder. Alleinstehend, gut testbar.
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.10]{gcc.png}
+\end{center}
+
+
+\end{frame}
+
+
+\begin{frame}{Applikationen}
+\begin{itemize}
+\item Mandebrot-Fraktal
+\item Vllt. DOS Demos portieren
+\end{itemize}
+
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{mandelbrot.jpg}
+\end{center}
+
+
+\end{frame}
+
+
+\begin{frame}{Doom?}
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
+\end{center}
+ 
+
+
+\end{frame}
+
+\begin{frame}{Fragen? Anregungen?}
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
+\end{center}
+ 
+
+
+\end{frame}
+
+\end{document}
