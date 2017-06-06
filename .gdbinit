@@ -4,6 +4,8 @@ define xxd
 end
 
 #b main
+set endian little
+set mipsfpu none
 layout asm
 
 define reconnect 
