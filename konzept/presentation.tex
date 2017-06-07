@@ -78,7 +78,7 @@
 \begin{frame}{MIPS Befehlsformate}
 %% some quote about real-time systems
 \begin{itemize}
-		\item R-Type -- Arithmetik and Logik
+	\item R-Type -- Arithmetik und Logik
        \item I-Type -- Laden/Speichern, Verzweigen, Direktwert
        \item J-Format -- Jump
 \end{itemize}
@@ -104,67 +104,64 @@
 \begin{frame}{Hardware-Komponenten}
 
 \begin{itemize}
-\item MIPS R3000
-\item ROM, RAM
-\item NS8250-class UART
-\item VGA Framebuffer
+	\item MIPS R3000
+	\item 32bit
 \end{itemize}
 
-%\myheading{Migration}
+\begin{center}
+\includegraphics{devices_graphic} %%Grafik s. WA
+\end{center}
 
-%% What's a preemptive Scheduler
-\begin{block}{UART}
-A scheduler is said to be preemptive if it is permitted to interrupt an executing job and have its execution resumed at some point in the future
-\end{block}
-\begin{block}{Migration}
-The preemption of a job and rescheduling thereof on a different processor
-\end{block}
+
+\begin{frame}{UART}
+
+\begin{itemize}
+	\item Universal Asynchronous Receiver Transmitter
+	\item NS8250 Class 
+	\item Adresse: 0x1fd00x3f8
+	\item Eingabe
+	\item Priorität -> Erlaubt debugging
+	\item keine interrupts
+\end{itemize}
+\begin{center}
+%%In deiner voice message klingst als hättest du ne schöne grafik. Falls ja > hier rein. Sonst erklär ichs bloß
+\end{center}
+
 
 \end{frame}
 
-%% Before delving any deeper.. bla bla
-%%\begin{frame}{Active Resources}\end{frame}
-
-
+\begin{frame}{VGA Frame Puffer}
+	\begin{itemize}
+		\item Adresse: 0x1fd0????
+		\item C Programm schreibt schreibt in Array
+		\item Array wird aus Speicher gelesen
+		\item VGA Clock
+	\end{itemize}
+\end{frame}
 
 \begin{frame}{VGA}
-Tasks denoted by 2 parameters:
-\begin{itemize}
-\item Worst case execution time
-\item Period, which is equal to its deadline
-\end{itemize}
-\begin{center}
-\includegraphics[scale=0.36]{gantt-chart.png}
-\end{center}
-
-A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
+	\begin{itemize}		
+		\item 255 Farben
+		\item Größe: 160*120 -> 19k byte
+		\item klein anfangen, feststellen ob der Speicher reicht
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{ROM}
-Tasks denoted by 2 parameters:
 \begin{itemize}
-\item Worst case execution time
-\item Period, which is equal to its deadline
+	\item Adresse: 0xbfc00000
+	\item 
 \end{itemize}
 \begin{center}
-\includegraphics[scale=0.36]{gantt-chart.png}
 \end{center}
 
-A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
 \end{frame}
 
 \begin{frame}{RAM}
-Tasks denoted by 2 parameters:
 \begin{itemize}
-\item Worst case execution time
-\item Period, which is equal to its deadline
+	\item Adresse: 0xa0000000
+	\item 
 \end{itemize}
-\begin{center}
-\includegraphics[scale=0.36]{gantt-chart.png} \\
-Not a LL Task: $WCET= 4$, $Period = 8$ but $Deadline = 7$
-\end{center}
-
-A scheduling algorithm is said to be optimal if it finds a schedule if feasible schedules exists. For example, Earliest-Deadline-First
 \end{frame}
 
 
@@ -254,10 +251,18 @@ Verantwortlich für
 \end{center}
  
 
-
 \end{frame}
 
-\begin{frame}{Fragen? Anregungen?}
+\begin{frame}{Aufgaben}
+\begin{itemization}
+	\item Aicha: ALU
+	\item Ahmad: Intruction Decoder
+	\item Niklas: UART
+	\item Danach: VGA, RAM, ROM
+\end{itemization}	
+\end{frame}
+
+\begin{frame}{Fragen? Anregungen?} %%Solche Folien macht man nicht. Besser wäre Zusammenfassung.
 \begin{center}
 \includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
 \end{center}
