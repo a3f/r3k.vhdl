@@ -57,7 +57,7 @@
 \begin{frame}{Der MIPS R3000}
 \begin{itemize}
        \item 1988 auf dem Markt gekommen
-       \item 32-bit, RISC Architektur mit 25 Instruktionen
+       \item 32-bit, RISC Architektur
 		\item 32 Register
 		\item 5-Stufige Pipeline
 \end{itemize}
@@ -68,6 +68,19 @@
 
 \end{frame}
 
+
+\begin{frame}{Was wird weg gelassen ?}
+\begin{itemize}
+       \item Traps
+       \item Interrupts 
+		\item Overflow
+		\item Syscall
+        \item Betriebsmodi (Kernel/User)
+ 		\item MMU
+ 		\item Caching
+
+\end{itemize}
+\end {frame}
 \begin{frame}{MIPS Befehlssatz}
 \begin{center}
 \includegraphics[keepaspectratio=true,width=0.85\paperwidth]{ISA.png}
@@ -78,18 +91,16 @@
 \begin{frame}{MIPS Befehlsformate}
 %% some quote about real-time systems
 \begin{itemize}
-	\item R-Type -- Arithmetik und Logik
+		\item R-Type -- Arithmetik and Logik
        \item I-Type -- Laden/Speichern, Verzweigen, Direktwert
        \item J-Format -- Jump
 \end{itemize}
 
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{instruction-formats.png}
+\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{instruction-formats.jpeg}
 \end{center}
 \end{frame}
-
 \begin{frame}{MIPS Pipeline}
-
 %% leakage currents
 \begin{center}
 
@@ -99,6 +110,15 @@
 
 \end{frame}
 
+\begin{frame}{Wie werden wir das Ganze implementieren? Bsp.: ALU}
+
+%% leakage currents
+\begin{center}
+
+\includegraphics[keepaspectratio=true,width=.4\linewidth]{Alu.jpeg}
+\includegraphics[keepaspectratio=true,width=.7\linewidth]{Alu-code.jpeg}
+\end{center}
+\end{frame}
 \section{Unser MIPS System}
 
 \begin{frame}{Hardware-Komponenten}
@@ -109,9 +129,10 @@
 \end{itemize}
 
 \begin{center}
-\includegraphics{devices_graphic} %%Grafik s. WA
+\includegraphics[scale=0.40]{bus.jpeg} %%Grafik s. WA
 \end{center}
 
+\end{frame}
 
 \begin{frame}{UART}
 
@@ -147,23 +168,6 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{ROM}
-\begin{itemize}
-	\item Adresse: 0xbfc00000
-	\item 
-\end{itemize}
-\begin{center}
-\end{center}
-
-\end{frame}
-
-\begin{frame}{RAM}
-\begin{itemize}
-	\item Adresse: 0xa0000000
-	\item 
-\end{itemize}
-\end{frame}
-
 
 \section{Wie kommt die Software auf den FPGA?}
 
@@ -180,7 +184,7 @@ Reset Vektor wird angesprungen. Assembler Code verantwortlich für
 
 \end{frame}
 
-\begin{frame}{BIOS (}
+\begin{frame}{BIOS (Basic Input/Output System)}
 
 Verantwortlich für
 
@@ -188,8 +192,7 @@ Verantwortlich für
 \item Initialisiert UART
 \item Startet Kommandozeilen Interpreter auf UART
 \item Startet Applikationen
-\item Traps und Interrupts?
-\pause
+\item Interrupts und Traps?
 \end{itemize}
 
 \end{frame}
@@ -221,11 +224,12 @@ Verantwortlich für
     \item QEMU mit R3000, UART und VGA
     \item Code lokal Testebar vor Auspielen auf den FPGA
 \end{itemize}
-    \item Testbenches: z.B. ALU und Instruktionsdecoder. Alleinstehend, gut testbar.
+    \item Simulation: Testbenches: z.B. ALU und Instruktionsdecoder. Alleinstehend, gut testbar.
 \end{itemize}
 \begin{center}
-\includegraphics[scale=0.10]{gcc.png}
+\includegraphics[scale=0.85]{qemu.png}
 \end{center}
+
 
 
 \end{frame}
@@ -238,7 +242,7 @@ Verantwortlich für
 \end{itemize}
 
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{mandelbrot.jpg}
+\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{mandelbrot.png}
 \end{center}
 
 
@@ -254,12 +258,17 @@ Verantwortlich für
 \end{frame}
 
 \begin{frame}{Aufgaben}
-\begin{itemization}
-	\item Aicha: ALU
-	\item Ahmad: Intruction Decoder
-	\item Niklas: UART
-	\item Danach: VGA, RAM, ROM
-\end{itemization}	
+\begin{itemize}
+\item ALU (Aicha)
+\item Instruction Decoder (Ahmad)
+\item UART (Niklas)
+\item Address decoder
+\item ROM
+\item RAM
+\item VGA frame buffer
+\item Register File
+\item Pipeline (Data path)
+\end{itemize}	
 \end{frame}
 
 \begin{frame}{Fragen? Anregungen?} %%Solche Folien macht man nicht. Besser wäre Zusammenfassung.
