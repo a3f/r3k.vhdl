@@ -36,18 +36,31 @@ struct uart16550 {
     };
 
     writeonly struct {
+#if MIPSEL
         uint8_t config   : 5;
         uint8_t          : 2;
         uint8_t set_baud : 1;
+#else
+        uint8_t set_baud : 1;
+        uint8_t          : 2;
+        uint8_t config   : 5;
+#endif
     } line_ctrl;
 
     writeonly uint8_t modem_ctrl;
 
     readonly struct {
+#if MIPSEL
         uint8_t data_available : 1;
         uint8_t                : 4;
         uint8_t tx_empty       : 1;
         uint8_t                : 2;
+#else
+        uint8_t                : 2;
+        uint8_t tx_empty       : 1;
+        uint8_t                : 4;
+        uint8_t data_available : 1;
+#endif
     } line_status;
 
     readonly uint8_t modem_status;

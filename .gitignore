@@ -5,3 +5,5 @@ build/
 *.o
 *.ko
 *.bin
+LITTLE
+BIG

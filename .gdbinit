@@ -4,8 +4,11 @@ define xxd
 end
 
 #b main
-set endian little
 set mipsfpu none
+shell touch /tmp/endianness
+shell if test -f ./LITTLE; then echo "set endian little" > /tmp/endianness; fi
+shell if test -f ./BIG; then echo "set endian big" > /tmp/endianness; fi
+source /tmp/endianness
 #layout asm
 set $mmio = (uint8_t*)0x14000000
 set $uart = $mmio+0x3f8
