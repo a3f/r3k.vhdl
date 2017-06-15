@@ -45,4 +45,4 @@ This project is free software; you can redistribute it and/or modify it under th
 
 This project was written during the Basispraktikum Technische Informatik at the Karlsruhe Institute of Technology.
 
-![datapath](https://raw.githubusercontent.com/a3f/r3k.vhdl/master/datapath.png)
+[datapath]: https://raw.githubusercontent.com/a3f/r3k.vhdl/master/datapath.png
