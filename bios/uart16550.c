@@ -10,13 +10,15 @@
  */
 
 
+#include "config.h"
 #include "uart16550.h"
 #include <stdbool.h>
 
 #define readonly  const
 #define writeonly
 
-#define __uart (*(volatile struct uart16550*)0x1fd003f8)
+#define __uart (*(struct uart16550*)UART_BASE)
+//extern volatile
 struct uart16550 {
     union {
         writeonly uint8_t tx;
@@ -49,7 +51,8 @@ struct uart16550 {
     } line_status;
 
     readonly uint8_t modem_status;
-};
+};//  __uart;
+
 _Static_assert(sizeof __uart == 7, "Struct not padded correctly!");
 
 void uart16550_init(uint16_t baud_div, uint8_t config)

@@ -12,6 +12,8 @@ designed.
 
 ## VHDL MIPS Simulation
 
+![MIPS R3000 single-cycle datapath][datapath]
+
 (to follow)
 
 ## BIOS
@@ -42,3 +44,5 @@ Copyright (C) 2017 Aicha Ben Chaouacha, Ahmad Fatoum, Niklas Fuhrberg
 This project is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. See the file LICENSE for full copying conditions.
 
 This project was written during the Basispraktikum Technische Informatik at the Karlsruhe Institute of Technology.
+
+![datapath](https://raw.githubusercontent.com/a3f/r3k.vhdl/master/datapath.png)

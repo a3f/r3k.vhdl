@@ -1,27 +1,31 @@
 CPU  ?= 74Kf
-SYS  ?= mipssim
+SYS  ?= mips
 BIOS ?= bios/bios.bin
 QEMU ?= qemu-system-mipsel
+GRAPHIC ?= -nographic
+VGA ?= -device isa-vga
 
 .PHONY: gdb emu monitor bios
 emu: bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) -nographic -monitor null -m 16M  -serial stdio \
-	-gdb tcp::51234 -M $(SYS)
+	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor null -m 16M  -serial stdio \
+	-gdb tcp::51234 -M $(SYS) $(VGA)
 	stty sane
 
 gdb: bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) -nographic -monitor null -m 16M  -serial stdio \
-	-gdb tcp::51234 -M $(SYS) -S
+	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor null -m 16M  -serial stdio \
+	-gdb tcp::51234 -M $(SYS) $(VGA) -S
 	stty sane
 
 monitor: bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) -nographic -monitor stdio -m 16M  -serial null \
-	-gdb tcp::51234 -M $(SYS) -S
+	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor stdio -m 16M  -serial null \
+	-gdb tcp::51234 -M $(SYS) $(VGA) -S
 	stty sane
 
 bios:
 	$(MAKE) -C bios
 
+vhdl sim:
+	$(MAKE) -C vhdl
 
 
 .PHONY: clean

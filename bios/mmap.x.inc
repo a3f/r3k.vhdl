@@ -1,15 +1,18 @@
+#include "config.h"
 OUTPUT_ARCH(mips)
 ENTRY(_reset)
+
 MEMORY
 {
-    MMIO (rw) : ORIGIN = 0x14000000, LENGTH = 16K
-    ROM (rx) : ORIGIN = 0xbfc00000, LENGTH = 16K
-    RAM (rw) : ORIGIN = 0xa0000000, LENGTH = 16K
+    MMIO (rw)  : ORIGIN = MMIO_BASE, LENGTH = 16K
+    ROM  (rx)  : ORIGIN = ROM_BASE, LENGTH = 16K
+    RAM  (rw)  : ORIGIN = RAM_BASE, LENGTH = 16K
 }
+ 
 SECTIONS
 {
     . = ORIGIN(ROM);
-    __uart = (0x14000000 +0x3f8);
+    __uart = UART_BASE;
     .text :
     {
         __text_start = .;
@@ -20,34 +23,40 @@ SECTIONS
     } > ROM
     . = ALIGN(16);
     __text_end = .;
- . = ORIGIN(RAM);
+ 
+	. = ORIGIN(RAM);
     .data :
     {
         __data_start = .;
         *(.data)
     } > RAM
     . = ALIGN(16);
- .got : {
-  _gp = ALIGN(16);
-  *(.got*)
- } > RAM
+	.got : {
+		_gp = ALIGN(16);
+		*(.got*)
+	} > RAM
     . = ALIGN(16);
     __data_end = .;
+ 
     .bss :
     {
-     __bss_start = .;
+    	__bss_start = .;
         *(.bss)
     __bss_end = .;
     } > RAM
     . = ALIGN(16);
- . = ALIGN(8);
- . = . + 0x1000; /* 4k of stack memory */
- __ss_top = .;
- /DISCARD/ : { *(.reginfo) *(.MIPS.abiflags) }
- /* FIXME make it work
+	. = ALIGN(8);
+	. = . + 0x1000; /* 4k of stack memory */
+	__ss_top = .;
+
+	/DISCARD/ : { *(.reginfo) *(.MIPS.abiflags) }
+
+	/* FIXME make it work
 	. = ALIGN(64);
 	__heap_start = .;
 	. = . + 0x1000;
 	__heap_end = .;
 	*/
 }
+
+
