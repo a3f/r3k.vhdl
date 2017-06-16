@@ -2,41 +2,39 @@
 # We need to setup the call stack and zero-initialize static variables
 # before we can call main()
 
-#include "asm.h"
+#include "asmmacros.h"
+#include "m32c0.h"
+#include "config.h"
 
 .set mips1
 .set noreorder
     
 .section .text.boot, "x"
 LEAF(_reset)
-#if 0
-disable_interruptss:
-    mtc0   $0, CP0_STATUS
+    LA     $gp, _gp
 
-disable_watch_exceptions:
-    mtc0   $0, CP0_WATCHLO
-    mtc0   $0, CP0_WATCHHI
+#if 0 && SYS_MALTA
+	mfc0    $t0, C0_STATUS
+	li      $t1, ~(SR_KSU_MASK|SR_ERL|SR_EXL|SR_IE)
 
-disable_kernel_mode_chache:
-    mfc0   $t0, CP0_CONFIG
-    and    $t0, ~0x7
-    ori    $t0, 0x2
-    mtc0   $t0, CP0_CONFIG
+	and     $t0, $t1
+	mtc0    $t0, C0_STATUS
+
+	mfc0    $t0, C0_CAUSE
+	li      $t1, ~CR_IP_MASK
+	and     $t0, $t1
+	mtc0    $t0, C0_CAUSE
 #endif
 
-
     j    init
+    nop
     .align 8
     nop
     .align 8
 
-unhandled_exception:
+nhandled_exception:
     j    _exit
     
-#if 0
-    li    $t0, SR_BEV
-    mtc0  $r0, CO_SR
-#endif
 
 init:
 clear_bss: nop
@@ -63,6 +61,7 @@ copy_loop:
 
 init_stack: nop
     la    $sp, __ss_top
+    nop
 
 load:
 #if 0
@@ -77,4 +76,3 @@ _loop:
 	j    _loop
     nop
 END(_reset)
-	

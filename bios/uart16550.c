@@ -13,29 +13,34 @@
 #include "config.h"
 #include "uart16550.h"
 #include <stdbool.h>
+#include <stddef.h>
 
 #define readonly  const
 #define writeonly
 
-#define __uart (*(struct uart16550*)UART_BASE)
+#define __uart (*(volatile struct uart16550*)UART_BASE)
 //extern volatile
 struct uart16550 {
     union {
         writeonly uint8_t tx;
         readonly  uint8_t rx;
                   uint8_t baud_div_lo;
+                  UART_PAD
     };
     union {
             uint8_t int_enable;
             uint8_t  baud_div_hi;
+            UART_PAD
     };
 
     union {
         uint8_t int_status; 
         uint8_t fifo_ctrl;
+        UART_PAD
     };
 
     writeonly struct {
+        union {
 #if MIPSEL
         uint8_t config   : 5;
         uint8_t          : 2;
@@ -45,11 +50,13 @@ struct uart16550 {
         uint8_t          : 2;
         uint8_t config   : 5;
 #endif
+        UART_PAD
+        };
     } line_ctrl;
 
-    writeonly uint8_t modem_ctrl;
+    writeonly union {uint8_t modem_ctrl; UART_PAD};
 
-    readonly struct {
+    readonly union {struct {
 #if MIPSEL
         uint8_t data_available : 1;
         uint8_t                : 4;
@@ -61,23 +68,24 @@ struct uart16550 {
         uint8_t                : 4;
         uint8_t data_available : 1;
 #endif
-    } line_status;
+    }; UART_PAD } line_status;
 
-    readonly uint8_t modem_status;
+    readonly union{uint8_t modem_status; UART_PAD};
 };//  __uart;
 
-_Static_assert(sizeof __uart == 7, "Struct not padded correctly!");
+_Static_assert(sizeof __uart / offsetof(struct uart16550, int_enable) == 7, "Struct not padded correctly!");
 
 void uart16550_init(uint16_t baud_div, uint8_t config)
 {
-    __uart.int_enable = false;
-
     __uart.line_ctrl.set_baud = true;
 
     __uart.baud_div_lo = (uint8_t)baud_div;
     __uart.baud_div_hi = (uint8_t)(baud_div >> 8);
 
     __uart.line_ctrl.set_baud = false;
+
+    __uart.int_enable = false;
+    __uart.fifo_ctrl = false;
 
     __uart.line_ctrl.config = config;
 }
@@ -98,9 +106,13 @@ void uart16550_putc(unsigned char ch)
     while (!__uart.line_status.tx_empty)
         ;
 
+again:
     __uart.tx = ch;
 
-    if (ch == '\n')
-        uart16550_putc('\r');
+
+    if (ch == '\n') {
+        ch = '\r';
+        goto again;
+    }
 }
 

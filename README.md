@@ -2,11 +2,8 @@
 
 ## VHDL MIPS Implementation
 
-Eventually, a VHDL implementation of a MIPS R3000 with 16550-class UART and VGA.
+Eventually, a VHDL implementation of a MIPS R3000 with memory mapped 16550-class UART and VGA.
 Supplied Toolchain and BIOS can be used to cross-compile C application to run on it.
-
-The UART is memory-mapped at address 0x1fd003f8. The VGA frame buffer is yet to be
-designed.
 
 (More to follow)
 
@@ -26,10 +23,12 @@ Application can be tested locally in QEMU by running `make` in the root director
 This will build the BIOS, applications and start a serial session with the command
 interpreter running inside the emulator.
 
-`make gdb` sets a breakpoint at `0xbfd0_0000` (reset vector) and `make monitor`
-launches QEMU monitor mode. All three modes start a gdb server at port 51234.
+`make gdb` sets a breakpoint at `0xbfc0_0000` (reset vector) and `make monitor`
+launches QEcU monitor mode. All three modes start a gdb server at port 51234.
 
 `apt-get install gdb-multiarch` for debugging.
+
+Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.g. 'SYS=mips" as environment variable to select one. 'malta' is the default. You can also pass 'BIG=1' in order to build for big-endian.
 
 ## C Toolchain
 

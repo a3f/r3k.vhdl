@@ -1,12 +1,10 @@
 .NOTPARALLEL:
-CPU  ?= 74Kf
-SYS  ?= mips
-export SYS
-BIOS ?= bios/bios.bin
-GRAPHIC ?= -nographic
-ifneq ($(SYS), mipssim)
-	VGA ?= -device isa-vga
-endif
+CPU  ?= 24Kf
+SYS  ?= malta
+BIOS ?= bios/bios
+
+include boards.mk
+
 ifeq ($(BIG), 1)
 	QEMU ?= qemu-system-mips
 	ENDIAN = BIG
@@ -14,21 +12,28 @@ else
 	QEMU ?= qemu-system-mipsel
 	ENDIAN = LITTLE
 endif
+ifeq ($(KERNEL), 1)
+	IMAGE ?= -kernel $(BIOS).elf
+else
+	IMAGE ?= -bios $(BIOS).bin
+endif
+
+export
 
 .PHONY: gdb emu monitor bios
 emu: $(ENDIAN) bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor null -m 16M  -serial stdio \
-	-gdb tcp::51234 $(VGA) -M $(SYS)
+	$(QEMU) $(IMAGE) -cpu $(CPU) -monitor null -m 16M $(DEV) \
+	-gdb tcp::51234 -M $(SYS)
 	stty sane
 
 gdb: $(ENDIAN) bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor null -m 16M  -serial stdio \
-	-gdb tcp::51234 $(VGA) -M $(SYS)
+	$(QEMU) $(IMAGE) -cpu $(CPU) -monitor null -m 16M $(DEV) \
+	-gdb tcp::51234 -M $(SYS) -S
 	stty sane
 
 monitor: $(ENDIAN) bios
-	$(QEMU) -bios $(BIOS) -cpu $(CPU) $(GRAPHIC) -monitor stdio -m 16M  -serial null \
-	-gdb tcp::51234 $(VGA) -M $(SYS) -S
+	$(QEMU) $(IMAGE) -cpu $(CPU) -monitor stdio -m 16M $(DEV) \
+	-gdb tcp::51234 -M $(SYS)
 	stty sane
 
 $(ENDIAN):
