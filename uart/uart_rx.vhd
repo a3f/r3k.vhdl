@@ -1,41 +1,12 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-package vl2vh_common_pack is 
-    type vl2vh_memory_type is      array  ( natural range <> , natural range <>  )  of std_logic ;
-    function vl2vh_ternary_func(  constant cond : Boolean;  constant trueval : std_logic;  constant falseval : std_logic)  return std_logic; 
-    function vl2vh_ternary_func(  constant cond : Boolean;  constant trueval : std_logic_vector;  constant falseval : std_logic_vector)  return std_logic_vector; 
-end package; 
-
-
-
-
-package body vl2vh_common_pack is 
-    function vl2vh_ternary_func(  constant cond : Boolean;  constant trueval : std_logic;  constant falseval : std_logic)  return std_logic is 
-    begin
-        if ( cond ) then 
-             return trueval;
-        else 
-             return falseval;
-        end if;
-    end;
-    function vl2vh_ternary_func(  constant cond : Boolean;  constant trueval : std_logic_vector;  constant falseval : std_logic_vector)  return std_logic_vector is 
-    begin
-        if ( cond ) then 
-             return trueval;
-        else 
-             return falseval;
-        end if;
-    end;
-end; 
-
 
 library ieee;
 library work;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_misc.all;
 use ieee.numeric_std.all;
-use work.vl2vh_common_pack.all;
 entity uart_rx is 
 generic (
         idle : INTEGER( 1  downto 0  ) := 0 ;
