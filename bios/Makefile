@@ -6,7 +6,7 @@ ifneq ($(BIG), 1)
 endif
 PIC ?=
 CFLAGS = -O0 -march=r3k $(PIC) -g3 -Wall -Wextra -Wno-main $(ENDIANNESS) \
-         -ffreestanding -nostdlib -nostartfiles
+         -ffreestanding -nostdlib -nostartfiles -msoft-float
 ifeq ($(SYS), mips)
 	CPPFLAGS += -DSYS_MIPS=1
 else
@@ -33,6 +33,7 @@ LDFLAGS = -ffreestanding $(PIC) -nostdlib -nostartfiles -march=r3k $(ENDIANNESS)
           -Werror=implicit-function-declaration -T$(MMAP)
 LDLIBS  = -static-libgcc -lgcc
 
+export
 
 ifeq ($(V), 1)
 	LDFLAGS += -Wl,-verbose

@@ -7,7 +7,7 @@ MEMORY
 {
     MMIO (rw)  : ORIGIN = MMIO_BASE, LENGTH = 128K
     ROM  (rx)  : ORIGIN = ROM_BASE,  LENGTH = 128K
-    RAM  (rw)  : ORIGIN = RAM_BASE,  LENGTH = 256K
+    RAM  (rw)  : ORIGIN = RAM_BASE,  LENGTH = 512K
 }
  
 SECTIONS
