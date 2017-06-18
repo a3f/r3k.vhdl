@@ -1,5 +1,5 @@
 ifeq ($(SYS), malta)
-	DEV ?= -nodefaults -device VGA -serial none -serial null -serial null
+	DEV ?= -device VGA -serial none -serial null -serial null
 	KERNEL=1
 
 ifeq ($(BIG), 1)

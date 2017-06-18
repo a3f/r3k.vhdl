@@ -15,7 +15,7 @@ Supplied Toolchain and BIOS can be used to cross-compile C application to run on
 
 ## BIOS
 
-`bios/` contains a simple BIOS that runs a command interpreter on the UART.
+`bios/` contains a simple MIPS BIOS that runs a command interpreter on the UART. By default `make` is invoked with `SYS=malta`, which additionally spawns a window for VGA output.
 
 ## MIPS Emulator
 
@@ -24,11 +24,11 @@ This will build the BIOS, applications and start a serial session with the comma
 interpreter running inside the emulator.
 
 `make gdb` sets a breakpoint at `0xbfc0_0000` (reset vector) and `make monitor`
-launches QEcU monitor mode. All three modes start a gdb server at port 51234.
+launches QEMU monitor mode. All three modes start a gdb server at port 51234.
 
 `apt-get install gdb-multiarch` for debugging.
 
-Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.g. 'SYS=mips" as environment variable to select one. 'malta' is the default. You can also pass 'BIG=1' in order to build for big-endian.
+Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.g. 'SYS=mips" as environment variable to select one. '. You can also pass 'BIG=1' in order to build for big-endian. 
 
 ## C Toolchain
 
@@ -38,7 +38,7 @@ Add them to your PATH with `source toolchain/setenv.sh`
 
 ## Copyright and License
 
-Copyright (C) 2017 Aicha Ben Chaouacha, Ahmad Fatoum, Niklas Fuhrberg 
+Copyright (C) 2017 Aicha Ben Chaouacha, Ahmad Fatoum and Niklas Fuhrberg.
 
 This project is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. See the file LICENSE for full copying conditions.
 
