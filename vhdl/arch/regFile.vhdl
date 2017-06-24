@@ -21,8 +21,11 @@ architecture behav of regFile is
 
 
 begin process(readreg1, readreg2, writereg, clk)
-        variable readreg1_int, readreg2_int, writereg_int : integer;
+        variable readreg1_int : integer := to_integer(unsigned(readreg1));
+        variable readreg2_int : integer := to_integer(unsigned(readreg2));
+        variable writereg_int : integer := to_integer(unsigned(writereg));
     begin
+
     -- Do these need to be inside a process? I think not.
     if readreg1'event then
         readdata1 <= reg(readreg1_int);
