@@ -18,6 +18,7 @@ package arch_defs is
 
     subtype word_t          is std_logic_vector(31 downto 0);
     subtype addr_t          is std_logic_vector(31 downto 0);
+    subtype addrdiff_t      is std_logic_vector(31 downto 0);
     subtype halfword_t      is std_logic_vector(31 downto 0);
     subtype ctrl_t          is std_logic;
     subtype ctrl_memwidth_t is std_logic_vector(1 downto 0);
