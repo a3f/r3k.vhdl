@@ -1,15 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy linkMux is 
+entity linkMux is 
 	port (
 	Link : in ctrl_t;
-	pc : in std_logic_vector(31 downto 0);
-	memToRegMux: in std_logic_vector(31 downto 0);
-	output: out std_logic_vector(31 downto 0)
+	pc : in addr_t;
+	memToRegMux: in word_t;
+	output: out word_t
 	);
+end entity;
 
 architecture behav of linkMux is
 	begin
-		output <= pc when Link => '1' else memToRegMux;
+		output <= pc when Link = '1' else memToRegMux;
 end architecture behav;

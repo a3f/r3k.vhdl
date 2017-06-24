@@ -1,17 +1,18 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy shiftMux is 
+entity shiftMux is 
 	port (
 	Shift: in ctrl_t;
-	reg1data : in std_logic_vector(31 downto 0)
-	shamt : in std_logic_vector(31 downto 0) --Instruction 0-6
-	output : out std_logic_vector(31 downto 0)
+	reg1data : in word_t;
+	shamt : in word_t; -- Instruction 0-6 Zero-extended
+	output : out word_t
 	);
+end entity;
 
 architecture behav of shiftMux is
 	begin
-		output <= shamt when Shift => '1' else reg1Data;
+		output <= shamt when Shift = '1' else reg1Data;
 end architecture behav;
 	
 		

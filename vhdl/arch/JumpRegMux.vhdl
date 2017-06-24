@@ -1,15 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy JumpRegMux is 
+entity JumpRegMux is 
 	port (
 	JumpReg: in ctrl_t;
-	reg1data : in std_logic_vector(31 downto 0)
-	JumpDirMux : in std_logic_vector(31 downto 0) 
-	output : out std_logic_vector(31 downto 0)
+	reg1data : in word_t;
+	JumpDirMux : in word_t;
+	output : out word_t
 	);
+end entity;
 
 architecture behav of JumpRegMux is
 	begin
-		output <= reg1data when JumpReg => '1' else JumpDirMux;
+		output <= reg1data when JumpReg = '1' else JumpDirMux;
 end architecture behav;

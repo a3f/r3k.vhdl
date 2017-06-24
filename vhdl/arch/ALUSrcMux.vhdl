@@ -1,18 +1,19 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy ALUSrcMux is 
+entity ALUSrcMux is 
 	port (
 	ALUSrc: in ctrl_t;
-	reg2data : in std_logic_vector(31 downto 0)
+	reg2data : in word_t;
 	-- Instruction 15-0 Address/Immediate
-	addr : in std_logic_vector(31 downto 0) 
-	output : out std_logic_vector(31 downto 0)
+	addr : in addr_t;
+	output : out word_t
 	);
+end entity;
 
 architecture behav of ALUSrcMux is
 	begin
-		output <= addr when ALUSrc => '1' else reg2Data;
+		output <= addr when ALUSrc = '1' else reg2Data;
 end architecture behav;
 	
 		

@@ -1,17 +1,18 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy returnAddrMux is 
+entity returnAddrMux is 
 	port (
 	returnAddrControl: in ctrl_t;
-	returnAddrReg : in std_logic_vector(31 downto 0)
-	regDstMux : in std_logic_vector(31 downto 0)
-	output : out std_logic_vector(31 downto 0)
+	returnAddrReg : in addr_t;
+	regDstMux : in addr_t;
+	output : out word_t
 	);
+end entity;
 
 architecture behav of returnAddrMux is
 	begin
-		output <= returnAddrReg when returnAddrControl => '1' else regDstMux;
+		output <= returnAddrReg when returnAddrControl = '1' else regDstMux;
 end architecture behav;
 	
 		

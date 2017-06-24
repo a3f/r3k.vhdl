@@ -1,15 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entitiy JumpDirMux is 
+entity JumpDirMux is 
 	port (
 	JumpDir: in ctrl_t;
-	jumpAddr : in std_logic_vector(31 downto 0)
-	BranchMux : in std_logic_vector(31 downto 0) 
-	output : out std_logic_vector(31 downto 0)
+	jumpAddr : in addr_t;
+	BranchMux : in word_t;
+	output : out word_t
 	);
+end entity;
 
 architecture behav of JumpDirMux is
 	begin
-		output <= jumpAddr when JumpDir => '1' else BranchMux;
+		output <= jumpAddr when JumpDir = '1' else BranchMux;
 end architecture behav;
