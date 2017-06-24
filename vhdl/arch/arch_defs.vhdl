@@ -16,34 +16,51 @@ package arch_defs is
       --  AND, OR, XOR, SLL, SRL, SLA, SRA, ADD, SUB, MULT, DIV
     --}
 
-    subtype word_t      is std_logic_vector(31 downto 0);
-    subtype halfword_t  is std_logic_vector(31 downto 0);
-    subtype ctrl_t is std_logic
-    subtype instruction_t  is word_t;
-    subtype mask_t         is word_t;
+    subtype word_t          is std_logic_vector(31 downto 0);
+    subtype halfword_t      is std_logic_vector(31 downto 0);
+    subtype ctrl_t          is std_logic;
+    subtype ctrl_memwidth_t is std_logic_vector(1 downto 0);
+    subtype instruction_t   is word_t;
+    subtype mask_t          is word_t;
+    subtype reg_t           is std_logic_vector(4 downto 0);
+    subtype opcode_t        is std_logic_vector(5 downto 0);
+    subtype func_t          is std_logic_vector(5 downto 0);
 
-    type alu_op_t is (ALU_ADD, ALU_AND, ALU_LU, ALU_NOR, ALU_OR, ALU_SLT, ALU_SUB, ALU_XOR);
+    type alu_op_t is (
+        ALU_ADD, ALU_ADDU, ALU_SUB, ALU_SUBU,
+        ALU_AND, ALU_OR, ALU_NOR, ALU_XOR, ALU_LU,
+        ALU_SLL, ALU_SRL, ALU_SRA,
+        ALU_MULT, ALU_MULTU, ALU_DIV, ALU_DIVU,
+        ALU_MFHI, ALU_MFLO, ALU_MTHI, ALU_MTLO,
+        ALU_SLT, ALU_SLTU,
+        ALU_EQ, ALU_NE, ALU_LEZ, ALU_LTZ, ALU_GTZ, ALU_GEZ
+    );
 
     -- Taken from https://opencores.org/project,plasma,opcodes
+    -- And http://web.cse.ohio-state.edu/~crawfis.3/cse675-02/Slides/MIPS%20Instruction%20Set.pdf
+
+    constant ZERO     : word_t:= (others => '0'); -- 32 bits
+    constant R0 : reg_t := (others => '0'); --  5 bits
 
     -- ALU
     constant OP_ADD   : mask_t := R(func => "100000");
-    constant OP_ADDI  : mask_t := I(op => "001000");
-    constant OP_ADDIU : mask_t := I(op => "001001");
     constant OP_ADDU  : mask_t := R(func => "100001");
     constant OP_AND   : mask_t := R(func => "100100");
-    constant OP_ANDI  : mask_t := I(op => "001100");
-    constant OP_LUI   : mask_t := I(op => "001111");
     constant OP_NOR   : mask_t := R(func => "100111");
     constant OP_OR    : mask_t := R(func => "100101");
-    constant OP_ORI   : mask_t := I(op => "001101");
-    constant OP_SLT   : mask_t := R(func => "100101");
-    constant OP_SLTI  : mask_t := I(op => "001010");
-    constant OP_SLTIU : mask_t := I(op => "001011");
+    constant OP_SLT   : mask_t := R(func => "101010");
     constant OP_SLTU  : mask_t := R(func => "101011");
     constant OP_SUB   : mask_t := R(func => "100010");
     constant OP_SUBU  : mask_t := R(func => "100011");
     constant OP_XOR   : mask_t := R(func => "100110");
+
+    constant OP_ADDI  : mask_t := I(op => "001000");
+    constant OP_ADDIU : mask_t := I(op => "001001");
+    constant OP_ANDI  : mask_t := I(op => "001100");
+    constant OP_LUI   : mask_t := I(op => "001111");
+    constant OP_ORI   : mask_t := I(op => "001101");
+    constant OP_SLTI  : mask_t := I(op => "001010");
+    constant OP_SLTIU : mask_t := I(op => "001011");
     constant OP_XORI  : mask_t := I(op => "001110");
 
     -- Shifter
@@ -75,7 +92,8 @@ package arch_defs is
     constant OP_BNE   : mask_t := I(op => "000101");
     constant OP_J     : mask_t := J(op => "000010");
     constant OP_JAL   : mask_t := J(op => "000011");
-    constant OP_JR    : mask_t := "000000"&"-----"&(14 downto 0 => '0')&"001000";
+    constant OP_JR    : mask_t := R(rt => R0, func => "001000", rd => R0);
+    constant OP_JALR  : mask_t := R(rt => R0, func => "100010");
 
     constant OP_BREAK   : mask_t := "000000"&(19 downto 0 => '-')&"001101";
     constant OP_MFC0    : mask_t := "010000"&"00000"&(9 downto 0 => '-')&(10 downto 0 => '0');
@@ -94,31 +112,6 @@ package arch_defs is
 
 
 
-    --constant OP_ADDU   : mask_t := "------"&"---------------"&"00000"&"100101";
-
-
-    --constant OP_SPECIAL : I_op := "0000_00";
-    --constant OP_ADDI    : I_op := "0010_00";
-    --constant OP_ADDIU   : I_op := "0010_01";
-    --constant OP_ANDI    : I_op := "0011_01";
-
-    --constant ALU_AND         : STD_LOGIC_VECTOR(5 downto 0) := "100100";
-    --constant ALU_OR          : STD_LOGIC_VECTOR(5 downto 0) := "100101";
-    --constant ALU_SLT         : STD_LOGIC_VECTOR(5 downto 0) := "101010";
-
-    -- BUS CONSTANTS
-    --constant OP_LOAD          : STD_LOGIC_VECTOR(5 downto 0) := "100011"; -- 23 (LOAD word_t) / 35
-    --constant OP_STORE         : STD_LOGIC_VECTOR(5 downto 0) := "101011"; -- 2B (STORE word_t) / 43
-    --constant OP_LI            : STD_LOGIC_VECTOR(5 downto 0) := "001111"; -- (UNKNOWN) F / 15
-    --constant OP_BEQ           : STD_LOGIC_VECTOR(5 downto 0) := "000100"; -- I-branch
-    --constant OP_NOP           : STD_LOGIC_VECTOR(5 downto 0) := "111111"; -- No Operation
-    
-    -- ALU OP Codes
-    --constant ALU_OP_LS          : STD_LOGIC_VECTOR(1 downto 0) := "00"; -- Load & Store
-    --constant ALU_OP_BEQ         : STD_LOGIC_VECTOR(1 downto 0) := "01"; -- Branch on equal
-    --constant ALU_OP_R           : STD_LOGIC_VECTOR(1 downto 0) := "10"; -- R funct
-    
-    
 end arch_defs;
 
 package body arch_defs is

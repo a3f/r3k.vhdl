@@ -9,3 +9,4 @@ build/
 LITTLE
 BIG
 .DS_Store
+*.cf
