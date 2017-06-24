@@ -5,9 +5,9 @@ use ieee.numeric_std.all;
 entity leds is
 		port (
 		-- static
-		addr : in  std_logic_vector(31 downto 0);
-		din: in std_logic_vector (31 downto 0);
-		dout: out std_logic_vector (31 downto 0);
+		addr : in addr_t;
+		din: in word_t;
+		dout: out word_t;
 		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
 		wr : in std_logic;
 		clk : in std_logic;
@@ -25,7 +25,7 @@ begin process(clk) begin
 			case wr is
 				when reading => dout <= (others => '1');
 				when writing => leds <= din(7 downto 0);
-				when others => 
+				when others => null;
 			end case;
 		end if;
 	end process;

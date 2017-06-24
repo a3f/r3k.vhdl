@@ -1,9 +1,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.arch_defs.all;
  
 entity decoder is
-   port(A  : in  std_logic_vector(31 downto 0);
+   port(A  : in  addr_t;
         cs : out std_logic_vector(7 downto 0));
 end decoder;
  
@@ -11,7 +12,7 @@ architecture behav of decoder is
     constant B : natural := 1;
     constant K : natural := 1024*B;
     constant M : natural := K*K;
-    function inside(addr_vec, base_vec: std_logic_vector(31 downto 0); len : natural) return boolean is
+    function inside(addr_vec, base_vec: addr_t; len : natural) return boolean is
         variable addr: unsigned(31 downto 0) := unsigned(addr_vec);
         variable base: unsigned(31 downto 0) := unsigned(base_vec);
     begin
