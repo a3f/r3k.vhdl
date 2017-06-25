@@ -29,7 +29,11 @@ begin
                 when others => null; -- implement me!
             end case;
 
-            Zero <= result = '0';
+            if result = X"0000_0000" then
+                Zero <= '1';
+            else
+                Zero <= '0';
+            end if;
 
             AluResult <= result;
         end process;

@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use work.arch_defs.all;
 
 entity SignExtend is
@@ -8,6 +9,8 @@ entity SignExtend is
     end;
 
 Architecture behav of SignExtend is
+    constant zeroes : halfword_t := (others => '0');
+    constant ones   : halfword_t := (others => '1');
 begin
-    sexed <= std_logic_vector(resize(signed(immediate),sexed'width));
+    sexed <= zeroes & immediate when immediate(15) = '0' else ones & immediate;
 end;

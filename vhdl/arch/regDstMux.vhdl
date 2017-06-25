@@ -1,17 +1,19 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use work.arch_defs.all;
 
-entitiy regDstMux is 
+entity regDstMux is 
 	port (
 	RegDst: in ctrl_t;
 	rt : in reg_t; --Instruction 20-16
 	rd : in reg_t; --Instruction 15-11
 	output : out reg_t 
 	);
+end;
 
 architecture behav of regDstMux is
 	begin
-		output <= rd when RegDst => '1' else rt;
+		output <= rd when RegDst = '1' else rt;
 end architecture behav;
 	
 		

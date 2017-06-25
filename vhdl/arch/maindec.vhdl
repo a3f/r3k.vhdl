@@ -33,13 +33,7 @@ architecture behave of maindec is
     constant i_shift : natural := 10;
     constant i_alusrc : natural := 11;
     signal ctrl: std_logic_vector(i_alusrc downto i_regwrite);
-    subtype memwidth_t is std_logic_vector(1 downto 0);
-    constant WIDTH_NONE : memwidth_t := "00";
-    constant WIDTH_BYTE : memwidth_t := "01";
-    constant WIDTH_HALF : memwidth_t := "10";
-    constant WIDTH_WORD : memwidth_t := "11";
-
-    signal memwidth : memwidth_t := WIDTH_NONE;
+    signal memwidth : ctrl_memwidth_t := WIDTH_NONE;
     begin
 
     --   :   6  :   5  :   5  :   5  :   5   :   6  :

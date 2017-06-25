@@ -12,7 +12,7 @@ entity PC is
 end PC;
 		
 architecture behav of PC is
-    signal counter : addr_t := X"bfc0_0000";
+    signal counter : addr_t := X"0000_0000"; -- X"bfc0_0000";
 
 begin process(next_addr, clk)
     begin

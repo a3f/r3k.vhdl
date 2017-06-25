@@ -8,7 +8,8 @@ entity ZeroExtend is
     end;
 
 Architecture behav of ZeroExtend is
+    constant zeroes : std_logic_vector(31 downto 5) := (others => '0');
 begin
-    zeroxed <= std_logic_vector(resize(unsigned(immediate),zeroxed'width));
+    zeroxed <= zeroes & shamt;
 end;
 

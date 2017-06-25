@@ -17,7 +17,7 @@ entity regFile is
 		
 architecture behav of regFile is
     type regfile_t is array (31 downto 0) of word_t;
-    signal reg : regfile_t := (R0 => ZERO);
+    signal reg : regfile_t := (0 => ZERO, others => DONT_CARE);
 
 
 begin process(readreg1, readreg2, writereg, clk)

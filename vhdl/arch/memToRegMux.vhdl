@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use work.arch_defs.all;
 
 entity memToRegMux is 
 	port (
@@ -12,7 +13,7 @@ end entity;
 
 architecture behav of memToRegMux is
 	begin
-		output <= medReadData when MemtoReg = '1' else alu;
+		output <= memReadData when MemtoReg = '1' else aluResult;
 end architecture behav;
 	
 		

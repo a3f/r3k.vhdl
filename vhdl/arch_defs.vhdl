@@ -1,9 +1,8 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 package arch_defs is
-
-
 
     function is_type_r(vec: std_logic_vector) return boolean;
     function is_type_j(vec: std_logic_vector) return boolean;
@@ -18,8 +17,9 @@ package arch_defs is
 
     subtype word_t          is std_logic_vector(31 downto 0);
     subtype addr_t          is std_logic_vector(31 downto 0);
+    subtype intaddr_t       is unsigned(31 downto 0);
     subtype addrdiff_t      is std_logic_vector(31 downto 0);
-    subtype halfword_t      is std_logic_vector(31 downto 0);
+    subtype halfword_t      is std_logic_vector(15 downto 0);
     subtype ctrl_t          is std_logic;
     subtype ctrl_memwidth_t is std_logic_vector(1 downto 0);
     subtype instruction_t   is word_t;
@@ -27,6 +27,11 @@ package arch_defs is
     subtype reg_t           is std_logic_vector(4 downto 0);
     subtype opcode_t        is std_logic_vector(5 downto 0);
     subtype func_t          is std_logic_vector(5 downto 0);
+
+    constant WIDTH_NONE : ctrl_memwidth_t := "00";
+    constant WIDTH_BYTE : ctrl_memwidth_t := "01";
+    constant WIDTH_HALF : ctrl_memwidth_t := "10";
+    constant WIDTH_WORD : ctrl_memwidth_t := "11";
 
     type alu_op_t is (
         ALU_ADD, ALU_ADDU, ALU_SUB, ALU_SUBU,
@@ -41,8 +46,12 @@ package arch_defs is
     -- Taken from https://opencores.org/project,plasma,opcodes
     -- And http://web.cse.ohio-state.edu/~crawfis.3/cse675-02/Slides/MIPS%20Instruction%20Set.pdf
 
-    constant ZERO     : word_t:= (others => '0'); -- 32 bits
-    constant R0 : reg_t := (others => '0'); --  5 bits
+    constant ZERO       : word_t:= X"00000000"; -- 32 bits
+    constant NEG_ONE    : word_t:= not ZERO;    -- 32 bits
+    constant DONT_CARE  : word_t:= (others => 'X'); -- 32 bits
+
+    constant R0 : reg_t  := (others => '0'); --  Zero register  (5 bits)
+    constant R31 : reg_t := (others => '1'); --  Return address (5 bits)
 
     -- ALU
     constant OP_ADD   : mask_t := R(func => "100000");

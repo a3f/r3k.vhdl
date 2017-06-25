@@ -1,15 +1,14 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.arch_defs.all;
 
-Entity Adder is
-    Port (src1 : in addr_t; src2 : in addrdiff_t;
-          result : out addr_t
-    End;
+entity Adder is
+    port (src1 : in addr_t; src2 : in addrdiff_t;
+          result : out addr_t);
+end;
 
-Architecture behav of Adder is
+architecture behav of Adder is
 begin
-     result <= std_logic_vector(
-                   to_unsigned(to_integer(unsigned(src1))
-                 + to_unsigned(to_integer(unsigned(src2)),
-               result'width));
+     result <= std_logic_vector(unsigned(src1) + unsigned(src2));
 end;
