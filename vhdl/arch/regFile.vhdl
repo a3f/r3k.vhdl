@@ -34,7 +34,7 @@ begin process(readreg1, readreg2, writereg, clk)
         readdata2 <= reg(readreg2_int);
     end if;
     if rising_edge(clk) then
-        if regWrite = '1' then
+        if regWrite = '1' and writereg /= R0 then
                 reg(writereg_int) <= writedata;
         end if;
     end if;
