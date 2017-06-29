@@ -1,7 +1,7 @@
 # GHDL flags and canned recipes
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
-GHDL_FLAGS = --std=93 --workdir=$(SELF_DIR)/work
+GHDL_FLAGS = --std=93c --ieee=synopsys --workdir=$(SELF_DIR)/work
 
 
 define ghdl_clean

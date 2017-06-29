@@ -11,7 +11,7 @@ Supplied Toolchain and BIOS can be used to cross-compile C application to run on
 
 ![MIPS R3000 single-cycle datapath][datapath]
 
-(to follow)
+The VHDL code is located in `vhdl/`. Build and run tests with `make test`.
 
 ## BIOS
 

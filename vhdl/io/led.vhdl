@@ -1,6 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.arch_defs.all;
 
 entity leds is
 		port (
@@ -20,7 +21,9 @@ architecture leds of leds is
 	constant reading : std_logic := '0';
 	constant writing : std_logic := '1';
 
-begin process(clk) begin
+begin
+    dout <= HI_Z;
+process(clk) begin
 		if rising_edge(clk) and size /= "00" then
 			case wr is
 				when reading => dout <= (others => '1');

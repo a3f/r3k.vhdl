@@ -1,3 +1,5 @@
+-- Address decoder
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -25,5 +27,10 @@ begin
          "00001000" when inside(A, X"14000001", 1*B)   else -- DIP-Switch
          "00010000" when inside(A, X"14000002", 1*B)   else -- Pushbuttons
          "00100000" when inside(A, X"140003f8", 7*B)   else -- UART
+         "01000000" when inside(A, X"10000000", 1*B)   else -- VRAM
          "00000000";
+
+         -- We need dual-ported RAM for the framebuffer,
+         -- lest we've to deal with bus arbitration.
+         -- That's why the VRAM is separate from the RAM
 end behav;
