@@ -3,7 +3,7 @@
 include *.mk
 
 .PHONY: all
-all: arch
+all: arch io
 
 .PHONY: test
 test: tb
