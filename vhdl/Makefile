@@ -3,7 +3,7 @@
 include *.mk
 
 .PHONY: all
-all: arch
+all: arch io
 
 .PHONY: test
 test: tb
@@ -16,7 +16,7 @@ arch: arch_defs
 	$(MAKE) -C $@
 
 .PHONY: io
-io: arch
+io: arch_defs
 	$(MAKE) -C $@
 
 .PHONY: tb

@@ -46,9 +46,11 @@ package arch_defs is
     -- Taken from https://opencores.org/project,plasma,opcodes
     -- And http://web.cse.ohio-state.edu/~crawfis.3/cse675-02/Slides/MIPS%20Instruction%20Set.pdf
 
-    constant ZERO       : word_t:= X"00000000"; -- 32 bits
-    constant NEG_ONE    : word_t:= not ZERO;    -- 32 bits
-    constant DONT_CARE  : word_t:= (others => 'X'); -- 32 bits
+    -- 32 bit defines
+    constant ZERO       : word_t := X"00000000";
+    constant HI_Z       : word_t := (others => 'Z');
+    constant NEG_ONE    : word_t := not ZERO;
+    constant DONT_CARE  : word_t := (others => 'X');
 
     constant R0 : reg_t  := (others => '0'); --  Zero register  (5 bits)
     constant R31 : reg_t := (others => '1'); --  Return address (5 bits)
