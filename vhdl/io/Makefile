@@ -5,7 +5,7 @@ include ../*.mk
 SRCS = $(wildcard *.vhdl)
 
 .PHONY: all uart vga ../work/work-obj93.cf
-all: vga ../work/work-obj93.cf
+all: uart vga ../work/work-obj93.cf
 
 .DEFAULT:
 ../work/work-obj93.cf: *.vhdl
@@ -17,8 +17,8 @@ uart: uart/*.vhdl
 vga: vga/color_util.vhdl vga/*.vhdl
 	$(ghdl_build)
 
-.PHONY: arch_defs
-arch_defs: ;
+.PHONY: globals
+globals: ;
 
 .PHONY: clean
 clean:

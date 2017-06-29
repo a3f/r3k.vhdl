@@ -16,8 +16,8 @@ test: $(SRCS)
 ../work/work-obj93.cf: *.vhdl
 	$(ghdl_build)
 
-.PHONY: arch_defs
-arch_defs: ;
+.PHONY: globals
+globals: ;
 
 .PHONY: clean
 clean:
