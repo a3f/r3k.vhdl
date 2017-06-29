@@ -10,7 +10,7 @@ compiler:
 
 install:
   - wget https://sourceforge.net/projects/ghdl-updates/files/Builds/ghdl-0.31/Debian/ghdl_0.31-2wheezy1_amd64.deb/download -Oghdl.deb
-  - sudo dpkg -iyy ghdl.deb
+  - sudo dpkg -i ghdl.deb
 
 script:
   - source toolchain/setenv.sh
