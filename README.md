@@ -1,4 +1,4 @@
-# r3k.vhdl - MIPS R3000 FPGA implementation in VHDL
+# r3k.vhdl - MIPS R3000 FPGA implementation in VHDL [![Build Status](https://travis-ci.org/a3f/r3k.vhdl.svg?branch=master)](https://travis-ci.org/a3f/r3k.vhdl)
 
 ## VHDL MIPS Implementation
 

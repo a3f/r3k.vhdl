@@ -1,0 +1,21 @@
+language: c
+
+dist: trusty
+sudo: required
+
+services:
+
+compiler:
+  - gcc
+
+install:
+  - wget https://sourceforge.net/projects/ghdl-updates/files/Builds/ghdl-0.31/Debian/ghdl_0.31-2wheezy1_amd64.deb/download -Oghdl.deb
+  - sudo dpkg -iyy ghdl.deb
+
+script:
+  - source toolchain/setenv.sh
+  - make
+  - make -C vhdl all
+  - make -C vhdl test
+
+after_success:
