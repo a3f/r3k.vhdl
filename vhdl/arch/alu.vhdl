@@ -7,7 +7,7 @@ entity alu is
          Src2       : in word_t;
          AluOp      : in alu_op_t;
          AluResult  : out word_t;
-         Zero       : out std_logic
+         Zero       : out ctrl_t
       -- We need to route a trap line, so we can reset the CPU on signed overflow
       -- Probably a global trap register, where we connect
       --Overflow   : out std_logic;
