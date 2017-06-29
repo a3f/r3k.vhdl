@@ -6,8 +6,8 @@ entity JumpDirMux is
 	port (
 	JumpDir: in ctrl_t;
 	jumpAddr : in addr_t;
-	BranchMux : in word_t;
-	output : out word_t
+	BranchMux : in addr_t;
+	output : out addr_t
 	);
 end entity;
 

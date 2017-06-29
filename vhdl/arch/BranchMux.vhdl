@@ -5,15 +5,15 @@ use work.arch_defs.all;
 entity BranchMux is 
 	port (
 	BranchANDZero: in ctrl_t;
-	ALUresult : in word_t;
+	AddrALUresult : in addr_t;
 	pc : in addr_t;
-	output : out word_t
+	output : out addr_t
 	);
 end entity;
 
 architecture behav of BranchMux is
 	begin
-		output <= ALUresult when BranchANDZero = '1' else pc;
+		output <= AddrALUresult when BranchANDZero = '1' else pc;
 end architecture behav;
 	
 		

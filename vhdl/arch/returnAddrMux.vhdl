@@ -7,7 +7,7 @@ entity returnAddrMux is
 	returnAddrControl: in ctrl_t;
 	returnAddrReg : in addr_t;
 	regDstMux : in addr_t;
-	output : out word_t
+	output : out addr_t
 	);
 end entity;
 

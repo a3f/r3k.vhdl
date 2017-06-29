@@ -5,7 +5,7 @@ use work.arch_defs.all;
 entity linkMux is 
 	port (
 	Link : in ctrl_t;
-	pc : in addr_t;
+	pc : in word_t;
 	memToRegMux: in word_t;
 	output: out word_t
 	);

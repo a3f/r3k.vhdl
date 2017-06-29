@@ -5,9 +5,9 @@ use work.arch_defs.all;
 entity JumpRegMux is 
 	port (
 	JumpReg: in ctrl_t;
-	reg1data : in word_t;
-	JumpDirMux : in word_t;
-	output : out word_t
+	reg1data : in addr_t;
+	JumpDirMux : in addr_t;
+	output : out addr_t
 	);
 end entity;
 

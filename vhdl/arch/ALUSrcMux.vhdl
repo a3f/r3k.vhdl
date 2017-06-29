@@ -7,14 +7,14 @@ entity ALUSrcMux is
 	ALUSrc: in ctrl_t;
 	reg2data : in word_t;
 	-- Instruction 15-0 Address/Immediate
-	addr : in addr_t;
+	immediate : in word_t;
 	output : out word_t
 	);
 end entity;
 
 architecture behav of ALUSrcMux is
 	begin
-		output <= addr when ALUSrc = '1' else reg2Data;
+		output <= immediate when ALUSrc = '1' else reg2Data;
 end architecture behav;
 	
 		
