@@ -30,5 +30,5 @@ tb: arch
 clean:
 	$(MAKE) -C arch clean
 	$(MAKE) -C tb clean
-	$(RM) work/{*.o,*.cf,*.lst,*.vcd}
+	cd work && $(RM) *.o *.cf *.lst *.vcd
 

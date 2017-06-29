@@ -13,11 +13,11 @@ sub run { print "@_ \n"; 0 == system @_ }
 
 my $errors = 0;
 for (@tests) {
-    run 'ghdl', '-a', @opts, "$_.vhdl" or do {
-        $errors++;
-        next;
-    };
-    run 'ghdl', '-r', @opts, $_, "--vcd=$_.vcd" or $errors++;
+    $errors++; # Pessimistic by default
+    run 'ghdl', '-a', @opts, "$_.vhdl" or next;
+    run 'ghdl', '-e', @opts, $_, or next;
+    run 'ghdl', '-r', @opts, $_, "--vcd=$_.vcd" or next;
+    $errors--;
 }
 
 if ($errors) {

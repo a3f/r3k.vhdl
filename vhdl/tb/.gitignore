@@ -1,0 +1,7 @@
+# ignore files without extension, which we assume to be binaries
+# resulting from GHDL elaboration
+*
+!*.vhdl
+!Makefile
+!*.vhd
+
