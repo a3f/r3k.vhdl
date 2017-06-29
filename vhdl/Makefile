@@ -8,15 +8,15 @@ all: arch io
 .PHONY: test
 test: tb
 
-.PHONY: arch_defs
-arch_defs: arch_defs.o
+.PHONY: globals
+globals: arch_defs.o utils.o
 
 .PHONY: arch
-arch: arch_defs
+arch: globals
 	$(MAKE) -C $@
 
 .PHONY: io
-io: arch_defs
+io: globals
 	$(MAKE) -C $@
 
 .PHONY: tb

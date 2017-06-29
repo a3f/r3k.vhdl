@@ -4,6 +4,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
+use work.utils.all;
 
 entity tsc is
 		port (
@@ -30,7 +31,7 @@ begin process(clk) begin
                 end case;
             end if;
 
-            tstamp <= std_logic_vector( unsigned(tstamp) + 1 );
+            tstamp <= vec_increment(tstamp);
 
 		end if;
 	end process;
