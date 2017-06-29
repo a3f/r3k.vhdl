@@ -9,7 +9,7 @@ entity regDstMux is
 	rd : in reg_t; --Instruction 15-11
 	output : out reg_t 
 	);
-end;
+end regDstMux;
 
 architecture behav of regDstMux is
 	begin

@@ -5,9 +5,9 @@ use work.arch_defs.all;
 entity returnAddrMux is 
 	port (
 	returnAddrControl: in ctrl_t;
-	returnAddrReg : in addr_t;
-	regDstMux : in addr_t;
-	output : out addr_t
+	returnAddrReg : in reg_t;
+	regDstMux : in reg_t;
+	output : out reg_t
 	);
 end entity;
 
