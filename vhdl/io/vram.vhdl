@@ -17,7 +17,7 @@ end dualport_ram;
 
 architecture blockram of dualport_ram is
     type memory_t is array(0 to SIZE-1) of std_logic_vector(7 downto 0);
-    signal memory : memory_t;   
+    signal memory : memory_t;
 begin
 process begin
     wait until rising_edge(clk);

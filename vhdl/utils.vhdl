@@ -34,7 +34,7 @@ package body utils is
 
     procedure zeroextend(signal data_out: out std_logic_vector; signal data_in : in std_logic_vector) is
     begin
-		data_out <= std_logic_vector(resize(unsigned(data_in), data_out'length));
+        data_out <= std_logic_vector(resize(unsigned(data_in), data_out'length));
     end zeroextend;
 
     function isnonzero(vec: std_logic_vector) return boolean is

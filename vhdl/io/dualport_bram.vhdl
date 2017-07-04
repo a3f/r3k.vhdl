@@ -1,10 +1,10 @@
 -- A parameterized, inferable, true dual-port, dual-clock block RAM in VHDL.
 -- https://danstrother.com/2010/09/11/inferring-rams-in-fpgas/
- 
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
- 
+
 library work;
 entity dualport_bram is
 generic (
@@ -18,7 +18,7 @@ port (
     a_dout  : out std_logic_vector(WORD_WIDTH-1 downto 0);
     a_wr    : in  std_logic;
     a_clk   : in  std_logic;
-     
+
     -- Port B
     b_addr  : in  std_logic_vector(ADDR_WIDTH-1 downto 0);
     b_din   : in  std_logic_vector(WORD_WIDTH-1 downto 0);
@@ -27,13 +27,13 @@ port (
     b_clk   : in  std_logic
 );
 end dualport_bram;
- 
+
 architecture rtl of dualport_bram is
     -- Shared memory
     type mem_type is array ( (2**ADDR_WIDTH)-1 downto 0 ) of std_logic_vector(WORD_WIDTH-1 downto 0);
     shared variable mem : mem_type;
 begin
- 
+
 -- Port A
 process(a_clk)
 begin
@@ -44,7 +44,7 @@ begin
         a_dout <= mem(to_integer(unsigned(a_addr)));
     end if;
 end process;
- 
+
 -- Port B
 process(b_clk)
 begin
@@ -55,5 +55,4 @@ begin
         b_dout <= mem(to_integer(unsigned(b_addr)));
     end if;
 end process;
- 
 end rtl;

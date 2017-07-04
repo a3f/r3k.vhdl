@@ -4,13 +4,13 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 
 entity InstructionMem is
-		port (
-		read_addr : in addr_t;
-        clk : in std_logic;
-		instr : out instruction_t
-		);
+    port (
+             read_addr : in addr_t;
+             clk : in std_logic;
+             instr : out instruction_t
+         );
 end InstructionMem;
-		
+
 architecture behav of InstructionMem is
     type code_t is array (natural range <>) of instruction_t;
     constant code : code_t := (

@@ -125,7 +125,7 @@ begin
     dout <= HI_Z;
 
     process(memclk)
-	begin
+    begin
         if rising_edge(memclk) and size /= "00" then
             dout <= NEG_ONE;
             case addr(31 downto 24) is

@@ -5,12 +5,12 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.memory_map.all;
- 
+
 entity decoder is
    port(A  : in  addr_t;
         cs : out std_logic_vector(7 downto 0));
 end decoder;
- 
+
 architecture behav of decoder is
 begin
    -- FIXME use a loop over the mmap array instead

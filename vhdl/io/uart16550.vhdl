@@ -8,30 +8,30 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 
 entity uart16550 is
-		port (
-		-- static
-		addr : in addr_t;
-		din: in word_t;
-		dout: out word_t;
-		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
-		wr : in std_logic;
-		clk : in std_logic;
-        trap : out traps_t := TRAP_NONE;
-		-- pins
-		tx : out std_logic;
-		rx : in std_logic
-		);
+    port (
+             -- static
+             addr : in addr_t;
+             din: in word_t;
+             dout: out word_t;
+             size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
+             wr : in std_logic;
+             clk : in std_logic;
+             trap : out traps_t := TRAP_NONE;
+             -- pins
+             tx : out std_logic;
+             rx : in std_logic
+         );
 end uart16550;
-		
+
 architecture behav of uart16550 is
-	constant reading : std_logic := '0';
-	constant writing : std_logic := '1';
+    constant reading : std_logic := '0';
+    constant writing : std_logic := '1';
 
 begin
     dout <= HI_Z;
-process(clk)
-begin
-		if rising_edge(clk) and size /= "00" then
+    process(clk)
+    begin
+        if rising_edge(clk) and size /= "00" then
             -- A 16550 UART spans 7 registers
             dout <= NEG_ONE;
             case addr(2 downto 0) is
@@ -49,10 +49,10 @@ begin
                     null;
                 when "110" => -- struct MODEM_STATUS
                     null;
-				when others => trap <= TRAP_SEGFAULT;
-			end case;
-		end if;
-	end process;
+                when others => trap <= TRAP_SEGFAULT;
+            end case;
+        end if;
+    end process;
 end;
 
 --
@@ -70,7 +70,7 @@ end;
 --    };
 --
 --    union {
---        uint8_t int_status; 
+--        uint8_t int_status;
 --        uint8_t fifo_ctrl;
 --        UART_PAD
 --    };

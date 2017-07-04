@@ -16,7 +16,7 @@ architecture exception of exception is
 begin
     -- Only EXCEPTION_IGNORE supported for now
     -- EXCEPTION_{HALT,RESET} would need to signal the instruction fetcher
-    -- EXCEPTION_TRAP is a bit more involved. For proper handling of 
+    -- EXCEPTION_TRAP is a bit more involved. For proper handling of
     -- programmable exception handlers, we need to zero the control vector
     -- forcibly, as to avoid clobbering registers/memory.
     -- I think the cleanest way would be to multiplex all control

@@ -49,7 +49,7 @@ architecture behave of maindec is
     -- J |opcode|              address              |
     --   '------------------------------------------'
     --   :31  26:25                                0:
-    
+
     process (op)
     begin
         aluop <= ALU_ADD;
