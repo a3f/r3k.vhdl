@@ -12,6 +12,8 @@ entity dipswitch is
 		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
 		wr : in std_logic;
 		clk : in std_logic;
+        trap : out traps_t := TRAP_NONE;
+
 		-- dip switch
 		switch : in std_logic_vector(7 downto 0)
 		);
@@ -27,7 +29,7 @@ begin
 		if rising_edge(clk) and size /= "00" then
 			case wr is
 				when reading => dout <= (31 downto 8 => '0') & switch;
-				when others => null;
+				when others => trap <= TRAP_SEGFAULT;
 			end case;
 		end if;
 	end process;

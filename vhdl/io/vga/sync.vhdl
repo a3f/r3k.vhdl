@@ -1,10 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.utils.all;
 
 entity sync is
     port (
          clk : in std_logic;
+         en : in std_logic;
          hsync : out std_logic := '1';
          vsync : out std_logic := '1';
          retracing : out std_logic := '1'; -- maybe we don't need this?
@@ -30,23 +32,13 @@ architecture behavioral of sync is
     constant v_retrace  : natural := v_front + v_sync + v_back;
     constant v_max      : natural := v_retrace + v_display - 1;
 
-    function high_if(cond : boolean) return std_logic is
-    begin
-        if cond then return '1'; else return '0'; end if;
-    end function;
-
-    function low_if(cond : boolean) return std_logic is
-    begin
-        if cond then return '0'; else return '1'; end if;
-    end function;
-
 begin
-    process(clk)
+    process(en, clk)
         variable h_idx: integer range 0 to h_max := 0;
         variable v_idx: integer range 0 to v_max := 0;
         variable in_retrace : boolean := true;
     begin
-        if rising_edge(clk) then
+        if rising_edge(clk) and en = '1' then
             if h_idx >= h_max - h_sync then hsync <= '0'; end if;
             if v_idx >= v_max - v_sync then vsync <= '0'; end if;
 
@@ -72,9 +64,6 @@ begin
             else
                 h_idx := h_idx + 1;
             end if;
-
-
-
         end if;
     end process;
 end architecture;

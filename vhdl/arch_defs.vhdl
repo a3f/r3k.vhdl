@@ -43,6 +43,19 @@ package arch_defs is
         ALU_EQ, ALU_NE, ALU_LEZ, ALU_LTZ, ALU_GTZ, ALU_GEZ
     );
 
+    subtype traps_t is std_logic_vector(7 downto 0);
+    constant TRAP_NONE      : traps_t := X"00";
+    constant TRAP_DIVBYZERO : traps_t := X"01";
+    constant TRAP_OVERFLOW  : traps_t := X"02";
+    constant TRAP_SEGFAULT  : traps_t := X"04";
+
+    type exception_config_t is (
+        EXCEPTIONS_IGNORE -- Bad idea!
+        --EXCEPTIONS_HALT,-- e.g. light a red LED and stop fetching new instructions
+        --EXCEPTIONS_RESET-- reboot
+        --EXCEPTIONS_TRAP -- invoke user-programmable exception handlers
+    );
+
     -- Taken from https://opencores.org/project,plasma,opcodes
     -- And http://web.cse.ohio-state.edu/~crawfis.3/cse675-02/Slides/MIPS%20Instruction%20Set.pdf
 

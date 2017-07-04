@@ -2,6 +2,9 @@
 
 include *.mk
 
+G_SRCS = $(wildcard *.vhdl)
+G_OBJS = $(G_SRCS:.vhdl=.o)
+
 .PHONY: all
 all: arch io
 
@@ -9,7 +12,7 @@ all: arch io
 test: tb
 
 .PHONY: globals
-globals: arch_defs.o utils.o
+globals: $(G_OBJS)
 
 .PHONY: arch
 arch: globals

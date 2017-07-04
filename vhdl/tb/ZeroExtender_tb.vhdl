@@ -3,51 +3,49 @@ use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 
 --  A testbench has no ports.
-entity SignExtend_tb is
-    end SignExtend_tb;
+entity ZeroExtender_tb is
+    end ZeroExtender_tb;
 
-architecture test of SignExtend_tb is
+architecture test of ZeroExtender_tb is
    --  Declaration of the component that will be instantiated.
-    component signextend
-        port (immediate : in halfword_t; sexed : out word_t);
+    component zeroextender
+        port (shamt : in std_logic_vector(4 downto 0); zeroxed : out word_t);
     end component;
 
    --  Specifies which entity is bound with the component.
-    for instance: SignExtend use entity work.SignExtend;
-        signal immediate : halfword_t;
-        signal sexed : word_t;
+    for instance: ZeroExtender use entity work.ZeroExtender;
+        signal shamt : std_logic_vector(4 downto 0);
+        signal zeroxed : word_t;
 
 begin
    --  Component instantiation.
-        instance: SignExtend port map (immediate => immediate, sexed => sexed);
+        instance: ZeroExtender port map (shamt => shamt, zeroxed => zeroxed);
 
    --  This process does the real job.
         process
         variable error       : boolean := false;
         variable error_count : integer := 0;
 
-        constant sixteen_zeroes : halfword_t := (others => '0');
-        constant sixteen_ones   : halfword_t := (others => '1');
+        constant twentyseven_zeroes : std_logic_vector(26 downto 0) := (others => '0');
         type testcase_t is record
-            input : halfword_t;
+            input : std_logic_vector(4 downto 0);
             output : word_t;
         end record;
 
         type testcase_table_t is array (natural range <>) of testcase_t;
         constant testcases : testcase_table_t := (
-            ("0000000000000000",  ZERO),
-            ("0111100000000000",  sixteen_zeroes & "0111100000000000"),
-            ("1111111111111111",  sixteen_ones   & "1111111111111111"),
-            ("1000000000000001",  sixteen_ones   & "1000000000000001")
+            ("00000",  ZERO),
+            ("11111",  twentyseven_zeroes & "11111"),
+            ("10001",  twentyseven_zeroes & "10001")
         );
         begin
             for i in testcases'range loop
          --  Set the inputs.
-                immediate <= testcases(i).input;
+                shamt <= testcases(i).input;
          --  Wait for the results.
                 wait for 1 ns;
          --  Check the outputs.
-                error := sexed /= testcases(i).output;
+                error := zeroxed /= testcases(i).output;
                 if error then
                     error_count := error_count + 1;
                 end if;
@@ -67,4 +65,3 @@ begin
             wait;
         end process;
 end test;
-

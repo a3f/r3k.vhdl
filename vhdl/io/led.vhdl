@@ -12,6 +12,7 @@ entity leds is
 		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
 		wr : in std_logic;
 		clk : in std_logic;
+        trap : out traps_t := TRAP_NONE;
 		-- leds
 		leds : out std_logic_vector(7 downto 0)
 		);
@@ -26,9 +27,9 @@ begin
 process(clk) begin
 		if rising_edge(clk) and size /= "00" then
 			case wr is
-				when reading => dout <= (others => '1');
+				when reading => dout <= NEG_ONE;
 				when writing => leds <= din(7 downto 0);
-				when others => null;
+				when others => trap <= TRAP_SEGFAULT;
 			end case;
 		end if;
 	end process;

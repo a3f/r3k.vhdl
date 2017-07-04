@@ -12,8 +12,7 @@ entity sysbus is
 		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
 		wr : in std_logic;
 		clk : in std_logic;
-		-- leds
-		leds : out std_logic_vector(7 downto 0)
+        trap : out traps_t := TRAP_NONE
 		);
 		end sysbus;
 		

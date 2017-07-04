@@ -14,7 +14,8 @@ entity tsc is
 		dout: out word_t;
 		size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
 		wr : in std_logic;
-		clk : in std_logic
+		clk : in std_logic;
+        trap : out traps_t := TRAP_NONE
 		);
 end tsc;
 		

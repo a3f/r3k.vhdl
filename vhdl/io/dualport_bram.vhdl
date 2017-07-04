@@ -13,18 +13,18 @@ generic (
 );
 port (
     -- Port A
-    a_clk   : in  std_logic;
-    a_wr    : in  std_logic;
     a_addr  : in  std_logic_vector(ADDR_WIDTH-1 downto 0);
     a_din   : in  std_logic_vector(WORD_WIDTH-1 downto 0);
     a_dout  : out std_logic_vector(WORD_WIDTH-1 downto 0);
+    a_wr    : in  std_logic;
+    a_clk   : in  std_logic;
      
     -- Port B
-    b_clk   : in  std_logic;
-    b_wr    : in  std_logic;
     b_addr  : in  std_logic_vector(ADDR_WIDTH-1 downto 0);
     b_din   : in  std_logic_vector(WORD_WIDTH-1 downto 0);
-    b_dout  : out std_logic_vector(WORD_WIDTH-1 downto 0)
+    b_dout  : out std_logic_vector(WORD_WIDTH-1 downto 0);
+    b_wr    : in  std_logic;
+    b_clk   : in  std_logic
 );
 end dualport_bram;
  

@@ -4,6 +4,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
+use work.memory_map.all;
  
 entity decoder is
    port(A  : in  addr_t;
@@ -11,24 +12,17 @@ entity decoder is
 end decoder;
  
 architecture behav of decoder is
-    constant B : natural := 1;
-    constant K : natural := 1024*B;
-    constant M : natural := K*K;
-    function inside(addr_vec, base_vec: addr_t; len : natural) return boolean is
-        variable addr: unsigned(31 downto 0) := unsigned(addr_vec);
-        variable base: unsigned(31 downto 0) := unsigned(base_vec);
-    begin
-        return base <= addr and addr <= base + len;
-    end inside;
 begin
-   cs <= "00000001" when inside(A, X"a0000000", 128*M) else -- RAM
-         "00000010" when inside(A, X"bfc00000", 128*K) else -- ROM
-         "00000100" when inside(A, X"14000000", 1*B)   else -- LEDs
-         "00001000" when inside(A, X"14000001", 1*B)   else -- DIP-Switch
-         "00010000" when inside(A, X"14000002", 1*B)   else -- Pushbuttons
-         "00100000" when inside(A, X"140003f8", 7*B)   else -- UART
-         "01000000" when inside(A, X"10000000", 1*B)   else -- VRAM
-         "00000000";
+   -- FIXME use a loop over the mmap array instead
+   cs <= mmap(0).chip_select when inside(A, mmap(0).base, mmap(0).size) else -- RAM
+         mmap(1).chip_select when inside(A, mmap(1).base, mmap(1).size) else -- ROM
+         mmap(2).chip_select when inside(A, mmap(2).base, mmap(2).size) else -- LEDs
+         mmap(3).chip_select when inside(A, mmap(3).base, mmap(3).size) else -- DIP-Switch
+         mmap(4).chip_select when inside(A, mmap(4).base, mmap(4).size) else -- Pushbuttons
+         mmap(5).chip_select when inside(A, mmap(5).base, mmap(5).size) else -- UART
+         mmap(6).chip_select when inside(A, mmap(6).base, mmap(6).size) else -- VRAM
+         mmap(7).chip_select when inside(A, mmap(7).base, mmap(7).size) else -- Video configuration
+         (others => '0');
 
          -- We need dual-ported RAM for the framebuffer,
          -- lest we've to deal with bus arbitration.
