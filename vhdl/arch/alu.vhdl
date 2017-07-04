@@ -10,7 +10,7 @@ entity alu is
          AluResult  : out word_t;
          Zero       : out ctrl_t;
 
-         trap       : out traps_t
+         trap       : out traps_t -- only TRAP_OVERFLOW is relevant
      );
 end alu;
 
@@ -27,11 +27,9 @@ begin
                 when ALU_NOR => result := Src1 nor Src2;
                 when ALU_XOR => result := Src1 xor Src2;
                 when ALU_DIV =>
-                    if Src2 = X"0000_0000" then
-                        trap <= TRAP_DIVBYZERO;
-                    else
-                        trap <= TRAP_UNIMPLEMENTED;
-                    end if;
+                    -- Interesting read: http://yarchive.net/comp/mips_exceptions.html
+                    -- TL;DR: No arithmetic division errors on a MIPS R3000
+                    trap <= TRAP_UNIMPLEMENTED; -- FIXME!
                 when others => trap <= TRAP_UNIMPLEMENTED; -- FIXME!
             end case;
 

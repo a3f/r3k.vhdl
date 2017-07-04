@@ -45,7 +45,7 @@ package arch_defs is
 
     subtype traps_t is std_logic_vector(7 downto 0);
     constant TRAP_NONE          : traps_t := X"00";
-    constant TRAP_DIVBYZERO     : traps_t := X"01";
+    constant TRAP_DIVERROR      : traps_t := X"01";
     constant TRAP_OVERFLOW      : traps_t := X"02";
     constant TRAP_SEGFAULT      : traps_t := X"04";
     constant TRAP_BREAKPOINT    : traps_t := X"08";
@@ -64,10 +64,12 @@ package arch_defs is
     -- And http://web.cse.ohio-state.edu/~crawfis.3/cse675-02/Slides/MIPS%20Instruction%20Set.pdf
 
     -- 32 bit defines
-    constant ZERO       : word_t := X"00000000";
-    constant HI_Z       : word_t := (others => 'Z');
-    constant NEG_ONE    : word_t := not ZERO;
-    constant DONT_CARE  : word_t := (others => 'X');
+    constant ZERO      : word_t := X"00000000";
+    constant HI_Z      : word_t := (others => 'Z');
+    constant NEG_ONE   : word_t := not ZERO;
+    constant INT_MIN   : word_t := X"8000_0000";
+    constant INT_MAX   : word_t := X"7fff_ffff";
+    constant DONT_CARE : word_t := (others => 'X');
 
     constant R0 : reg_t  := (others => '0'); --  Zero register  (5 bits)
     constant R31 : reg_t := (others => '1'); --  Return address (5 bits)
