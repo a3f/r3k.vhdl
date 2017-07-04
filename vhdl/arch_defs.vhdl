@@ -44,10 +44,14 @@ package arch_defs is
     );
 
     subtype traps_t is std_logic_vector(7 downto 0);
-    constant TRAP_NONE      : traps_t := X"00";
-    constant TRAP_DIVBYZERO : traps_t := X"01";
-    constant TRAP_OVERFLOW  : traps_t := X"02";
-    constant TRAP_SEGFAULT  : traps_t := X"04";
+    constant TRAP_NONE          : traps_t := X"00";
+    constant TRAP_DIVBYZERO     : traps_t := X"01";
+    constant TRAP_OVERFLOW      : traps_t := X"02";
+    constant TRAP_SEGFAULT      : traps_t := X"04";
+    constant TRAP_BREAKPOINT    : traps_t := X"08";
+    constant TRAP_SYSCALL       : traps_t := X"10";
+    constant TRAP_EPE           : traps_t := X"20";
+    constant TRAP_UNIMPLEMENTED : traps_t := X"40";
 
     type exception_config_t is (
         EXCEPTIONS_IGNORE -- Bad idea!
