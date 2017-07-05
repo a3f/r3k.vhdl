@@ -14,8 +14,9 @@ architecture struct of MIPSFPGA is
 -- TODO: check order with entity
 component Control is
 port(
-        Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, ALUOp, RegWrite, RegDst: out ctrl_t;
-        memRead, memWrite: out ctrl_memwidth_t
+        Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst: out ctrl_t;
+        memRead, memWrite: out ctrl_memwidth_t;
+	ALUOp: out alu_op_t
     );
 end component;
 component PC is
@@ -87,18 +88,11 @@ readData2 : in word_t;
 immExt : in word_t;
 ALUSrcMuxOut : out word_t);
 end component;
-component AluControl
-port(
-        AluOp: in ctrl_t;
-func: in func_t; --instruction 5-0
-AluControlOut: out alu_op_t
-);
-end component;
 component alu is
 port(
-        Src1       : in word_t;
+Src1       : in word_t;
 Src2       : in word_t;
-AluControlOut      : in alu_op_t;
+ALUOp      : in alu_op_t;
 AluResult  : out word_t;
 Zero       : out std_logic);
 end component;
@@ -163,7 +157,8 @@ Link : in ctrl_t;
 returnAddrControl : out ctrl_t);
 end component;
 --control signals
-signal Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, ALUOp, RegWrite, RegDst, returnAddrControl, BranchORJumpDirOut: ctrl_t;
+signal Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst, returnAddrControl, BranchORJumpDirOut: ctrl_t;
+signal ALUOp: alu_op_t;
 -- pc
 signal read_addr: addr_t;
 signal addr, addr2: addr_t; --TODO: pcAdd
@@ -186,7 +181,6 @@ alias imm is instr(15 downto 0);
 -- ALU signals
 signal immExt, shamtExt: word_t;
 signal Src1, Src2, ALUResult: word_t;
-signal AluControlOut: alu_op_t;
 signal reg1data, reg2data: word_t;
 signal Zero: ctrl_t;
 -- regFile Signals
@@ -197,7 +191,7 @@ signal memRead, memWrite: ctrl_memwidth_t;
 signal memSex: std_logic;
 begin
 control1: control
-port map (Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, ALUOp, RegWrite, RegDst, memRead, memWrite);
+port map (Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst, memRead, memWrite, ALUOp);
 pc1: PC
 port map (next_addr, clk, addr);
 -- jumps
@@ -220,10 +214,8 @@ port map (Shift, readData1, shamtExt, Src1);
 --alu
 aluSrcMux1: aluSrcMux
 port map (ALUSrc, readData2, immExt, Src2);
-aluControl1: aluControl
-port map (AluOP, func, AluControlOut);
 alu1: alu
-port map (Src1, Src2, AluControlOut, AluResult, Zero);
+port map (Src1, Src2, ALUOp, AluResult, Zero);
 --regFile
 regDstMux1: regDstMux
 port map (RegDst, rt, rd, RegDstMuxOut);
