@@ -19,7 +19,7 @@ entity uart_tx is
 end entity;
 
 
-architecture rtl of uart_tx is
+architecture behav of uart_tx is
     type STATE is (IDLE, START, DATA, STOP);
     signal state_reg : STATE;
     signal state_next : STATE;
@@ -33,16 +33,15 @@ architecture rtl of uart_tx is
     signal tx_reg : std_logic;
     signal tx_next : std_logic;
     begin
-        process
-        begin
-            wait until ( ( reset'EVENT and ( reset = '1' )  )  or ( clk'EVENT and ( clk = '1' )  )  ) ;
-            if ( reset = '1' ) then
-                state_reg <= IDLE;
-                baud_reg <= (others => '0');
-                n_reg <= (others => '0');
+	a: process (clk, reset) is
+	begin
+    	    if (reset = '1' ) then
+      		state_reg <= IDLE;
+        	baud_reg <= (others => '0');
+		n_reg <= (others => '0');
                 d_reg <= (others => '0');
                 tx_reg <= '1';
-            else
+	    elsif (clk'EVENT and (clk = '1')) then
                 state_reg <= STATE_NEXT;
                 baud_reg <= baud_next;
                 n_reg <= n_next;

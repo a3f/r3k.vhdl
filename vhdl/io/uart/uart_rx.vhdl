@@ -19,11 +19,10 @@ entity uart_rx is
 end entity;
 
 
-architecture rtl of uart_rx is
+architecture behav of uart_rx is
     type STATE is (IDLE, START, DATA, STOP);
     signal state_reg : STATE;
     signal state_next : STATE;
-
     signal baud_reg : std_logic_vector( 4  downto 0  );
     signal baud_next : std_logic_vector( 4  downto 0  );
     signal n_reg : std_logic_vector( 3  downto 0  );
@@ -31,24 +30,22 @@ architecture rtl of uart_rx is
     signal d_reg : std_logic_vector( 7  downto 0  );
     signal d_next : std_logic_vector( 7  downto 0  );
     begin
-        process
+        a: process (clk, reset) is
         begin
-            wait until ( ( reset'EVENT and ( reset = '1' )  )  or ( clk'EVENT and ( clk = '1' )  )  ) ;
             if ( reset = '1' ) then
                 state_reg <= IDLE;
                 baud_reg <= (others => '0');
                 n_reg <= (others => '0');
                 d_reg <= (others => '0');
-            else
+            elsif (clk'EVENT and (clk = '1')) then
                 state_reg <= state_next;
                 baud_reg <= baud_next;
                 n_reg <= n_next;
                 d_reg <= d_next;
             end if;
         end process;
-        process
+        b: process
         begin
-            wait ;
             state_next <= state_reg;
             rx_done_tick <= '0';
             baud_next <= baud_reg;
