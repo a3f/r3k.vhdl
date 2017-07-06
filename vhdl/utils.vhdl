@@ -39,7 +39,7 @@ package body utils is
 
     function isnonzero(vec: std_logic_vector) return boolean is
     begin
-        return vec = (vec'range => '0');
+        return vec /= (vec'range => '0');
     end isnonzero;
 end utils;
 
