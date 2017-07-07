@@ -38,7 +38,7 @@ Add them to your PATH with `source toolchain/setenv.sh`
 
 ## Copyright and License
 
-Copyright (C) 2017 Aicha Ben Chaouacha, Ahmad Fatoum and Niklas Fuhrberg.
+Copyright (C) 2017 Ahmad Fatoum and Niklas Fuhrberg.
 
 This project is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. See the file LICENSE for full copying conditions.
 
