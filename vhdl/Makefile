@@ -23,7 +23,7 @@ io: globals
 	$(MAKE) -C $@
 
 .PHONY: tb
-tb: arch
+tb: arch io
 	$(MAKE) -C $@ test
 
 %.o: %.vhdl
