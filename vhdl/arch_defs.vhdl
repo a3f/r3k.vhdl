@@ -25,6 +25,10 @@ package arch_defs is
     subtype opcode_t        is std_logic_vector(5 downto 0);
     subtype func_t          is std_logic_vector(5 downto 0);
 
+    function word(w : std_logic_vector) return word_t;
+    function half(w : std_logic_vector) return word_t;
+    function byte(w : std_logic_vector) return word_t;
+
     constant WIDTH_NONE : ctrl_memwidth_t := "00";
     constant WIDTH_BYTE : ctrl_memwidth_t := "01";
     constant WIDTH_HALF : ctrl_memwidth_t := "10";
@@ -166,6 +170,19 @@ package body arch_defs is
     function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector is
     begin return op & (14 downto 0 => '-') & shift & func;
     end R;
+
+    function word(w : std_logic_vector) return word_t is
+    begin
+        return w(31 downto 0);
+    end function;
+    function half(w : std_logic_vector) return word_t is
+    begin
+        return w(15 downto 0);
+    end function;
+    function byte(w : std_logic_vector) return word_t is
+    begin
+        return w( 7 downto 0);
+    end function;
 
 
 end arch_defs;

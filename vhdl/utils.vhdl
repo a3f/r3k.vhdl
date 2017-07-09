@@ -3,11 +3,6 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 package utils is
-    function "+" (a : std_logic_vector; b : integer ) return std_logic_vector;
-    function "+" (a : std_logic_vector; b : std_logic_vector) return std_logic_vector;
-    function "-" (a : std_logic_vector; b : integer ) return std_logic_vector;
-    function "-" (a : std_logic_vector; b : std_logic_vector) return std_logic_vector;
-
     function vec_increment(vec: std_logic_vector) return std_logic_vector;
 
     function high_if(cond : boolean) return std_logic;
@@ -17,42 +12,13 @@ package utils is
     procedure zeroextend(signal data_out: out std_logic_vector; signal data_in : in std_logic_vector);
 
     function isnonzero(vec: std_logic_vector) return boolean;
-
 end utils;
 
 package body utils is
 
-    function "+" (a : std_logic_vector; b : integer) return std_logic_vector is
-        variable result : unsigned(a'range);
-    begin
-        result := unsigned(a) + b;
-        return std_logic_vector(result);
-    end function ;
-
-    function "+" (a : std_logic_vector; b : std_logic_vector) return std_logic_vector is
-        variable result : unsigned(a'range);
-    begin
-        result := unsigned(a) + unsigned(b);
-        return std_logic_vector(result);
-    end function ;
-
-    function "-" (a : std_logic_vector; b : integer) return std_logic_vector is
-        variable result : unsigned(a'range);
-    begin
-        result := unsigned(a) - b;
-        return std_logic_vector(result);
-    end function ;
-
-    function "-" (a : std_logic_vector; b : std_logic_vector) return std_logic_vector is
-        variable result : unsigned(a'range);
-    begin
-        result := unsigned(a) - unsigned(b);
-        return std_logic_vector(result);
-    end function ;
-
     function vec_increment(vec: std_logic_vector) return std_logic_vector is
     begin
-        return vec + 1;
+        return std_logic_vector(unsigned(vec) + 1);		
     end vec_increment;
 
     function high_if(cond : boolean) return std_logic is
@@ -75,6 +41,7 @@ package body utils is
     begin
         return vec /= (vec'range => '0');
     end isnonzero;
+
 end utils;
 
 
