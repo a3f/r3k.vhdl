@@ -51,7 +51,7 @@ begin
                 when ALU_MFHI => result := HI;
                 when ALU_MFLO => result := LO;
 
-                -- These weren't part of the MIPS R300 AFAIK, implemented here anyway.
+                -- These weren't part of the MIPS R3000 AFAIK, implemented here anyway.
                 when ALU_MTHI => HI <= Src1;
                 when ALU_MTLO => LO <= Src2;
                 

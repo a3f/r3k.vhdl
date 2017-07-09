@@ -37,8 +37,8 @@ begin
         variable error_count : integer := 0;
         variable error : boolean := false;
 
-        constant BTRUE  : word_t := X"0000_0000";
-        constant BFALSE : word_t := X"0000_0001";
+        constant BTRUE  : word_t := (31 downto 1 => '-', 0 => '1');
+        constant BFALSE : word_t := (31 downto 1 => '-', 0 => '0');
 
         type testcase_t is record
             Src1 : word_t;
@@ -96,7 +96,7 @@ begin
             (NEG_ONE,      ALU_SLTU, NEG_ONE, X"0000_0000"),
             (NEG_ONE,      ALU_SLT, NEG_ONE, X"0000_0000"),
 
-            -- A bit hacky, we assume the ALU to output 0 and 1 same as SLT for branches
+            -- BTRUE, BFALSE refer to whether the Zero signal of the ALU is asserted or not
             (X"0000_0001", ALU_EQ, X"0000_0001", BTRUE),
             (X"1000_0001", ALU_EQ, X"0000_0001", BFALSE),
             (X"0000_0001", ALU_NE, X"0000_0001", BFALSE),
@@ -104,19 +104,19 @@ begin
 
             (X"0000_0001", ALU_LEZ, DONT_CARE, BFALSE),
             (NEG_ONE,      ALU_LEZ, DONT_CARE, BTRUE),
-            (ZERO,         ALU_LEZ, ZERO,      BTRUE),
+            (ZERO,         ALU_LEZ, DONT_CARE, BTRUE),
 
             (X"0000_0001", ALU_LTZ, DONT_CARE, BFALSE),
             (NEG_ONE,      ALU_LTZ, DONT_CARE, BTRUE),
-            (ZERO,         ALU_LTZ, ZERO,      BFALSE),
+            (ZERO,         ALU_LTZ, DONT_CARE, BFALSE),
 
             (X"0000_0001", ALU_GTZ, DONT_CARE, BTRUE),
             (NEG_ONE,      ALU_GTZ, DONT_CARE, BFALSE),
-            (ZERO,         ALU_GTZ, ZERO,      BFALSE),
+            (ZERO,         ALU_GTZ, DONT_CARE, BFALSE),
 
             (X"0000_0001", ALU_GEZ, DONT_CARE, BTRUE),
             (NEG_ONE,      ALU_GEZ, DONT_CARE, BFALSE),
-            (ZERO,         ALU_GEZ, ZERO,      BTRUE),
+            (ZERO,         ALU_GEZ, DONT_CARE, BTRUE),
             
             (ZERO, ALU_AND, ZERO, ZERO)
         );
@@ -130,7 +130,14 @@ begin
          --  Wait for the results.
                 wait for 10 ns;
          --  Check the outputs.
-                error := (testcases(i).AluResult /= DONT_CARE and AluResult /= testcases(i).AluResult) or ((AluResult = ZERO and ZeroInd = '0') or (AluResult /= Zero and ZeroInd /= '0')) or trap /= TRAP_NONE;
+                if testcases(i).AluResult(31) /= '-' then
+                    error := AluResult /= testcases(i).AluResult
+                          or (AluResult /= Zero and ZeroInd /= '0');
+                else
+                    error := testcases(i).AluResult(0) /= ZeroInd;
+                end if;
+                error := error or trap /= TRAP_NONE;
+
                 if error then
                     error_count := error_count + 1;
                 end if;
