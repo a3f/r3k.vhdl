@@ -3,11 +3,21 @@
 use strict;
 use warnings;
 
+my @only = split ' ', $ENV{TEST};
+my @skip = split ' ', $ENV{SKIP};
+
 my (@opts, @tests);
 
 for (@ARGV) {
     /^-/ and push @opts, $_ or push @tests, $_
 }
+
+my $total = @tests;
+@tests = @only if @only;
+
+my %disabled = map {($_, 1)} @skip;
+@tests = grep {!$disabled{$_}} @tests;
+
 
 sub run { print "@_ \n"; 0 == system @_ }
 
@@ -21,8 +31,10 @@ for (@tests) {
 }
 
 if ($errors) {
-    print "\n \33[31m=> $errors/${\scalar @tests} test(s) failed.\33[m\n";
+    print "\n \33[31m=> $errors/${\scalar @tests} test(s) failed.\33[m";
 } else {
-    print "\n \33[32m=> All ${\scalar @tests} tests were successful\33[m\n";
+    print "\n \33[32m=> All ${\scalar @tests} tests were successful\33[m";
 }
+print " => ". ($total - @tests) . " skipped.\n";
+return $errors;
 

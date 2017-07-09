@@ -2,7 +2,7 @@
 
 include ../*.mk
 
-SRCS  = $(wildcard *.vhdl)
+SRCS  = $(wildcard *_tb.vhdl)
 NAMES = $(SRCS:.vhdl=)
 
 .PHONY: all ../work/work-obj93.cf
