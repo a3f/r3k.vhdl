@@ -10,11 +10,6 @@ package arch_defs is
     function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector;
     function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector;
 
-    -- ALU function
-    -- enum ALU {
-      --  AND, OR, XOR, SLL, SRL, SLA, SRA, ADD, SUB, MULT, DIV
-    --}
-
     subtype byte_t          is std_logic_vector( 7 downto 0);
     subtype half_t          is std_logic_vector(15 downto 0);
     subtype word_t          is std_logic_vector(31 downto 0);

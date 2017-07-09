@@ -13,7 +13,10 @@ architecture test of alu_tb is
          Src2       : in word_t;
          AluOp      : in alu_op_t;
          AluResult  : out word_t;
-         Zero       : out std_logic);
+         Zero       : out ctrl_t;
+
+         trap       : out traps_t -- only TRAP_OVERFLOW is relevant
+     );
     end component;
 
    --  Specifies which entity is bound with the component.
@@ -21,11 +24,11 @@ architecture test of alu_tb is
         signal Src1, Src2 : word_t;
         signal AluOp : alu_op_t;
         signal AluResult : word_t;
-        signal ZeroInd : std_logic;
+        signal ZeroInd : ctrl_t;
 
 begin
    --  Component instantiation.
-        instance: alu port map (Src1 => Src1, Src2 => Src2, AluOp => AluOp, AluResult => AluResult, Zero => ZeroInd);
+        instance: alu port map (Src1 => Src1, Src2 => Src2, AluOp => AluOp, AluResult => AluResult, Zero => ZeroInd, trap => open); -- FIXME check traps
 
    --  This process does the real job.
         process
@@ -43,10 +46,15 @@ begin
 
         type testcase_table_t is array (natural range <>) of testcase_t;
         constant testcases : testcase_table_t := (
-            (ZERO, ALU_AND, ZERO, ZERO),
             (ZERO, ALU_OR, NEG_ONE, NEG_ONE),
             (NEG_ONE, ALU_NOR, ZERO, ZERO),
-            (X"f0f0_f0f0", ALU_XOR, X"0f0f_0f0f", X"ffff_ffff")
+            (X"f0f0_f0f0", ALU_XOR, X"0f0f_0f0f", X"ffff_ffff"),
+            (X"f0f0_f0f0", ALU_OR, X"0f0f_0f0f", X"ffff_ffff"),
+            (X"0000_0000", ALU_ADD, X"0000_0000", X"0000_0000"),
+            --(X"f0f0_f0f0", ALU_ADDU, X"0f0f_0f0f", X"ffff_ffff"),
+            --(X"f0f0_f0f1", ALU_ADDU, X"0f0f_0f0f", X"0000_0000")
+
+            (ZERO, ALU_AND, ZERO, ZERO)
         );
         begin
             for i in testcases'range loop

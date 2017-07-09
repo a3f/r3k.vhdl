@@ -14,6 +14,7 @@ entity maindec is
 
 architecture behave of maindec is
     signal op : opcode_t := instr(31 downto 26);
+    -- fixme maybe use alias?
     signal rs : reg_t := instr(25 downto 21);
     signal rt : reg_t := instr(20 downto 16);
     signal rd : reg_t := instr(15 downto 11);

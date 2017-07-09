@@ -17,15 +17,17 @@ end alu;
 
 architecture behav of alu is
     signal HI, LO : word_t;
+    signal result : word_t;
 begin
         process (AluOp)
-            variable result : word_t;
         begin
             case AluOp is
-                when ALU_AND => result := Src1 and Src2;
-                when ALU_OR  => result := Src1 or  Src2;
-                when ALU_NOR => result := Src1 nor Src2;
-                when ALU_XOR => result := Src1 xor Src2;
+                when ALU_ADD | ALU_ADDU =>
+                                result <= Src1  +  Src2;
+                when ALU_AND => result <= Src1 and Src2;
+                when ALU_OR  => result <= Src1 or  Src2;
+                when ALU_NOR => result <= Src1 nor Src2;
+                when ALU_XOR => result <= Src1 xor Src2;
                 when ALU_DIV =>
                     -- Interesting read: http://yarchive.net/comp/mips_exceptions.html
                     -- TL;DR: No arithmetic division errors on a MIPS R3000
@@ -33,9 +35,9 @@ begin
                 when others => trap <= TRAP_UNIMPLEMENTED; -- FIXME!
             end case;
 
-            Zero <= high_if(result = X"0000_0000");
-
-            AluResult <= result;
         end process;
+
+        Zero <= '1' when result = X"0000_0000" else '0';
+        AluResult <= result;
 end behav;
 
