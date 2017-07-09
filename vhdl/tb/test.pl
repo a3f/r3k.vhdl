@@ -3,13 +3,18 @@
 use strict;
 use warnings;
 
-my @only = split ' ', $ENV{TEST};
-my @skip = split ' ', $ENV{SKIP};
+my @only = split ' ', $ENV{TEST} if defined $ENV{TEST};
+my @skip = split ' ', $ENV{SKIP} if defined $ENV{SKIP};
 
 my (@opts, @tests);
 
 for (@ARGV) {
     /^-/ and push @opts, $_ or push @tests, $_
+}
+
+for (@tests) {
+    open my $file, '<', "$_.vhdl"; my $line = <$file>; close $file;
+    push @skip, $_ if $line =~ /^\s*--\s*SKIP/i;
 }
 
 my $total = @tests;
@@ -36,5 +41,5 @@ if ($errors) {
     print "\n \33[32m=> All ${\scalar @tests} tests were successful\33[m";
 }
 print " => ". ($total - @tests) . " skipped.\n";
-return $errors;
+exit $errors;
 

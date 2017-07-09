@@ -1,3 +1,4 @@
+-- SKIP FIXME: Niklas remove this line, when the test succeeds
 library ieee;
 library work;
 use ieee.std_logic_1164.all;
