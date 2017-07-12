@@ -46,8 +46,10 @@ package txt_utils is
 
   constant NBSP : CHARACTER      := CHARACTER'val(160);  -- space character
   constant NUS  : STRING(2 to 1) := (others => ' ');     -- null STRING
+  constant LF : Character := Character'val(10);
+  constant ESC : Character := Character'val(27);
 
-  end txt_utils;
+end txt_utils;
 
 package body txt_utils is
 

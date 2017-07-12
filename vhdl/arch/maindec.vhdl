@@ -1,3 +1,4 @@
+-- Use tools/assemble.pl to test control vector assignment
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
@@ -13,27 +14,28 @@ entity maindec is
     end;
 
 architecture behave of maindec is
-    signal op : opcode_t := instr(31 downto 26);
-    -- fixme maybe use alias?
-    signal rs : reg_t := instr(25 downto 21);
-    signal rt : reg_t := instr(20 downto 16);
-    signal rd : reg_t := instr(15 downto 11);
- -- signal shamt : std_logic_vector(4 downto 0) := instr(10 downto 6);
-    signal func : func_t := instr(5 downto 0);
 
-    constant i_regwrite : natural := 0;
-    constant i_regdst : natural := 1;
-    constant i_link : natural := 2;
-    constant i_jumpreg : natural := 3;
-    constant i_jumpdirect : natural := 4;
-    constant i_branch : natural := 5;
-    constant i_memread : natural := 6;
-    constant i_memtoreg : natural := 7;
-    constant i_memsex : natural := 8;
-    constant i_memwrite : natural := 9;
-    constant i_shift : natural := 10;
-    constant i_alusrc : natural := 11;
-    signal ctrl: std_logic_vector(i_alusrc downto i_regwrite);
+    alias op is instr(31 downto 26);
+    alias rs is instr(25 downto 21);
+    alias rt is instr(20 downto 16);
+    alias rd is instr(15 downto 11);
+    alias shamt is instr(10 downto 6);
+    alias func is instr(5 downto 0);
+    alias imm is instr(15 downto 0);
+
+    constant i_regwrite : natural := 11;
+    constant i_regdst : natural := 10;
+    constant i_link : natural := 9;
+    constant i_jumpreg : natural := 8;
+    constant i_jumpdirect : natural := 7;
+    constant i_branch : natural := 6;
+    constant i_memread : natural := 5;
+    constant i_memtoreg : natural := 4;
+    constant i_memsex : natural := 3;
+    constant i_memwrite : natural := 2;
+    constant i_shift : natural := 1;
+    constant i_alusrc : natural := 0;
+    signal ctrl: std_logic_vector(i_regwrite downto i_alusrc);
     signal memwidth : ctrl_memwidth_t := WIDTH_NONE;
     begin
 
@@ -51,9 +53,8 @@ architecture behave of maindec is
     --   '------------------------------------------'
     --   :31  26:25                                0:
 
-    process (op)
+    process (instr)
     begin
-        aluop <= ALU_ADD;
         case op is
             when B"000_000" => ctrl <= "110000000000"; -- R-Type
                 case func is

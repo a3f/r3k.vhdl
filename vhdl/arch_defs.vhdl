@@ -4,11 +4,6 @@ use ieee.numeric_std.all;
 
 package arch_defs is
 
-    function is_type_r(vec: std_logic_vector) return boolean;
-    function is_type_j(vec: std_logic_vector) return boolean;
-    function J(op : std_logic_vector) return std_logic_vector;
-    function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector;
-    function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector;
 
     subtype byte_t          is std_logic_vector( 7 downto 0);
     subtype half_t          is std_logic_vector(15 downto 0);
@@ -24,6 +19,13 @@ package arch_defs is
     subtype reg_t           is std_logic_vector(4 downto 0);
     subtype opcode_t        is std_logic_vector(5 downto 0);
     subtype func_t          is std_logic_vector(5 downto 0);
+
+    function is_type_r(instr: instruction_t) return boolean;
+    function is_type_j(instr: instruction_t) return boolean;
+    function is_type_I(instr: instruction_t) return boolean;
+    function J(op : std_logic_vector) return std_logic_vector;
+    function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector;
+    function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector;
 
     function word(w : std_logic_vector) return word_t;
     function half(w : std_logic_vector) return word_t;
@@ -149,15 +151,21 @@ end arch_defs;
 
 package body arch_defs is
 
-    function is_type_r(vec: std_logic_vector) return boolean is
+    function is_type_r(instr: instruction_t) return boolean is
     begin
-        return vec(vec'high downto vec'high - 5) = "000000";
+        return instr(31 downto 26) = "000000";
     end is_type_r;
 
-    function is_type_j(vec: std_logic_vector) return boolean is
+    function is_type_j(instr: instruction_t) return boolean is
     begin
-        return vec(vec'high downto vec'high - 5) = "000000";
+		return instr(31 downto 26) = "000010"
+			or instr(31 downto 26) = "000011";
     end is_type_j;
+
+    function is_type_i(instr: instruction_t) return boolean is
+    begin
+		return not is_type_j(instr) and not is_type_r(instr);
+    end is_type_i;
 
     function J(op : std_logic_vector) return std_logic_vector is
     begin return op & (31-6 downto 0 => '-');
