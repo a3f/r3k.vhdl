@@ -15,8 +15,7 @@ port(
 	src2: in addrdiff_t;
 	result: addr_t);
 end component;
--- TODO: check order with entity
-component Control is
+component maindec is
 port(
         Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst: out ctrl_t;
         memRead, memWrite: out ctrl_memwidth_t;
@@ -174,10 +173,10 @@ signal inst27to0: std_logic_vector (27 downto 0);
 signal BranchANDZeroOut: ctrl_t;
 signal BranchMuxOut, BranchAddOut: addr_t;
 alias pcLast4 is pcAddOut (31 downto 28);	
-signal jump_addr: addr_t; --TODO: concat pcAddOut 31-28 to inst27to0
+signal jump_addr: addr_t; --concat pcAddOut 31-28 to inst27to0
 signal JumpDirMuxOut, JumpRegMuxOUt: addr_t;
 -- instructions
-signal instr: instruction_t; --TODO: type? Instruction output is instruction_t, but all inputs are reg_t, here actual std_logic_vectors would be much cleaner.
+signal instr: instruction_t;
 -- instruction signals
 alias op is instr(31 downto 26);
 alias rs is instr(25 downto 21);
@@ -211,8 +210,8 @@ port map(
 	src2 => immExtShift,
 	result => BranchAddOut
 );
-control1: control
-port map (Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst, memRead, memWrite, ALUOp);
+maindec1: maindec
+port map (Link => Link, JumpReg => JumpReg, JumpDir => JumpDir, Branch =>Branch, MemToReg => MemToReg, SignExtend => SignExtend, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
 pc1: PC
 port map (next_addr, clk, addr);
 -- jumps
