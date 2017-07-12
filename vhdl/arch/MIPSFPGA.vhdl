@@ -4,14 +4,11 @@ use work.arch_defs.all;
 
 entity MIPSFPGA is
 port(
-        clk: in std_logic;
-        --tmp
-        ALUZero: in ctrl_t;
-AddrALUresult: in addr_t);
-end ;
+        clk: in std_logic);
+end;
 
 architecture struct of MIPSFPGA is
--- multi used componets
+-- multi used componets 
 component Adder is
 port(
 	src1: in addr_t;
@@ -40,7 +37,7 @@ port (
 end component;
 component ShiftLeftAddr
 port(
-        Inst25to0: in std_logic_vector(25 downto 0);
+	Inst25to0: in std_logic_vector(25 downto 0);
 	Inst27to0: out std_logic_vector(27 downto 0));
 end component;
 component ShiftLeftImm is
@@ -51,7 +48,7 @@ end component;
 component BranchMux
 port (
         BranchANDZeroOut: in ctrl_t;
-        AddrALUResult, pcAddOut: in addr_t;
+        BranchAddOut, pcAddOut: in addr_t;
 	BranchMuxOut: out addr_t);
 end component;
 component JumpDirMux
@@ -68,7 +65,7 @@ port (
 end component;
 component InstructionMem is
 port (
-        read_addr : in addr_t;
+        read_addr: in addr_t;
 	clk : in std_logic;
 	instr : out instruction_t);
 end component;
@@ -226,7 +223,7 @@ port map(immExt, immExtShift);
 branchANDZero1: BranchANDZero
 port map (Branch, Zero, BranchANDZeroOut);
 branchMux1: BranchMux
-port map (BranchANDZeroOut, AddrALUResult, pcAddOut, BranchMuxOut);
+port map (BranchANDZeroOut, BranchAddOut, pcAddOut, BranchMuxOut);
 jumpDirMux1: JumpDirMux
 port map (JumpDir, jump_addr, BranchMuxOut, JumpDirMuxOut);
 jumpRegMux1:JumpRegMux
