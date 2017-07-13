@@ -5,9 +5,10 @@ use work.arch_defs.all;
 
 package memory_map is
     constant B : natural := 1; constant K : natural := 1024*B; constant M : natural := K*K;
+    subtype memchipsel_t is std_logic_vector(7 downto 0);
 
     type mblock_t is record
-        base : addr_t; size : natural; chip_select : std_logic_vector(7 downto 0);
+        base : addr_t; size : natural; chip_select : memchipsel_t;
     end record;
     type mmap_t is array (natural range <>) of mblock_t;
 

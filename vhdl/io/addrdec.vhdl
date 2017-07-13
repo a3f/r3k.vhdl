@@ -6,12 +6,12 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.memory_map.all;
 
-entity decoder is
+entity addrdec is
    port(A  : in  addr_t;
-        cs : out std_logic_vector(7 downto 0));
-end decoder;
+        cs : out memchipsel_t);
+end addrdec;
 
-architecture behav of decoder is
+architecture behav of addrdec is
 begin
    -- FIXME use a loop over the mmap array instead
    cs <= mmap(0).chip_select when inside(A, mmap(0).base, mmap(0).size) else -- RAM

@@ -7,7 +7,6 @@ package arch_defs is
 
     subtype byte_t          is std_logic_vector( 7 downto 0);
     subtype half_t          is std_logic_vector(15 downto 0);
-    subtype halfword_t      is half_t; -- deprecated
     subtype word_t          is std_logic_vector(31 downto 0);
     subtype addr_t          is std_logic_vector(31 downto 0);
     subtype intaddr_t       is unsigned(31 downto 0);

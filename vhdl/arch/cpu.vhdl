@@ -98,7 +98,7 @@ architecture struct of cpu is
     end component;
     component SignExtender is
     port (
-            imm: in halfword_t;
+            imm: in half_t;
         immExt: out std_logic_vector (31 downto 0)
     );
     end component;
@@ -179,7 +179,7 @@ architecture struct of cpu is
     signal addr, pcAddOut, next_addr, read_addr: addr_t;
 
     --control signals
-    signal Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegDst, returnAddrControl, BranchORJumpDirOut: ctrl_t;
+    signal Link, JumpReg, JumpDir, Branch, MemToReg, Shift, ALUSrc, RegDst, returnAddrControl, BranchORJumpDirOut: ctrl_t;
     signal ALUOp: alu_op_t;
 
     --jump MUXs signals
@@ -231,7 +231,7 @@ begin
     port map (next_addr, clk, addr);
 
     maindec1: maindec
-    port map (Link => Link, JumpReg => JumpReg, JumpDir => JumpDir, Branch =>Branch, MemToReg => MemToReg, SignExtend => SignExtend, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
+    port map (Link => Link, JumpReg => JumpReg, JumpDir => JumpDir, Branch =>Branch, MemToReg => MemToReg, SignExtend => MemSex, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
 
     -- jumps
     shiftLeftAddr1: shiftLeftAddr

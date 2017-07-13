@@ -22,7 +22,7 @@ architecture struct of mips is
     );
     end component;
 
-    component DataMem is
+    component mem is
     port (
         Address : in addr_t;
         WriteData : in word_t;
@@ -76,7 +76,7 @@ begin
         regWrite => regWrite
     );
 
-    dataMem_inst: DataMem port map (
+    mem_bus: mem port map (
         Address => Address,
         WriteData => memWriteData,
         memReadData => memReadData,
