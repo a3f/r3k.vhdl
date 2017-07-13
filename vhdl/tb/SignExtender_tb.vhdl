@@ -9,12 +9,12 @@ entity SignExtender_tb is
 architecture test of SignExtender_tb is
    --  Declaration of the component that will be instantiated.
     component signextender
-        port (immediate : in halfword_t; sexed : out word_t);
+        port (immediate : in half_t; sexed : out word_t);
     end component;
 
    --  Specifies which entity is bound with the component.
     for instance: SignExtender use entity work.SignExtender;
-        signal immediate : halfword_t;
+        signal immediate : half_t;
         signal sexed : word_t;
 
 begin
@@ -26,10 +26,10 @@ begin
         variable error       : boolean := false;
         variable error_count : integer := 0;
 
-        constant sixteen_zeroes : halfword_t := (others => '0');
-        constant sixteen_ones   : halfword_t := (others => '1');
+        constant sixteen_zeroes : half_t := (others => '0');
+        constant sixteen_ones   : half_t := (others => '1');
         type testcase_t is record
-            input : halfword_t;
+            input : half_t;
             output : word_t;
         end record;
 

@@ -7,11 +7,11 @@ package arch_defs is
 
     subtype byte_t          is std_logic_vector( 7 downto 0);
     subtype half_t          is std_logic_vector(15 downto 0);
+    subtype halfword_t      is half_t; -- deprecated
     subtype word_t          is std_logic_vector(31 downto 0);
     subtype addr_t          is std_logic_vector(31 downto 0);
     subtype intaddr_t       is unsigned(31 downto 0);
     subtype addrdiff_t      is std_logic_vector(31 downto 0);
-    subtype halfword_t      is std_logic_vector(15 downto 0);
     subtype ctrl_t          is std_logic;
     subtype ctrl_memwidth_t is std_logic_vector(1 downto 0);
     subtype instruction_t   is word_t;
@@ -27,9 +27,9 @@ package arch_defs is
     function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector;
     function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector;
 
-    function word(w : std_logic_vector) return word_t;
-    function half(w : std_logic_vector) return word_t;
-    function byte(w : std_logic_vector) return word_t;
+    function word(w : word_t) return word_t;
+    function half(w : word_t) return half_t;
+    function byte(w : word_t) return byte_t;
 
     constant WIDTH_NONE : ctrl_memwidth_t := "00";
     constant WIDTH_BYTE : ctrl_memwidth_t := "01";
@@ -76,6 +76,51 @@ package arch_defs is
 
     constant R0 : reg_t  := (others => '0'); --  Zero register  (5 bits)
     constant R31 : reg_t := (others => '1'); --  Return address (5 bits)
+
+end arch_defs;
+
+package body arch_defs is
+
+    function is_type_r(instr: instruction_t) return boolean is
+    begin
+        return instr(31 downto 26) = "000000";
+    end is_type_r;
+
+    function is_type_j(instr: instruction_t) return boolean is
+    begin
+		return instr(31 downto 26) = "000010"
+			or instr(31 downto 26) = "000011";
+    end is_type_j;
+
+    function is_type_i(instr: instruction_t) return boolean is
+    begin
+		return not is_type_j(instr) and not is_type_r(instr);
+    end is_type_i;
+
+    function J(op : std_logic_vector) return std_logic_vector is
+    begin return op & (31-6 downto 0 => '-');
+    end J;
+
+    function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector is
+    begin return op & rs & rt & (15 downto 0 => '-');
+    end I;
+
+    function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector is
+    begin return op & (14 downto 0 => '-') & shift & func;
+    end R;
+
+    function word(w : word_t) return word_t is
+    begin
+        return w(31 downto 0);
+    end function;
+    function half(w : word_t) return half_t is
+    begin
+        return w(15 downto 0);
+    end function;
+    function byte(w : word_t) return byte_t is
+    begin
+        return w( 7 downto 0);
+    end function;
 
     -- ALU
     constant OP_ADD   : mask_t := R(func => "100000");
@@ -144,53 +189,5 @@ package arch_defs is
     constant OP_SB  : mask_t := I(op => "101000");
     constant OP_SH  : mask_t := I(op => "101001");
     constant OP_SW  : mask_t := I(op => "101011");
-
-
-
-end arch_defs;
-
-package body arch_defs is
-
-    function is_type_r(instr: instruction_t) return boolean is
-    begin
-        return instr(31 downto 26) = "000000";
-    end is_type_r;
-
-    function is_type_j(instr: instruction_t) return boolean is
-    begin
-		return instr(31 downto 26) = "000010"
-			or instr(31 downto 26) = "000011";
-    end is_type_j;
-
-    function is_type_i(instr: instruction_t) return boolean is
-    begin
-		return not is_type_j(instr) and not is_type_r(instr);
-    end is_type_i;
-
-    function J(op : std_logic_vector) return std_logic_vector is
-    begin return op & (31-6 downto 0 => '-');
-    end J;
-
-    function I(op : std_logic_vector; rs : std_logic_vector := "-----"; rt :std_logic_vector := "-----") return std_logic_vector is
-    begin return op & rs & rt & (15 downto 0 => '-');
-    end I;
-
-    function R(op : std_logic_vector := "000000"; rs : std_logic_vector := "-----"; rt : std_logic_vector := "-----"; rd : std_logic_vector := "-----";shift : std_logic_vector := "00000"; func : std_logic_vector(5 downto 0)) return std_logic_vector is
-    begin return op & (14 downto 0 => '-') & shift & func;
-    end R;
-
-    function word(w : std_logic_vector) return word_t is
-    begin
-        return w(31 downto 0);
-    end function;
-    function half(w : std_logic_vector) return word_t is
-    begin
-        return w(15 downto 0);
-    end function;
-    function byte(w : std_logic_vector) return word_t is
-    begin
-        return w( 7 downto 0);
-    end function;
-
 
 end arch_defs;
