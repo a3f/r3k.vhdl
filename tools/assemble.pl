@@ -17,7 +17,7 @@ my @opts = qw(--std=93c -fexplicit --ieee=synopsys);
 my @args = @ARGV;
 sub cmdline { shift @args }
 my %opts;
-BEGIN {getopts 'a:c:', \%opts; *arg = @ARGV ? \&cmdline : \&CORE::readline }
+BEGIN {getopts 'ra:c:', \%opts; *arg = @ARGV ? \&cmdline : \&CORE::readline }
 
 my $PREFIX   = $opts{p} // 'mips-';
 my $packsize = $opts{s} // 'L>';
@@ -35,10 +35,12 @@ while (defined(my $instr = arg)) {
         # We got an instruction. Assemble it
 
         # pass as stdin to
-        system "printf '.set mips1\n$instr\n' | ${PREFIX}as -EB -o$aout" and die;
+        system "printf '.set mips1\n.set noat\n$instr\n' | ${PREFIX}as -EB -o$aout" and die;
         system "${PREFIX}objcopy -j .text -Obinary $aout $bin" and die;
         $instr = sprintf q/X"%08X"/, unpack($packsize, do { local $/; <$tmp2fh> });
     }
+
+    do { print pack $packsize, hex substr $instr, 2, -1; exit; } if $opts{r};
 
     my $tb = $template_tb =~ s/(\$\w+)/$1/geer;
     truncate $tmp1fh, 0;
