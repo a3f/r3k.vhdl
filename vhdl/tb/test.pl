@@ -16,7 +16,8 @@ for (@tests) {
     push @skip, $_ if $line =~ /^\s*--\s*SKIP/i;
 }
 
-$total = @tests = @only if @only;
+@tests = @only if @only;
+$total = @tests;
 
 %disabled = map {($_, 1)} @skip;
 @tests = grep {!$disabled{$_}} @tests;
