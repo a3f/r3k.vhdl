@@ -30,6 +30,7 @@ component maindec is
     signal memwrite : ctrl_memwidth_t;
     signal shift, alusrc : ctrl_t;
     signal aluop     : alu_op_t;
+
     alias op is instr(31 downto 26);
     alias rs is instr(25 downto 21);
     alias rt is instr(20 downto 16);
@@ -41,7 +42,6 @@ component maindec is
 
     alias b is TO_BSTRING [STD_LOGIC_VECTOR return STRING];
     alias b is TO_STRING [STD_ULOGIC return STRING];
-    constant d : string := "|";
     begin
         control : maindec port map(
                 instr,

@@ -15,7 +15,8 @@ package utils is
 
     procedure tick(signal clk : inout std_logic; n : natural; T : time := 1 ns);
 
-    function vtoi(v : std_logic_vector) return natural;
+    function vtoi(v : std_logic_vector) return integer;
+    function vtou(v : std_logic_vector) return natural;
 end utils;
 
 package body utils is
@@ -54,7 +55,12 @@ package body utils is
         end loop;
     end procedure;
 
-    function vtoi(v : std_logic_vector) return natural is
+    function vtoi(v : std_logic_vector) return integer is
+    begin
+        return to_integer(signed(v));
+    end;
+
+    function vtou(v : std_logic_vector) return natural is
     begin
         return to_integer(unsigned(v));
     end;

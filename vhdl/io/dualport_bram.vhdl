@@ -4,6 +4,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.utils.all;
 
 library work;
 entity dualport_bram is
@@ -39,9 +40,9 @@ process(a_clk)
 begin
     if(a_clk'event and a_clk='1') then
         if(a_wr='1') then
-            mem(to_integer(unsigned(a_addr))) := a_din;
+            mem(vtou(a_addr)) := a_din;
         end if;
-        a_dout <= mem(to_integer(unsigned(a_addr)));
+        a_dout <= mem(vtou(a_addr));
     end if;
 end process;
 
@@ -50,9 +51,9 @@ process(b_clk)
 begin
     if(b_clk'event and b_clk='1') then
         if(b_wr='1') then
-            mem(to_integer(unsigned(b_addr))) := b_din;
+            mem(vtou(b_addr)) := b_din;
         end if;
-        b_dout <= mem(to_integer(unsigned(b_addr)));
+        b_dout <= mem(vtou(b_addr));
     end if;
 end process;
 end rtl;

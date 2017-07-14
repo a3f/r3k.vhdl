@@ -1,16 +1,12 @@
--- This is the top level MIPS architecture
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 
-entity mips is
-    port (
-        clk : in std_logic;
-        rst : in std_logic
-    );
+-- A testbench has no ports
+entity mips_tb is
 end;
 
-architecture struct of mips is
+architecture struct of mips_tb is
     component regFile is
     port (
             readreg1, readreg2 : in reg_t;
@@ -43,7 +39,7 @@ architecture struct of mips is
         readreg1, readreg2 : out reg_t;
         writereg: out reg_t;
         regWriteData: out word_t;
-        readData1, readData2 : in word_t;
+        regReadData1, regReadData2 : in word_t;
         regWrite : out std_logic;
 
         -- Memory
@@ -55,18 +51,25 @@ architecture struct of mips is
     );
     end component;
 
-    signal readreg1, readreg2 : reg_t;
-    signal writereg: reg_t;
-    signal regWriteData: word_t;
-    signal readData1, readData2 : word_t;
-    signal regWrite : std_logic;
+    signal clk : std_logic := '0';
+    signal rst : std_logic := '1';
 
-    signal Address : addr_t;
-    signal memWriteData : word_t;
-    signal memReadData : word_t;
-    signal MemRead, MemWrite : ctrl_memwidth_t;
-    signal MemSex : std_logic;
+    signal readreg1 : reg_t := R0;
+    signal readreg2 : reg_t := R0;
+    signal writereg: reg_t := R0;
+    signal regWriteData: word_t := ZERO;
+    signal readData1 : word_t := ZERO;
+    signal readData2 : word_t := ZERO;
+    signal regWrite : std_logic := '0';
 
+    signal Address : addr_t := ZERO;
+    signal memWriteData : word_t := ZERO;
+    signal memReadData : word_t := ZERO;
+    signal MemRead  : ctrl_memwidth_t := WIDTH_NONE;
+    signal MemWrite : ctrl_memwidth_t := WIDTH_NONE;
+    signal MemSex : std_logic := '0';
+
+    signal done : boolean := false;
 begin
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
@@ -95,7 +98,7 @@ begin
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         regWriteData => regWriteData,
-        readData1 => readData1, readData2 => readData2,
+        regReadData1 => readData1, regReadData2 => readData2,
         regWrite => regWrite,
 
         -- Memory
@@ -105,5 +108,24 @@ begin
         MemRead => memRead, MemWrite => memWrite,
         MemSex => memSex
     );
+
+    test: process begin
+        wait for 2 ns;
+        rst <= '1';
+        wait for 2 ns;
+        rst <= '0';
+        wait for 2 ns;
+
+        done <= true;
+        wait;
+    end process;
+
+    clkproc: process begin
+        clk <= not clk;
+        wait for 1 ns;
+
+        if done then wait; end if;
+    end process;
 end struct;
+
 

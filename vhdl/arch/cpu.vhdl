@@ -34,87 +34,88 @@ architecture struct of cpu is
     port(
         src1: in addr_t;
         src2: in addrdiff_t;
-        result: addr_t);
+        result: out addr_t);
     end component;
     component maindec is
     port(
-            Link, JumpReg, JumpDir, Branch, MemToReg, SignExtend, Shift, ALUSrc, RegWrite, RegDst: out ctrl_t;
-            memRead, memWrite: out ctrl_memwidth_t;
+        instr : in std_logic_vector(31 downto 0);
+        Link, JumpReg, JumpDirect, Branch, MemToReg, MemSex, Shift, ALUSrc, RegWrite, RegDst: out ctrl_t;
+        memRead, memWrite: out ctrl_memwidth_t;
         ALUOp: out alu_op_t);
     end component;
     component PC is
     port (
-            next_addr : in addr_t;
+        next_addr : in addr_t;
         clk : in std_logic;
-        read_addr : out addr_t);
+        addr : out addr_t);
     end component;
 
     -- jumps
     component BranchANDZero
     port (
-            Branch: in ctrl_t;
-        Zero: in ctrl_t;
-        BranchANDZeroOut: out ctrl_t);
+        Branch: in ctrl_t;
+        ALUZero: in ctrl_t;
+        output: out ctrl_t);
     end component;
     component ShiftLeftAddr
     port(
-        Inst25to0: in std_logic_vector(25 downto 0);
-        Inst27to0: out std_logic_vector(27 downto 0));
+        addr: in std_logic_vector(25 downto 0);
+        output: out std_logic_vector(27 downto 0));
     end component;
     component ShiftLeftImm is
     port(
-        immExt: in std_logic_vector (31 downto 0);
-        immExtShift: out std_logic_vector (31 downto 0));
+        imm: in std_logic_vector (31 downto 0);
+        output: out std_logic_vector (31 downto 0));
     end component;
     component BranchMux
     port (
-            BranchANDZeroOut: in ctrl_t;
-            BranchAddOut, pcAddOut: in addr_t;
-        BranchMuxOut: out addr_t);
+        BranchANDZero: in ctrl_t;
+        AddrALUresult, addr: in addr_t;
+        output: out addr_t);
     end component;
     component JumpDirMux
     port (
-            JumpDir: in ctrl_t;
-            jump_addr, BranchMuxOut: in addr_t;
-        JumpDirMuxOut: out addr_t);
+        JumpDir: in ctrl_t;
+        jumpAddr, BranchMux: in addr_t;
+        output: out addr_t);
     end component;
     component JumpRegMux
     port (
-            JumpReg: in ctrl_t;
-            regReadData1, JumpDirMuxOut: in addr_t;
-        next_addr: out addr_t);
+        JumpReg: in ctrl_t;
+        reg1data, JumpDirMux: in addr_t;
+        output: out addr_t);
     end component;
     component InstructionMem is
     port (
-            read_addr: in addr_t;
+        read_addr: in addr_t;
         clk : in std_logic;
         instr : out instruction_t);
     end component;
     -- ALU
     component ZeroExtender is
     port (
-            shamt: reg_t;
-        shamtExt: out word_t);
+        shamt: reg_t;
+        zeroxed: out word_t);
     end component;
     component SignExtender is
     port (
-            imm: in half_t;
-        immExt: out std_logic_vector (31 downto 0)
+        immediate: in half_t;
+        sexed: out std_logic_vector (31 downto 0)
     );
     end component;
     component shiftMux is
     port (
-            Shift: in ctrl_t;
-        readData1 : in word_t;
-        shamtExt : in word_t;
-        shiftMuxOut : out word_t);
+        Shift: in ctrl_t;
+        reg1data : in word_t;
+        shamt : in word_t;
+        output : out word_t);
     end component;
     component ALUSrcMux is
     port (
-            ALUSrc: in ctrl_t;
-        readData2 : in word_t;
-        immExt : in std_logic_vector (31 downto 0);
-        ALUSrcMuxOut : out word_t);
+        ALUSrc: in ctrl_t;
+        reg2data : in word_t;
+        immediate : in std_logic_vector (31 downto 0);
+        output : out word_t);
     end component;
     component alu is
     port(
@@ -122,12 +123,14 @@ architecture struct of cpu is
         Src2       : in word_t;
         ALUOp      : in alu_op_t;
         AluResult  : out word_t;
-        Zero       : out std_logic);
+        Zero       : out std_logic;
+        trap       : out traps_t
+    );
     end component;
     component regFile is
     port (
             -- static
-            readreg1, readreg2 : in reg_t;
+        readreg1, readreg2 : in reg_t;
         writereg: in reg_t;
         writedata: in word_t;
         readData1, readData2 : out word_t;
@@ -136,41 +139,41 @@ architecture struct of cpu is
     end component;
     component returnAddrMux is
     port (
-            returnAddrControl: in ctrl_t;
+        returnAddrControl: in ctrl_t;
         returnAddrReg : in reg_t;
-        regDstMuxOut : in reg_t;
-        returnAddrMuxOut : out reg_t);
+        regDstMux : in reg_t;
+        output : out reg_t);
     end component;
     component regDstMux is
     port (
-            RegDst: in ctrl_t;
+        RegDst: in ctrl_t;
         rt : in reg_t; --Instruction 20-16
         rd : in reg_t; --Instruction 15-11
-        regDstMuxOut : out reg_t);
+        output : out reg_t);
     end component;
     component linkMux is
     port (
-            Link : in ctrl_t;
-        pcAddOut : in word_t;
-        memToRegMuxOut: in word_t;
-        linkMuxOut: out word_t);
+        Link : in ctrl_t;
+        pc: in word_t;
+        memToRegMux: in word_t;
+        output: out word_t);
     end component;
     component memToRegMux is
     port (
-            MemtoReg: in ctrl_t;
+        MemtoReg: in ctrl_t;
         aluResult : in word_t;
         memReadData : in word_t;
-        memToRegMuxOut : out word_t);
+        output : out word_t);
     end component;
     component BranchORJumpDir is
     port (
-            Branch: in ctrl_t;
+        Branch: in ctrl_t;
         JumpDir : in ctrl_t;
         BranchOrJumpDirOut : out ctrl_t);
     end component;
     component LinkANDBranchORJumpDir is
     port (
-            BranchORJumpDirOut: in ctrl_t;
+        BranchORJumpDirOut: in ctrl_t;
         Link : in ctrl_t;
         returnAddrControl : out ctrl_t);
     end component;
@@ -228,49 +231,53 @@ begin
         result => BranchAddOut
     );
     pc1: PC
-    port map (next_addr, clk, addr);
+    port map (
+        next_addr => next_addr,
+        clk => clk,
+        addr => addr
+    );
 
     maindec1: maindec
-    port map (Link => Link, JumpReg => JumpReg, JumpDir => JumpDir, Branch =>Branch, MemToReg => MemToReg, SignExtend => MemSex, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
+    port map (instr => instr, Link => Link, JumpReg => JumpReg, JumpDirect => JumpDir, Branch =>Branch, MemToReg => MemToReg, MemSex => MemSex, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
 
     -- jumps
     shiftLeftAddr1: shiftLeftAddr
-    port map(inst25to0, inst27to0);
+    port map(addr => inst25to0, output => inst27to0);
     shiftLeftImm1: shiftLeftImm
-    port map(immExt, immExtShift);
+    port map(imm => immExt, output => immExtShift);
     branchANDZero1: BranchANDZero
-    port map (Branch, Zero, BranchANDZeroOut);
+    port map (Branch => Branch, ALUZero => Zero, output => BranchANDZeroOut);
     branchMux1: BranchMux
-    port map (BranchANDZeroOut, BranchAddOut, pcAddOut, BranchMuxOut);
+    port map (BranchANDZero => BranchANDZeroOut, AddrALUresult => BranchAddOut, addr => pcAddOut, output => BranchMuxOut);
     jumpDirMux1: JumpDirMux
-    port map (JumpDir, jump_addr, BranchMuxOut, JumpDirMuxOut);
+    port map (JumpDir => JumpDir, jumpAddr => jump_addr, BranchMux => BranchMuxOut, output => JumpDirMuxOut);
     jumpRegMux1:JumpRegMux
-    port map (JumpReg, regReadData1, JumpDirMuxOut, next_addr);
+    port map (JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => next_addr);
     instructionMem1: InstructionMem
     port map (read_addr, clk, instr);
     zeroExtender1: ZeroExtender
-    port map (shamt, shamtExt);
+    port map (shamt => shamt, zeroxed => shamtExt);
     signExtender1: SignExtender
-    port map (imm, immExt);
+    port map (immediate => imm, sexed => immExt);
     shiftMux1: shiftMux
-    port map (Shift, regReadData1, shamtExt, Src1);
+    port map (Shift => Shift, reg1data => regReadData1, shamt => shamtExt, output => Src1);
 
     --alu
     aluSrcMux1: aluSrcMux
-    port map (ALUSrc, regReadData2, immExt, Src2);
+    port map (ALUSrc => ALUSrc, reg2data => regReadData2, immediate => immExt, output => Src2);
     alu1: alu
     port map (Src1, Src2, ALUOp, AluResult, Zero);
 
     --regFile
     regDstMux1: regDstMux
-    port map (RegDst, rt, rd, RegDstMuxOut);
+    port map (RegDst => RegDst, rt => rt, rd => rd, output => RegDstMuxOut);
     returnAddrMux1: returnAddrMux
-    port map (returnAddrControl, returnAddrReg, regDstMuxOut, returnAddrMuxOut);
+    port map (returnAddrControl => returnAddrControl, returnAddrReg => returnAddrReg, regDstMux => regDstMuxOut, output => returnAddrMuxOut);
 
     linkMux1: linkMux
-    port map(Link, pcAddOut, memToRegMuxOut, linkMuxOut);
+    port map(Link => Link, pc => pcAddOut, memToRegMux => memToRegMuxOut, output => linkMuxOut);
     memToRegMux1: memToRegMux
-    port map(memToReg, ALUResult, memReadData, memToRegMuxOut);
+    port map(MemtoReg => memToReg, aluresult => ALUResult, memReadData => memReadData, output => memToRegMuxOut);
 
 end struct;
 

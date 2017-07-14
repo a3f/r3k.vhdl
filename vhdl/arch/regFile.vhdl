@@ -24,11 +24,11 @@ architecture behav of regFile is
     begin process(readreg1, readreg2, writereg, writedata, regWrite, clk, rst)
     begin
         if rising_edge(clk) then
-            readdata1 <= reg(vtoi(readreg1));
-            readdata2 <= reg(vtoi(readreg2));
+            readdata1 <= reg(vtou(readreg1));
+            readdata2 <= reg(vtou(readreg2));
 
             if regWrite = '1' and writereg /= R0 then
-                reg(vtoi(writereg)) <= writedata;
+                reg(vtou(writereg)) <= writedata;
             end if;
             -- replace with loop
             if rst = '1' then

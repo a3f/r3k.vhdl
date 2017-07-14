@@ -1,37 +1,36 @@
 #!/usr/bin/env perl
 
 use strict;
+no strict 'vars';
 use warnings;
 
-my @only = split ' ', $ENV{TEST} if defined $ENV{TEST};
-my @skip = split ' ', $ENV{SKIP} if defined $ENV{SKIP};
-
-my (@opts, @tests);
+@only = split ' ', $ENV{TEST} if defined $ENV{TEST};
+@skip = split ' ', $ENV{SKIP} if defined $ENV{SKIP};
 
 for (@ARGV) {
     /^-/ and push @opts, $_ or push @tests, $_
 }
 
 for (@tests) {
-    open my $file, '<', "$_.vhdl"; my $line = <$file>; close $file;
+    open $file, '<', "$_.vhdl"; $line = <$file>; close $file;
     push @skip, $_ if $line =~ /^\s*--\s*SKIP/i;
 }
 
-my $total = @tests;
-@tests = @only if @only;
+$total = @tests = @only if @only;
 
-my %disabled = map {($_, 1)} @skip;
+%disabled = map {($_, 1)} @skip;
 @tests = grep {!$disabled{$_}} @tests;
 
+@aopts = @eopts = @ropts = @opts;
+# push @ropts, '--assert-level=note' if $ENV{FATAL};
 
 sub run { print "@_ \n"; 0 == system @_ }
 
-my $errors = 0;
 for (@tests) {
     $errors++; # Pessimistic by default
-    run 'ghdl', '-a', @opts, "$_.vhdl" or next;
-    run 'ghdl', '-e', @opts, $_, or next;
-    run 'ghdl', '-r', @opts, $_, "--vcd=$_.vcd" or next;
+    run 'ghdl', '-a', @aopts, "$_.vhdl" or next;
+    run 'ghdl', '-e', '-g', @eopts, $_, or next;
+    run 'ghdl', '-r', @ropts, $_, "--vcd=$_.vcd" or next;
     $errors--;
     # GHDL doesn't fail on testbench error!
 }

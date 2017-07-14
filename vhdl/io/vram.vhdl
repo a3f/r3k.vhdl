@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-
+use work.utils.all;
 use work.color_util.all;
 
 entity dualport_ram is
@@ -22,8 +22,8 @@ begin
 process begin
     wait until rising_edge(clk);
     if wr = '1' then
-        memory(to_integer(unsigned(wraddr)+0)) <= din;
+        memory(vtou(wraddr)+0) <= din;
     end if;
-    dout <= memory(to_integer(unsigned(rdaddr)));
+    dout <= memory(vtou(rdaddr));
 end process;
 end blockram;

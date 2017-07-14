@@ -38,9 +38,9 @@ begin
                 when ALU_XOR => result := Src1 xor Src2;
                 when ALU_LU  => result := half(Src2) & X"0000";
 
-                when ALU_SLL => result := Src1 sll to_integer(unsigned(Src2));
-                when ALU_SRL => result := Src1 srl to_integer(unsigned(Src2));
-                when ALU_SRA => result := Src1 sra to_integer(unsigned(Src2));
+                when ALU_SLL => result := Src1 sll vtou(Src2);
+                when ALU_SRL => result := Src1 srl vtou(Src2);
+                when ALU_SRA => result := Src1 sra vtou(Src2);
 
                 when ALU_MULT | ALU_MULTU | ALU_DIV | ALU_DIVU =>
                     -- Interesting read: http://yarchive.net/comp/mips_exceptions.html
@@ -57,7 +57,7 @@ begin
                 
                 when ALU_SLT  =>
                     result := (31 downto 1 => '0')
-                            & high_if(to_integer(signed(Src1)) < to_integer(signed(Src2)));
+                            & high_if(vtoi(Src1) < vtoi(Src2));
                 when ALU_SLTU => result := (31 downto 1 => '0') & high_if(Src1 < Src2);
 
                 -- Some (all?) of these could be optimized away (e.g. EQ can be done with SUB)
@@ -65,13 +65,13 @@ begin
                 when ALU_NE  => result := (31 downto 1 => '0') & low_if(Src1 /= Src2);
 
                 when ALU_LEZ => result := (31 downto 1 => '0')
-                                        & low_if(to_integer(signed(Src1)) <= 0);
+                                        & low_if(vtoi(Src1) <= 0);
                 when ALU_LTZ => result := (31 downto 1 => '0')
-                                        & low_if(to_integer(signed(Src1)) <  0);
+                                        & low_if(vtoi(Src1) <  0);
                 when ALU_GTZ => result := (31 downto 1 => '0')
-                                        & low_if(to_integer(signed(Src1)) >  0);
+                                        & low_if(vtoi(Src1) >  0);
                 when ALU_GEZ => result := (31 downto 1 => '0')
-                                        & low_if(to_integer(signed(Src1)) >= 0);
+                                        & low_if(vtoi(Src1) >= 0);
 
                 when others => null; -- trap <= TRAP_UNIMPLEMENTED; -- FIXME!
             end case;

@@ -92,8 +92,8 @@ begin
                 Character'Val(27) & "[31mFailure in testcase " & integer'image(i)
                 & Character'Val(27) & "[m" severity note;
                 assert not error report Character'Val(27) &
-                "[31mGot: "    & integer'image(to_integer(unsigned(extended))) &
-                ", Expected: " & integer'image(to_integer(unsigned(testcases(i).extended)))
+                "[31mGot: "    & integer'image(vtou(extended)) &
+                ", Expected: " & integer'image(vtou(testcases(i).extended))
                 & Character'Val(27) & "[m" severity note;
             end loop;
             assert error_count /= 0 report

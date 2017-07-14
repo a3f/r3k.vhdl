@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
+use work.utils.all;
 
 entity DataMem is
     port (
@@ -24,7 +25,7 @@ architecture behav of DataMem is
 begin process(Address, clk)
 begin
     if rising_edge(clk) then
-        ReadData <= code(to_integer(unsigned(Address)));
+        ReadData <= code(vtou(Address));
     end if;
 end process;
 end behav;
