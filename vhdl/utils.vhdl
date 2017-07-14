@@ -12,6 +12,10 @@ package utils is
     procedure zeroextend(signal data_out: out std_logic_vector; signal data_in : in std_logic_vector);
 
     function isnonzero(vec: std_logic_vector) return boolean;
+
+    procedure tick(signal clk : inout std_logic; n : natural; T : time := 1 ns);
+
+    function vtoi(v : std_logic_vector) return natural;
 end utils;
 
 package body utils is
@@ -41,6 +45,19 @@ package body utils is
     begin
         return vec /= (vec'range => '0');
     end isnonzero;
+
+    procedure tick(signal clk : inout std_logic; n : natural; T : time := 1 ns) is
+    begin
+        for i in 1 to n loop
+            clk <= not clk;
+            wait for T;
+        end loop;
+    end procedure;
+
+    function vtoi(v : std_logic_vector) return natural is
+    begin
+        return to_integer(unsigned(v));
+    end;
 
 end utils;
 

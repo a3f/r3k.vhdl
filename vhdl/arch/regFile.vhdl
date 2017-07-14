@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
+use work.utils.all;
 
 entity regFile is
     port (
@@ -10,6 +11,7 @@ entity regFile is
         writedata: in word_t;
         readData1, readData2 : out word_t;
         clk : in std_logic;
+        rst : in std_logic;
         regWrite : in std_logic
     );
     end regFile;
@@ -19,25 +21,19 @@ architecture behav of regFile is
     signal reg : regfile_t := (0 => ZERO, others => DONT_CARE);
 
 
-begin process(readreg1, readreg2, writereg, clk)
-    variable readreg1_int : integer := to_integer(unsigned(readreg1));
-    variable readreg2_int : integer := to_integer(unsigned(readreg2));
-    variable writereg_int : integer := to_integer(unsigned(writereg));
+    begin process(readreg1, readreg2, writereg, writedata, regWrite, clk, rst)
     begin
-
-    -- Do these need to be inside a process? I think not.
-        if readreg1'event then
-            readdata1 <= reg(readreg1_int);
-        end if;
-        if readreg1'event then
-            readdata2 <= reg(readreg2_int);
-        end if;
         if rising_edge(clk) then
+            readdata1 <= reg(vtoi(readreg1));
+            readdata2 <= reg(vtoi(readreg2));
+
             if regWrite = '1' and writereg /= R0 then
-                reg(writereg_int) <= writedata;
+                reg(vtoi(writereg)) <= writedata;
+            end if;
+            -- replace with loop
+            if rst = '1' then
+                for i in 0 to 31 loop reg(i) <= ZERO; end loop;
             end if;
         end if;
-
     end process;
-
 end behav;

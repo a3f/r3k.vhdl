@@ -33,6 +33,7 @@ for (@tests) {
     run 'ghdl', '-e', @opts, $_, or next;
     run 'ghdl', '-r', @opts, $_, "--vcd=$_.vcd" or next;
     $errors--;
+    # GHDL doesn't fail on testbench error!
 }
 
 if ($errors) {

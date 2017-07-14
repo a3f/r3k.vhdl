@@ -73,8 +73,41 @@ package arch_defs is
     constant INT_MAX   : word_t := X"7fff_ffff";
     constant DONT_CARE : word_t := (others => 'X');
 
-    constant R0 : reg_t  := (others => '0'); --  Zero register  (5 bits)
-    constant R31 : reg_t := (others => '1'); --  Return address (5 bits)
+    -- Register file
+    constant R0  : reg_t := B"0_0000"; --  $zero
+    constant R1  : reg_t := B"0_0001"; --  $at
+    constant R2  : reg_t := B"0_0010"; --  $v0
+    constant R3  : reg_t := B"0_0011"; --  $v1
+    constant R4  : reg_t := B"0_0100"; --  $a0
+    constant R5  : reg_t := B"0_0101"; --  $a1
+    constant R6  : reg_t := B"0_0110"; --  $a2
+    constant R7  : reg_t := B"0_0111"; --  $a3
+    constant R8  : reg_t := B"0_1000"; --  $t0
+    constant R9  : reg_t := B"0_1001"; --  $t1
+    constant R10 : reg_t := B"0_1010"; --  $t2
+    constant R11 : reg_t := B"0_1011"; --  $t3
+    constant R12 : reg_t := B"0_1100"; --  $t4
+    constant R13 : reg_t := B"0_1101"; --  $t5
+    constant R14 : reg_t := B"0_1110"; --  $t6
+    constant R15 : reg_t := B"0_1111"; --  $t7
+    constant R16 : reg_t := B"1_0000"; --  $s0
+    constant R17 : reg_t := B"1_0001"; --  $s1
+    constant R18 : reg_t := B"1_0010"; --  $s2
+    constant R19 : reg_t := B"1_0011"; --  $s3
+    constant R20 : reg_t := B"1_0100"; --  $s4
+    constant R21 : reg_t := B"1_0101"; --  $s5
+    constant R22 : reg_t := B"1_0110"; --  $s6
+    constant R23 : reg_t := B"1_0111"; --  $s7
+    constant R24 : reg_t := B"1_1000"; --  $t8
+    constant R25 : reg_t := B"1_1001"; --  $t9
+    constant R26 : reg_t := B"1_1010"; --  $k0
+    constant R27 : reg_t := B"1_1011"; --  $k1
+    constant R28 : reg_t := B"1_1100"; --  $gp
+    constant R29 : reg_t := B"1_1101"; --  $sp
+    constant R30 : reg_t := B"1_1110"; --  $fp
+    constant R31 : reg_t := B"1_1111"; --  $ra
+
+    function toreg(i : integer) return reg_t;
 
 end arch_defs;
 
@@ -119,6 +152,11 @@ package body arch_defs is
     function byte(w : word_t) return byte_t is
     begin
         return w( 7 downto 0);
+    end function;
+
+    function toreg(i : integer) return reg_t is
+    begin
+        return std_logic_vector(to_unsigned(i, 5));
     end function;
 
     -- ALU

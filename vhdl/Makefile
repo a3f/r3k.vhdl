@@ -8,8 +8,8 @@ G_OBJS = $(G_SRCS:.vhdl=.o)
 .PHONY: all
 all: arch io
 
-.PHONY: test
-test: tb
+.PHONY: test 
+test: arch io tb
 
 .PHONY: globals
 globals: $(G_OBJS)
@@ -23,7 +23,7 @@ io: globals
 	$(MAKE) -C $@
 
 .PHONY: tb
-tb: arch io
+tb:
 	$(MAKE) -C $@ test
 
 %.o: %.vhdl
