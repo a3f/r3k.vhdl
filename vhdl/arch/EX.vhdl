@@ -15,8 +15,6 @@ entity Execute is
 
         zeroxed, sexed : in word_t;
 
- 	branch_out : out ctrl_t;
-
         takeBranch : out ctrl_t;
         AluResult : out word_t;
 
@@ -94,7 +92,5 @@ begin
     port map (Src1 => Src1, Src2 => Src2, AluOp => ALUOp_in, Immediate => AluSrc_in, AluResult => AluResult, isZero => isZero);
 
     takebranch <= Branch_in and isZero;
-
-    Branch_out     <= Branch_in;
 
 end struct;
