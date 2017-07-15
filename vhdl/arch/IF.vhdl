@@ -61,6 +61,7 @@ instructionMem1: InstructionMem
 	clk => clk,
 	instr => instr_out);
 
+end;
 end struct;
 
 
