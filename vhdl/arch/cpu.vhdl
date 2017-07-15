@@ -210,26 +210,13 @@ architecture struct of cpu is
 
 begin
     jump_addr <= pcLast4 & inst27to0;
-
-    pcAdd: Adder
-    port map(
-        src1 => read_addr,
-        src2 => PC_ADD,
-        result => pcAddOut);
+  
     branchAdd: Adder
     port map(
         src1 => pcAddOut,
         src2 => immExtShift,
         result => BranchAddOut
     );
-    pc1: PC
-    port map (
-        next_addr => next_addr,
-        clk => clk,
-        rst => rst,
-        addr => addr
-    );
-
     maindec1: maindec
     port map (instr => instr, Link => Link, JumpReg => JumpReg, JumpDirect => JumpDir, Branch =>Branch, MemToReg => MemToReg, MemSex => MemSex, Shift => Shift, ALUSrc => ALUSrc, RegWrite => RegWrite, RegDst => RegDst, memRead => memRead, memWrite => memWrite, ALUOp => ALUOp);
 
@@ -246,8 +233,6 @@ begin
     port map (JumpDir => JumpDir, jumpAddr => jump_addr, BranchMux => BranchMuxOut, output => JumpDirMuxOut);
     jumpRegMux1:JumpRegMux
     port map (JumpReg => JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => next_addr);
-    instructionMem1: InstructionMem
-    port map (read_addr, clk, instr);
     zeroExtender1: ZeroExtender
     port map (shamt => shamt, zeroxed => shamtExt);
     signExtender1: SignExtender
