@@ -7,6 +7,25 @@ use work.arch_defs.all;
 -- This allows for testbenches that can instantiate them theirselves
 -- and check whether everything works as expected
 entity cpu is
+generic(PC_ADD : addrdiff_t := X"0000_0004");
+    port(
+        clk : in std_logic;
+        rst : in std_logic;
+
+        -- Register File
+        readreg1, readreg2 : out reg_t;
+        writereg: out reg_t;
+        regWriteData: out word_t;
+        regReadData1, regReadData2 : in word_t;
+        regWrite : out std_logic;
+
+        -- Memory
+        Address : out addr_t;
+        memWriteData : out word_t;
+        memReadData : in word_t;
+        MemRead, MemWrite : out ctrl_memwidth_t;
+        MemSex : out std_logic
+    );
 end;
 
 architecture struct of cpu is
@@ -18,7 +37,7 @@ component InstructionFetch is
         pc_in : in addr_t;
 	pc_out : out addr_t;
         instr_out : out instruction_t);
-end component
+end component;
 	 
 component InstructionDecode is
     port(
@@ -41,18 +60,18 @@ component InstructionDecode is
 end component;
 
 component execute is
-    port(
-	);
 end component;
 
 component memoryAccess is
-    port(
-	);
 end component;
 
 component writeBack is
     port(
-	);
+	Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
+	pc_out, branch_addr, jump_addr: in addr_t;
+	aluResult, memReadData, regReadData1 : in word_t;
+	regWriteData : out word_t;
+	next_addr : out addr_t);
 end component;
 
 begin

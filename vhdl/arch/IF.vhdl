@@ -8,7 +8,7 @@ entity InstructionFetch is
     port (
         clk : in std_logic;
 	rst : in std_logic;
-        pc_in : in addr_t;
+        next_addr : in addr_t;
 	pc_out : out addr_t;
         instr_out : out instruction_t
     );
@@ -18,7 +18,7 @@ architecture struct of InstructionFetch is
 
 component PC is
     port (
-        pc_in : in addr_t;
+        next_addr : in addr_t;
         clk : in std_logic;
         rst : in std_logic;
         addr : out addr_t);
@@ -44,7 +44,7 @@ begin
 
 pc1: PC
     port map (
-        pc_in=> pc_in,
+        next_addr=> next_addr,
         clk => clk,
         rst => rst,
         addr => read_addr);
@@ -60,8 +60,6 @@ instructionMem1: InstructionMem
 	read_addr => read_addr,
 	clk => clk,
 	instr => instr_out);
-
-end;
 end struct;
 
 
