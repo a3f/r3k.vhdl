@@ -16,8 +16,8 @@ architecture behav of InstructionMem is
     type code_t is array (natural range <>) of instruction_t;
     constant code : code_t := (
     -- start:
-    X"3421ffff", -- no-op
-    X"08_00_00_00"  -- j start
+    X"3421_ffff", -- ori $at, $at, 0xffff
+    X"08_000000"  -- j start
     );
 begin process(read_addr, clk)
     begin

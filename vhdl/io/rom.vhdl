@@ -17,7 +17,7 @@ architecture rtl of rom is
         begin
         case a is
 
-        when X"0000_0000" => z <= X"3421ffff"; -- 4!..
+        when X"0000_0000" => z <= X"3421ffff"; -- ori $at, $at, 0xffff
 
         when others => z <= X"ffffffff";
         end case;

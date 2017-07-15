@@ -7,6 +7,7 @@ use work.arch_defs.all;
 -- This allows for testbenches that can instantiate them theirselves
 -- and check whether everything works as expected
 entity cpu is
+    generic(PC_ADD : addrdiff_t := X"0000_0004");
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -47,6 +48,7 @@ architecture struct of cpu is
     port (
         next_addr : in addr_t;
         clk : in std_logic;
+        rst : in std_logic;
         addr : out addr_t);
     end component;
 
@@ -54,7 +56,7 @@ architecture struct of cpu is
     component BranchANDZero
     port (
         Branch: in ctrl_t;
-        ALUZero: in ctrl_t;
+        isZero: in ctrl_t;
         output: out ctrl_t);
     end component;
     component ShiftLeftAddr
@@ -123,19 +125,9 @@ architecture struct of cpu is
         Src2       : in word_t;
         ALUOp      : in alu_op_t;
         AluResult  : out word_t;
-        Zero       : out std_logic;
+        isZero       : out std_logic;
         trap       : out traps_t
     );
-    end component;
-    component regFile is
-    port (
-            -- static
-        readreg1, readreg2 : in reg_t;
-        writereg: in reg_t;
-        writedata: in word_t;
-        readData1, readData2 : out word_t;
-        clk : in std_logic;
-        regWrite : in std_logic);
     end component;
     component returnAddrMux is
     port (
@@ -210,7 +202,7 @@ architecture struct of cpu is
     signal immExt, immExtShift: std_logic_vector (31 downto 0);
     signal shamtExt : word_t;
     signal Src1, Src2, ALUResult: word_t;
-    signal Zero: ctrl_t;
+    signal isZero: ctrl_t;
 
     -- regFile Signals
     signal regDstMuxOut, returnAddrMuxOut, returnAddrReg: reg_t;
@@ -222,7 +214,7 @@ begin
     pcAdd: Adder
     port map(
         src1 => read_addr,
-        src2 => X"0000_0004",
+        src2 => PC_ADD,
         result => pcAddOut);
     branchAdd: Adder
     port map(
@@ -234,6 +226,7 @@ begin
     port map (
         next_addr => next_addr,
         clk => clk,
+        rst => rst,
         addr => addr
     );
 
@@ -246,13 +239,13 @@ begin
     shiftLeftImm1: shiftLeftImm
     port map(imm => immExt, output => immExtShift);
     branchANDZero1: BranchANDZero
-    port map (Branch => Branch, ALUZero => Zero, output => BranchANDZeroOut);
+    port map (Branch => Branch, isZero => isZero, output => BranchANDZeroOut);
     branchMux1: BranchMux
     port map (BranchANDZero => BranchANDZeroOut, AddrALUresult => BranchAddOut, addr => pcAddOut, output => BranchMuxOut);
     jumpDirMux1: JumpDirMux
     port map (JumpDir => JumpDir, jumpAddr => jump_addr, BranchMux => BranchMuxOut, output => JumpDirMuxOut);
     jumpRegMux1:JumpRegMux
-    port map (JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => next_addr);
+    port map (JumpReg => JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => next_addr);
     instructionMem1: InstructionMem
     port map (read_addr, clk, instr);
     zeroExtender1: ZeroExtender
@@ -266,7 +259,7 @@ begin
     aluSrcMux1: aluSrcMux
     port map (ALUSrc => ALUSrc, reg2data => regReadData2, immediate => immExt, output => Src2);
     alu1: alu
-    port map (Src1, Src2, ALUOp, AluResult, Zero);
+    port map (Src1, Src2, ALUOp, AluResult, isZero);
 
     --regFile
     regDstMux1: regDstMux

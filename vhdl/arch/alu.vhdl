@@ -10,7 +10,7 @@ entity alu is
          Src2       : in word_t;
          AluOp      : in alu_op_t;
          AluResult  : out word_t;
-         Zero       : out ctrl_t;
+         isZero     : out ctrl_t;
 
          trap       : out traps_t -- only TRAP_OVERFLOW is relevant
      );
@@ -76,10 +76,10 @@ begin
                 when others => null; -- trap <= TRAP_UNIMPLEMENTED; -- FIXME!
             end case;
 
-            if result = X"0000_0000" then
-                Zero <= '1';
+            if result = ZERO then
+                isZero <= '1';
             else
-                Zero <= '0';
+                isZero <= '0';
             end if;
             AluResult <= result;
         end process;

@@ -32,15 +32,14 @@ architecture struct of mem is
     signal cs : memchipsel_t;
     signal instr : instruction_t;
 begin
-    addrdec_instance : addrdec
-        port map(Address, cs);
+    -- addrdec_instance : addrdec port map(Address, cs);
 
     instruction_mem : rom
         port map(Address, instr);
 
     memReadData <= HI_Z;
 
-    process(clk)
+    process(clk, instr, memRead)
     begin
         if rising_edge(clk) and memRead = WIDTH_WORD then
             memReadData <= instr;

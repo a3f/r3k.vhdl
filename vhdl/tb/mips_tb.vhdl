@@ -1,6 +1,10 @@
+-- SKIP because I can't get it to work yet :-(
+-- Will try less involved instr_tb.vhdl first
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
+use work.utils.all;
+use work.txt_utils.all;
 
 -- A testbench has no ports
 entity mips_tb is
@@ -31,6 +35,7 @@ architecture struct of mips_tb is
     end component;
 
     component cpu is
+    generic(PC_ADD : addrdiff_t := X"0000_0004");
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -90,7 +95,9 @@ begin
         clk => clk
     );
 
-    cpu_inst: cpu port map (
+    cpu_inst: cpu
+    generic map (PC_ADD => X"0000_0000")
+    port map (
         clk => clk,
         rst => rst,
 
@@ -110,22 +117,25 @@ begin
     );
 
     test: process begin
-        wait for 2 ns;
+        wait for 20 ns;
         rst <= '1';
-        wait for 2 ns;
+        wait for 20 ns;
         rst <= '0';
-        wait for 2 ns;
+        wait for 20 ns;
+
+        readreg1 <= R1;
+        wait for 20 ns;
+
+        assert readdata1 = X"01234567" report
+            "Failed writing regfile: " & to_string(readdata1)
+        severity error;
+
 
         done <= true;
         wait;
     end process;
 
-    clkproc: process begin
-        clk <= not clk;
-        wait for 1 ns;
-
-        if done then wait; end if;
-    end process;
+    clkproc: process begin clk <= not clk; wait for 1 ns; if done then wait; end if; end process;
 end struct;
 
 

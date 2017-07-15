@@ -15,7 +15,7 @@ architecture test of alu_tb is
          Src2       : in word_t;
          AluOp      : in alu_op_t;
          AluResult  : out word_t;
-         Zero       : out ctrl_t;
+         isZero     : out ctrl_t;
 
          trap       : out traps_t -- only TRAP_OVERFLOW is relevant
      );
@@ -24,12 +24,12 @@ architecture test of alu_tb is
     signal Src1, Src2 : word_t;
     signal Op : alu_op_t;
     signal AluResult : word_t;
-    signal ZeroInd : ctrl_t;
+    signal isZero : ctrl_t;
     signal trap : traps_t;
 
 begin
    --  Component instantiation.
-        instance: alu port map (Src1 => Src1, Src2 => Src2, AluOp => Op, AluResult => AluResult, Zero => ZeroInd, trap => trap); -- FIXME check traps
+    instance: alu port map (Src1 => Src1, Src2 => Src2, AluOp => Op, AluResult => AluResult, isZero => isZero, trap => trap); -- FIXME check traps
 
    --  This process does the real job.
         process
@@ -132,9 +132,9 @@ begin
          --  Check the outputs.
                 if testcases(i).AluResult(31) /= '-' then
                     error := AluResult /= testcases(i).AluResult
-                          or (AluResult /= Zero and ZeroInd /= '0');
+                    or (AluResult /= Zero and isZero /= '0');
                 else
-                    error := testcases(i).AluResult(0) /= ZeroInd;
+                    error := testcases(i).AluResult(0) /= isZero;
                 end if;
                 error := error or trap /= TRAP_NONE;
 

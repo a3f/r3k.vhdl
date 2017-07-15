@@ -35,6 +35,7 @@ architecture struct of mips is
     end component;
 
     component cpu is
+    generic(PC_ADD : addrdiff_t := X"0000_0004");
     port(
         clk : in std_logic;
         rst : in std_logic;
