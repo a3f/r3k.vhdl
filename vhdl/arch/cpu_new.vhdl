@@ -34,9 +34,9 @@ component InstructionFetch is
     port(
 	clk : in std_logic;
 	rst : in std_logic;
-        pc_in : in addr_t;
-	pc_out : out addr_t;
-        instr_out : out instruction_t);
+        next_addr : in addr_t;
+	next_pc : out addr_t;
+        instr	 : out instruction_t);
 end component;
 	 
 component InstructionDecode is
@@ -60,6 +60,31 @@ component InstructionDecode is
 end component;
 
 component execute is
+port (
+        next_pc : in addr_t;
+        regReadData1, regReadData2 : in word_t;
+        branch_addr : out addr_t;
+
+        regwrite_in, link_in, jumpreg_in, jumpdirect_in, branch_in : in ctrl_t;
+        memread_in : in ctrl_memwidth_t;
+        memtoreg_in, memsex_in : in ctrl_t;
+        memwrite_in : in ctrl_memwidth_t;
+        shift_in, alusrc_in : in ctrl_t;
+        aluop_in     : in alu_op_t;
+
+        zeroxed, sexed : in word_t;
+
+        regwrite_out, link_out, jumpreg_out, jumpdirect_out, branch_out : out ctrl_t;
+        memread_out : out ctrl_memwidth_t;
+        memtoreg_out, memsex_out : out ctrl_t;
+        memwrite_out : out ctrl_memwidth_t;
+
+        takeBranch : out ctrl_t;
+        AluResult : out word_t;
+
+        clk : in std_logic;
+        rst : in std_logic
+    );
 end component;
 
 component memoryAccess is
@@ -74,5 +99,71 @@ component writeBack is
 	next_addr : out addr_t);
 end component;
 
+signal Link, JumpReg, JumpDir, Branch, TakeBranch, MemToReg,  SignExtend, Shift, ALUSrc, ALUOp : ctrl_t;
+signal next_addr, pc_out : addr_t;
+signal instr : instruction_t;	
+signal zeroxes, sexed: word_t;
+
 begin
+
+id1: InstructionDecode
+port map(clk => clk, rst => rst, next_addr => next_addr, next_pc => next_pc, instr => instr);
+if1: InstructionFetch
+port map(clk => clk,
+	rst => rst, 
+	instr => instr,
+        next_pc => next_pc,
+        jump_addr => jump_addr,
+        regwrite => regwrite,
+	link => link,
+	jumpreg => jumpreg,
+	jumpdirect => jumpDir,
+	branch => Branch,
+        memread => memRead,
+        memtoreg => memToReg,
+	memsex => memSex,
+        memwrite => memWrite,
+        shift => shift,
+	alusrc => ALUSrc,
+        aluop => ALUOp,        
+        readreg1 => readReg,
+	readreg2 => readReg2,
+	writeReg => writeReg,
+        zeroxed => zeroxed,
+	sexed => sexed);
+ex1: Execute
+port map(
+	clk => clk,
+	rst => rst, 
+        next_pc => next_pc,
+	readreg1 => readReg,
+	readreg2 => readReg2,
+	branch_addr => branch_addr,
+	branch_in => Branch,
+        shift_in => shift,
+	alusrc_in => ALUSrc,
+        aluop_in => ALUOp,
+	zeroxed => zeroxed,
+	sexed => sexed,
+	takeBranch => takeBranch,
+	ALUResult => ALUResult);
+ma1: memoryAccess
+port map();
+wb1: WriteBack
+port map(Link => Link,
+	JumpReg => JumpReg,
+	JumpDir => JumpDir,
+	MemToReg => MemToReg,
+ 	TakeBranch => TakeBranch,
+	pc_out => pc_out,
+	branch_addr => branch_addr,
+	jump_addr => jump_addr,
+	aluResult => aluResult,
+	memReadData => memReadData,
+	regReadData1 => regReadData1,
+	regWriteData => regWriteData,
+	next_addr => next_addr);
+
 end struct;
+
+

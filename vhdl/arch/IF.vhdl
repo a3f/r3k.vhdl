@@ -9,8 +9,8 @@ entity InstructionFetch is
         clk : in std_logic;
         rst : in std_logic;
         next_addr : in addr_t;
-        pc_out : out addr_t;
-        instr_out : out instruction_t
+	next_pc : out addr_t;
+        instr : out instruction_t
     );
 end;
 
@@ -53,13 +53,13 @@ pcAdd: Adder
     port map(
         src1 => read_addr,
         src2 => PC_ADD,
-        result => pc_out);
+        result => next_pc);
 
 instructionMem1: InstructionMem
     port map (
 	read_addr => read_addr,
 	clk => clk,
-	instr => instr_out);
+	instr => instr);
 end struct;
 
 

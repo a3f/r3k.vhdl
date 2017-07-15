@@ -9,19 +9,13 @@ entity Execute is
         regReadData1, regReadData2 : in word_t;
         branch_addr : out addr_t;
 
-        regwrite_in, link_in, jumpreg_in, jumpdirect_in, branch_in : in ctrl_t;
-        memread_in : in ctrl_memwidth_t;
-        memtoreg_in, memsex_in : in ctrl_t;
-        memwrite_in : in ctrl_memwidth_t;
+        branch_in : in ctrl_t;
         shift_in, alusrc_in : in ctrl_t;
         aluop_in     : in alu_op_t;
 
         zeroxed, sexed : in word_t;
 
-        regwrite_out, link_out, jumpreg_out, jumpdirect_out, branch_out : out ctrl_t;
-        memread_out : out ctrl_memwidth_t;
-        memtoreg_out, memsex_out : out ctrl_t;
-        memwrite_out : out ctrl_memwidth_t;
+ 	branch_out : out ctrl_t;
 
         takeBranch : out ctrl_t;
         AluResult : out word_t;
@@ -101,16 +95,6 @@ begin
 
     takebranch <= Branch_in and isZero;
 
-
-    -- pass through
-    RegWrite_out   <= RegWrite_in;
-    Link_out       <= Link_in;
-    JumpReg_out    <= JumpReg_in;
-    JumpDirect_out <= JumpDirect_in;
     Branch_out     <= Branch_in;
-    MemRead_out    <= MemRead_in;
-    MemToReg_out   <= MemToReg_in;
-    MemSex_out     <= MemSex_in;
-    memWrite_out   <= MemWrite_in;
 
 end struct;
