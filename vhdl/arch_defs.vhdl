@@ -41,7 +41,7 @@ package arch_defs is
         ALU_SLL, ALU_SRL, ALU_SRA,
         ALU_MULT, ALU_MULTU, ALU_DIV, ALU_DIVU,
         ALU_MFHI, ALU_MFLO, ALU_MTHI, ALU_MTLO,
-        ALU_SLT, ALU_SLTU,
+        ALU_SLT, ALU_SLTU, -- TODO zero extend or sign extent?
         ALU_EQ, ALU_NE, ALU_LEZ, ALU_LTZ, ALU_GTZ, ALU_GEZ
     );
 

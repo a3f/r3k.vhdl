@@ -64,6 +64,7 @@ architecture struct of Execute is
         Src1       : in word_t;
         Src2       : in word_t;
         ALUOp      : in alu_op_t;
+        Immediate  : in ctrl_t;
         AluResult  : out word_t;
         isZero     : out ctrl_t;
         trap       : out traps_t
@@ -96,7 +97,7 @@ begin
     aluSrc2Mux1: aluSrcMux
     port map (ALUSrc => AluSrc_in, reg2data => regReadData2, immediate => sexed, output => Src2);
     alu1: alu
-    port map (Src1 => Src1, Src2 => Src2, AluOp => ALUOp_in, AluResult => AluResult, isZero => isZero);
+    port map (Src1 => Src1, Src2 => Src2, AluOp => ALUOp_in, Immediate => AluSrc_in, AluResult => AluResult, isZero => isZero);
 
     takebranch <= Branch_in and isZero;
 

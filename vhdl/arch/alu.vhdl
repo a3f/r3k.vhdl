@@ -9,6 +9,7 @@ entity alu is
     port(Src1       : in word_t;
          Src2       : in word_t;
          AluOp      : in alu_op_t;
+         Immediate  : in ctrl_t;
          AluResult  : out word_t;
          isZero     : out ctrl_t;
 
@@ -20,9 +21,17 @@ end alu;
 -- http://www-inst.eecs.berkeley.edu/~cs61c/resources/MIPS_Green_Sheet.pdf
 architecture behav of alu is
     signal HI, LO : word_t;
+    function immediately_correct(Src2 : word_t; immediate : ctrl_t) return word_t is
+    begin
+        if immediate = '0' then
+            return Src2;
+        else
+            return X"0000" & half(Src2);
+        end if;
+    end function;
 begin
         trap <= TRAP_NONE; -- rethink
-        process (Src1, Src2, AluOp)
+        process (Src1, Src2, AluOp, immediate)
             variable result : word_t := X"DEADBEEF";
         begin
             case AluOp is
@@ -31,11 +40,10 @@ begin
                 when ALU_ADDU => result := Src1  +  Src2;
                 when ALU_SUB | ALU_SUBU =>
                                 result := Src1  -  Src2;
-
-                when ALU_AND => result := Src1 and Src2;
-                when ALU_OR  => result := Src1 or  Src2;
-                when ALU_NOR => result := Src1 nor Src2;
-                when ALU_XOR => result := Src1 xor Src2;
+                when ALU_AND => result := Src1 and immediately_correct(Src2, immediate);
+                when ALU_OR  => result := Src1 or  immediately_correct(Src2, immediate);
+                when ALU_NOR => result := Src1 nor immediately_correct(Src2, immediate);
+                when ALU_XOR => result := Src1 xor immediately_correct(Src2, immediate);
                 when ALU_LU  => result := half(Src2) & X"0000";
 
                 when ALU_SLL => result := Src1 sll vtou(Src2);

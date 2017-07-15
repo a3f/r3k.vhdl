@@ -7,9 +7,9 @@ entity InstructionFetch is
     generic(PC_ADD : addrdiff_t := X"0000_0004");
     port (
         clk : in std_logic;
-	rst : in std_logic;
+        rst : in std_logic;
         next_addr : in addr_t;
-	pc_out : out addr_t;
+        pc_out : out addr_t;
         instr_out : out instruction_t
     );
 end;
