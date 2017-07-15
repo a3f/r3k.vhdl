@@ -163,7 +163,7 @@ port map(
 	Link => Link,
 	JumpReg => JumpReg,
 	JumpDir => JumpDir,
-	MemToReg => MemToReg,git 
+	MemToReg => MemToReg,
  	TakeBranch => TakeBranch,
 	next_pc => next_pc,
 	branch_addr => branch_addr,
