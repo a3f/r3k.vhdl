@@ -15,7 +15,7 @@ generic(PC_ADD : addrdiff_t := X"0000_0004");
         -- Register File
         readreg1, readreg2 : out reg_t;
         writereg: out reg_t;
-        regWriteData: out word_t;
+        regWriteData: out word_t;	
         regReadData1, regReadData2 : in word_t;
         regWrite : out std_logic;
 
@@ -148,7 +148,13 @@ port map(
 	takeBranch => takeBranch,
 	ALUResult => ALUResult);
 ma1: memoryAccess
-port map();
+port map(
+	Address => Address,
+        memWriteData => memWriteData,
+        memReadData = memReadData,
+        MemRead => MemRead,
+	MemWrite => MemWrite,
+        MemSex => MemSex);
 wb1: WriteBack
 port map(Link => Link,
 	JumpReg => JumpReg,
