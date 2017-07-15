@@ -11,7 +11,7 @@ entity Execute is
 
         branch_in : in ctrl_t;
         shift_in, alusrc_in : in ctrl_t;
-        aluop_in     : in alu_op_t;
+        aluop_in : in alu_op_t;
 
         zeroxed, sexed : in word_t;
 
