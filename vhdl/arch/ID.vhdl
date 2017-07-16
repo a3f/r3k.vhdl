@@ -6,7 +6,7 @@ use work.arch_defs.all;
 entity InstructionDecode is
     port (
         instr : in instruction_t;
-        next_pc : in addr_t;
+        pc_plus_4 : in addr_t;
         jump_addr : out addr_t;
         
         regwrite, link, jumpreg, jumpdirect, branch : out ctrl_t;
@@ -74,7 +74,7 @@ architecture struct of InstructionDecode is
 begin
 
     -- immediates
-    jump_addr <= next_pc(31 downto 28) & jump_immediate & "00";
+    jump_addr <= pc_plus_4(31 downto 28) & jump_immediate & "00";
     returnAddrControl <= (iBranch or iJumpDirect) and iLink;
     zeroxed <= (31 downto 5 => '0') & shamt;
     sexed <= zeroes & imm when imm(15) = '0' else ones & imm;

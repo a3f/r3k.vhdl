@@ -5,13 +5,16 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 
 entity InstructionFetch is
+    -- NOTE I think, too high a CPI may lead to the same instruction
+    --      executed multiple times. Problematic with real world
+    --      access (e.g. writing UART)
     generic(PC_ADD : natural := 4;
             CPI : natural := 5);
     port (
         clk : in std_logic;
         rst : in std_logic;
-        next_addr : in addr_t;
-        next_pc : out addr_t;
+        new_pc : in addr_t;
+        pc_plus_4 : out addr_t;
         instr : out instruction_t
     );
 end;
@@ -48,7 +51,7 @@ begin
 pc1: PC
     generic map(CPI => CPI)
     port map (
-        next_addr=> next_addr,
+        next_addr => new_pc,
         clk => clk,
         rst => rst,
         addr => read_addr);
@@ -57,7 +60,7 @@ pcAdd: Adder
     port map(
         src1 => read_addr,
         src2 => std_logic_vector(to_unsigned(PC_ADD, 32)),
-        result => next_pc);
+        result => pc_plus_4);
 
 instructionMem1: InstructionMem
     port map (

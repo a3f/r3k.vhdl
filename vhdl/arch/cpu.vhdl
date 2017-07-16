@@ -34,18 +34,19 @@ architecture struct of cpu is
     component InstructionFetch is
         generic(PC_ADD : natural := PC_ADD;
                 CPI : natural := CPI);
-        port(
-                clk : in std_logic;
-                rst : in std_logic;
-                next_addr : in addr_t;
-                next_pc : out addr_t;
-                instr   : out instruction_t);
+        port (
+            clk : in std_logic;
+            rst : in std_logic;
+            new_pc : in addr_t;
+            pc_plus_4 : out addr_t;
+            instr : out instruction_t
+        );
     end component;
 
     component InstructionDecode is
         port(
                 instr : in instruction_t;
-                next_pc : in addr_t;
+                pc_plus_4 : in addr_t;
                 jump_addr : out addr_t;
 
         regwrite, link, jumpreg, jumpdirect, branch : out ctrl_t;
@@ -63,7 +64,7 @@ architecture struct of cpu is
 
     component Execute is
         port (
-            next_pc : in addr_t;
+            pc_plus_4 : in addr_t;
             regReadData1, regReadData2 : in word_t;
             branch_addr : out addr_t;
 
@@ -90,14 +91,14 @@ architecture struct of cpu is
     component WriteBack is
         port(
         Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
-        next_pc, branch_addr, jump_addr: in addr_t;
+        pc_plus_4, branch_addr, jump_addr: in addr_t;
         aluResult, memReadData, regReadData1 : in word_t;
         regWriteData : out word_t;
-        next_addr : out addr_t);
+        new_pc : out addr_t);
     end component;
 
     signal Link, JumpReg, JumpDir, Branch, TakeBranch, MemToReg,  SignExtend, Shift, ALUSrc : ctrl_t;
-    signal next_addr, next_pc, jump_addr, branch_addr : addr_t;
+    signal new_pc, pc_plus_4, jump_addr, branch_addr : addr_t;
     signal instr : instruction_t;
     signal zeroxed, sexed, aluResult: word_t;
     signal aluop : alu_op_t;
@@ -109,12 +110,12 @@ begin
     port map(
                 clk => clk,
                 rst => rst,
-                next_addr => next_addr,
-                next_pc => next_pc,
+                new_pc => new_pc,
+                pc_plus_4 => pc_plus_4,
                 instr => instr);
     id1: InstructionDecode
     port map(instr => instr,
-             next_pc => next_pc,
+             pc_plus_4 => pc_plus_4,
              jump_addr => jump_addr,
 
              regwrite => regwrite, link => link, jumpreg => jumpreg, jumpdirect => jumpDir, branch => Branch,
@@ -132,7 +133,7 @@ begin
          );
     ex1: Execute
     port map(
-                next_pc => next_pc,
+                pc_plus_4 => pc_plus_4,
                 regReadData1 => regReadData1, regReadData2 => regReadData2,
                 branch_addr => branch_addr,
                 branch_in => Branch,
@@ -159,13 +160,13 @@ begin
                 JumpDir => JumpDir,
                 MemToReg => MemToReg,
                 TakeBranch => TakeBranch,
-                next_pc => next_pc,
+                pc_plus_4 => pc_plus_4,
                 branch_addr => branch_addr,
                 jump_addr => jump_addr,
                 aluResult => aluResult,
                 memReadData => memReadData,
                 regReadData1 => regReadData1,
                 regWriteData => regWriteData,
-                next_addr => next_addr);
+                new_pc => new_pc);
 
 end struct;

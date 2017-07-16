@@ -5,7 +5,7 @@ use work.arch_defs.all;
 
 entity Execute is
     port (
-        next_pc : in addr_t;
+        pc_plus_4 : in addr_t;
         regReadData1, regReadData2 : in word_t;
         branch_addr : out addr_t;
 
@@ -77,7 +77,7 @@ begin
 
     branchAdd: Adder
     port map(
-        src1 => next_pc,
+        src1 => pc_plus_4,
         src2 => branch_offset,
         result => branch_addr
     );

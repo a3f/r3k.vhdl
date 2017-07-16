@@ -13,7 +13,7 @@ architecture behav of ID_tb is
 
 component InstructionDecode is
     port (instr : in instruction_t;
-          next_pc : in addr_t;
+          pc_plus_4 : in addr_t;
           jump_addr : out addr_t;
           
           regwrite, link, jumpreg, jumpdirect, branch : out ctrl_t;
@@ -39,7 +39,7 @@ component InstructionDecode is
     signal shift, alusrc : ctrl_t;
     signal aluop     : alu_op_t;
 
-    signal next_pc, jump_addr : addr_t;
+    signal pc_plus_4, jump_addr : addr_t;
 
     signal clk, rst : std_logic;
     signal readreg1, readreg2 : reg_t;
@@ -52,7 +52,7 @@ component InstructionDecode is
 begin
         ID : InstructionDecode port map(
             instr => instr,
-            next_pc => next_pc,
+            pc_plus_4 => pc_plus_4,
             jump_addr => jump_addr,
 
             regwrite => regwrite, link => link, jumpreg => jumpreg,
