@@ -24,6 +24,8 @@ package memory_map is
     );
 
     function inside(addr_vec, base_vec: addr_t; len : natural) return boolean;
+
+    constant BOOT_ADDR : addr_t := X"0000_0000";
 end memory_map;
 
 package body memory_map is

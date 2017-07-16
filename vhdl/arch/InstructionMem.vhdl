@@ -3,6 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.utils.all;
+use work.txt_utils.all;
+use work.debugio_h.all;
 
 entity InstructionMem is
     port (
@@ -17,7 +19,7 @@ architecture behav of InstructionMem is
     constant code : code_t := (
     -- start:
     B"001101_00001_00001" & X"f000", -- ori r1, r1, 0xf000
-    B"001101_00001_00001" & X"0b00", -- ori r1, r2, 0x0b00
+    B"001101_00001_00010" & X"0b00", -- ori r1, r2, 0x0b00
     X"08_000000"  -- j start
     );
 begin process(read_addr, clk)
@@ -26,6 +28,7 @@ begin process(read_addr, clk)
         instrnum := "00" & read_addr(31 downto 2);
     if rising_edge(clk) then
         instr <= code(vtou(instrnum));
+        printf("[IMEM] %s: %s\n", to_hstring(read_addr), to_hstring(code(vtou(instrnum))));
     end if;
 end process;
 end behav;

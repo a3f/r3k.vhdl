@@ -2,6 +2,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
+use work.memory_map.all;
 
 -- We keep keep all state (registers, memory) out of the CPU
 -- This allows for testbenches that can instantiate them theirselves
@@ -98,7 +99,8 @@ architecture struct of cpu is
     end component;
 
     signal Link, JumpReg, JumpDir, Branch, TakeBranch, MemToReg,  SignExtend, Shift, ALUSrc : ctrl_t;
-    signal new_pc, pc_plus_4, jump_addr, branch_addr : addr_t;
+    signal new_pc : addr_t := BOOT_ADDR;
+    signal pc_plus_4, jump_addr, branch_addr : addr_t;
     signal instr : instruction_t;
     signal zeroxed, sexed, aluResult: word_t;
     signal aluop : alu_op_t;

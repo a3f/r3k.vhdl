@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 use work.txt_utils.all;
+use work.memory_map.all;
 
 entity cpu_tb is
 end;
@@ -86,7 +87,8 @@ architecture struct of cpu_tb is
 
     -- control signals
     signal Link, Branch, jumpreg, jumpdirect, memToreg, TakeBranch, Shift, ALUSrc : ctrl_t;
-    signal new_pc, pc_plus_4, jump_addr, branch_addr : addr_t;
+    signal new_pc : addr_t;
+    signal pc_plus_4, jump_addr, branch_addr : addr_t;
     signal instr : instruction_t;
     signal zeroxed, sexed, aluResult: word_t;
     signal aluop : alu_op_t;
@@ -95,7 +97,8 @@ architecture struct of cpu_tb is
     signal regclk : std_logic := '0';
     signal halt_cpu : boolean := false;
 
-    signal rst : std_logic := '0';
+    signal cpurst : std_logic := '0';
+    signal regrst : std_logic := '0';
 
     signal done : boolean := false;
 
@@ -107,7 +110,7 @@ begin
             readreg1 => readreg1, readreg2 => readreg2,
             writereg => writereg, writedata => regWriteData,
             readData1 => regReadData1, readData2 => regReadData2,
-            clk => regclk, rst => rst,
+            clk => regclk, rst => regrst,
             regWrite => regWrite
         );
 
@@ -115,7 +118,7 @@ begin
     generic map (PC_ADD => 4, CPI => 10)
     port map(
                 clk => cpuclk,
-                rst => rst,
+                rst => cpurst,
                 new_pc => new_pc,
                 pc_plus_4 => pc_plus_4,
                 instr => instr);
@@ -136,7 +139,7 @@ begin
              zeroxed => zeroxed, sexed => sexed,
 
              clk => cpuclk,
-             rst => rst
+             rst => cpurst
          );
     ex1: Execute
     port map(
@@ -153,7 +156,7 @@ begin
                 ALUResult => AluResult,
 
                 clk => cpuclk,
-                rst => rst
+                rst => cpurst
     );
 
     wb1: WriteBack
@@ -176,11 +179,11 @@ begin
     begin
         -- This halt_cpu thing doesn't work yet
         --halt_cpu <= true;
-        --rst <= '0';
+        --regrst <= '0';
         --wait for 2 ns;
-        --rst <= '1';
+        --regrst <= '1';
         --wait for 2 ns;
-        --rst <= '0';
+        --regrst <= '0';
         --wait for 20 ns;
 
         --readreg1 <= R1;
@@ -190,6 +193,12 @@ begin
         --    ESC& "[31mFailed to reset. 0 /= " & to_hstring(regReadData1) &ESC& "[m"
         --severity error;
         --halt_cpu <= false;
+
+        cpurst <= '0';
+        wait for 2 ns;
+        cpurst <= '1';
+        wait for 2 ns;
+        cpurst <= '0';
 
 
         wait for 200 ns;
@@ -205,16 +214,13 @@ begin
         readreg2 <= R2;
         wait for 2 ns;
 
-        -- FIXME this test fails. probably because the next PC mechanism doesn't work?
-        -- or it works too good and we are already at some random address before the
-        -- first instruction leaves the pipeline
         assert regReadData2 = X"0000_0B00" report
                 ESC& "[31mFailed to ori. 0x0B00 /= " & to_hstring(regReadData2) &ESC& "[m"
-        severity note;
+        severity error;
 
         assert regReadData1 = X"0000_F000" report
                 ESC& "[31mFailed to ori. 0xF000 /= " & to_hstring(regReadData1) &ESC& "[m"
-        severity note;
+        severity error;
 
         done <= true;
         wait;
