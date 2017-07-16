@@ -81,13 +81,13 @@ architecture struct of cpu is
         );
     end component;
 
-    component memoryAccess is
+    component MemoryAccess is
         port(
         ALUResult, regReadData2 : in word_t;
         signExtend : in ctrl_t);
     end component;
 
-    component writeBack is
+    component WriteBack is
         port(
         Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
         next_pc, branch_addr, jump_addr: in addr_t;

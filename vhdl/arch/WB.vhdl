@@ -8,6 +8,7 @@ entity WriteBack is
 	next_pc, branch_addr, jump_addr: in addr_t;
 	aluResult, memReadData, regReadData1 : in word_t;
 	regWriteData : out word_t;
+
 	next_addr : out addr_t);
 end;
 

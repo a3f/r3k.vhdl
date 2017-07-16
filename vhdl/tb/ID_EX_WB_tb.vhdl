@@ -3,10 +3,10 @@ use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 use work.txt_utils.all;
 
-entity id_ex_tb is
+entity id_ex_wb_tb is
 end;
 
-architecture struct of id_ex_tb is
+architecture struct of id_ex_wb_tb is
     component regFile is
     port (
         readreg1, readreg2 : in reg_t;
@@ -21,7 +21,7 @@ architecture struct of id_ex_tb is
 
     signal readreg1, readreg2 : reg_t := R0;
     signal writereg: reg_t := R0;
-    signal regReadData1, regReadData2 : word_t := ZERO;
+    signal regReadData1, regReadData2, regWriteData : word_t := ZERO;
     signal regWrite : std_logic := '0';
 
     component InstructionDecode is
@@ -63,7 +63,18 @@ architecture struct of id_ex_tb is
         );
     end component;
 
-    signal Branch, TakeBranch, Shift, ALUSrc : ctrl_t;
+    component WriteBack is
+        port(
+        Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
+        next_pc, branch_addr, jump_addr: in addr_t;
+        aluResult, memReadData, regReadData1 : in word_t;
+        regWriteData : out word_t;
+        next_addr : out addr_t);
+    end component;
+
+
+    -- control signals
+    signal Link, Branch, memToreg, TakeBranch, Shift, ALUSrc : ctrl_t;
     signal next_addr, next_pc, jump_addr, branch_addr : addr_t;
     signal instr : instruction_t;
     signal zeroxed, sexed, aluResult: word_t;
@@ -80,7 +91,7 @@ begin
     regFile1: regFile
         port map(
             readreg1 => readreg1, readreg2 => readreg2,
-            writereg => writereg, writedata => AluResult,
+            writereg => writereg, writedata => regWriteData,
             readData1 => regReadData1, readData2 => regReadData2,
             clk => clk, rst => rst,
             regWrite => regWrite
@@ -93,7 +104,7 @@ begin
 
              regwrite => regwrite, link => open, jumpreg => open, jumpdirect => open, branch => Branch,
              memread => open, memwrite => open,
-             memtoreg => open, memsex => open,
+             memtoreg => memtoreg, memsex => open,
              shift => shift, alusrc => aluSrc,
              aluop => aluOp,        
 
@@ -116,11 +127,27 @@ begin
                 zeroxed => zeroxed, sexed => sexed,
 
                 takeBranch => open,
-                ALUResult => ALUResult,
+                ALUResult => AluResult,
 
                 clk => clk,
                 rst => rst
     );
+
+    wb1: WriteBack
+    port map(
+                Link => Link,
+                JumpReg => 'X',
+                JumpDir => 'X',
+                MemToReg => memtoreg,
+                TakeBranch => 'X',
+                next_pc => DONT_CARE,
+                branch_addr => DONT_CARE,
+                jump_addr => DONT_CARE,
+                aluResult => aluResult,
+                memReadData => DONT_CARE,
+                regReadData1 => regReadData1,
+                regWriteData => regWriteData,
+                next_addr => open);
     
     test : process
     begin
