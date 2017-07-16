@@ -31,9 +31,9 @@ for (@tests) {
     $errors++; # Pessimistic by default
     run 'ghdl', '-a', @aopts, "$_.vhdl" or next;
     run 'ghdl', '-e', '-g', @eopts, $_, or next;
-    run 'ghdl', '-r', @ropts, $_, "--vcd=$_.vcd" or next;
+    print $out = `ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-`;
+    next if $? != 0 || $out =~ /:\(assertion error\):/;
     $errors--;
-    # GHDL doesn't fail on testbench error!
 }
 
 if ($errors) {
