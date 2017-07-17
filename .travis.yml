@@ -8,15 +8,25 @@ services:
 compiler:
   - gcc
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.9
+    - g++-4.9
+
 install:
   - ./install-deps.sh
   - ghdl --version
 
 script:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
   - source toolchain/setenv.sh
 # Skip building BIOS till running the cross compiler on Travis works
 #  - make
   - make -C vhdl all
   - make -C vhdl test
+
 
 after_success:
