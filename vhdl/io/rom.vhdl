@@ -3,9 +3,13 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use work.txt_utils.all;
+use work.arch_defs.all;
+
 entity rom is
     port ( a: in std_logic_vector(31 downto 0);
-           z: out std_logic_vector(31 downto 0)
+           z: out std_logic_vector(31 downto 0);
+           clk: in std_logic
          );
     attribute syn_romstyle : string;
     attribute syn_romstyle of z : signal is "select_rom";
@@ -14,12 +18,15 @@ end rom;
 architecture rtl of rom is
     begin
     process(a)
-        begin
+    begin
+        printf("address = %s\n", a);
         case a is
 
-        when X"0000_0000" => z <= X"3421ffff"; -- ori $at, $at, 0xffff
+        when X"0000_0000" => z <= B"001101_00001_00001" & X"f000"; -- ori r1, r1, 0xf000
+        when X"0000_0004" => z <= B"001101_00001_00010" & X"0b00"; -- ori r1, r2, 0x0b00
+        when X"0000_0008" => z <= X"08_000000"; -- j start
 
-        when others => z <= X"ffffffff";
+        when others => null;
         end case;
     end process;
 end rtl;

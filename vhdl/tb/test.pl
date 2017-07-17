@@ -31,9 +31,14 @@ for (@tests) {
     $errors++; # Pessimistic by default
     run 'ghdl', '-a', @aopts, "$_.vhdl" or next;
     run 'ghdl', '-e', '-g', @eopts, $_, or next;
-    print $out = `ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-`;
-    next if $? != 0 || $out =~ /:\(assertion error\):/;
-    $errors--;
+    @out = qx(ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-);
+    @out = grep {
+        $failed++ if /:\(assertion error\):/;
+        !/:\(assertion warning\): NUMERIC_STD/ 
+    } @out if $ENV{NO_WARN_NUMERIC_STD};
+
+    print @out;
+    $errors-- unless $? != 0 || $failed;
 }
 
 if ($errors) {

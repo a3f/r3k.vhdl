@@ -31,8 +31,7 @@ architecture behav of regFile_tb is
     signal rst : std_logic := '0';
     signal regWrite : std_logic := '0';
 
-    constant ESC : Character := Character'val(27);
-    constant errormsg : string := ESC & "[31m" & "Testcase failed" & ESC & "[m";
+    constant errormsg : string := ANSI_RED & "Testcase failed" & ANSI_NONE;
     signal done : boolean := false;
 
     begin

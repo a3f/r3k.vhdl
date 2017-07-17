@@ -4,12 +4,12 @@ use work.arch_defs.all;
 
 entity WriteBack is
    port(
-	Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
-	pc_plus_4, branch_addr, jump_addr: in addr_t;
-	aluResult, memReadData, regReadData1 : in word_t;
-	regWriteData : out word_t;
-    
-	new_pc : out addr_t);
+   Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
+   pc_plus_4, branch_addr, jump_addr: in addr_t;
+   aluResult, memReadData, regReadData1 : in word_t;
+   regWriteData : out word_t;
+
+   new_pc : out addr_t);
 end;
 
 architecture struct of WriteBack is
@@ -52,7 +52,7 @@ component memToRegMux is
 end component;
 
 signal BranchMuxOut, JumpDirMuxOut : addr_t;
-signal MemToRegMuxOut : word_t; 
+signal MemToRegMuxOut : word_t;
 
 begin
 
@@ -60,11 +60,11 @@ branchMux1: BranchMux
     port map (BranchANDZero => TakeBranch, AddrALUresult => branch_addr, addr => pc_plus_4, output => BranchMuxOut);
     jumpDirMux1: JumpDirMux
     port map (JumpDir => JumpDir, jumpAddr => jump_addr, BranchMux => BranchMuxOut, output => JumpDirMuxOut);
-    jumpRegMux1:JumpRegMux
-    port map (JumpReg => JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => new_pc); 	
+jumpRegMux1:JumpRegMux
+    port map (JumpReg => JumpReg, reg1Data => regReadData1, JumpDirMux => JumpDirMuxOut, output => new_pc);
  linkMux1: linkMux
     port map(Link => Link, pc => pc_plus_4, memToRegMux => memToRegMuxOut, output => regWriteData);
-    memToRegMux1: memToRegMux
+memToRegMux1: memToRegMux
     port map(MemtoReg => memToReg, aluresult => ALUResult, memReadData => memReadData, output => memToRegMuxOut);
 
 end struct;

@@ -1,42 +1,43 @@
--- The CPU, only the stateless parts
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
+use work.txt_utils.all;
 use work.memory_map.all;
 
--- We keep keep all state (registers, memory) out of the CPU
--- This allows for testbenches that can instantiate them theirselves
--- and check whether everything works as expected
-entity cpu is
-    generic(PC_ADD : natural := 4;
-               CPI : natural := 5;
-               SINGLE_ADDRESS_SPACE : boolean := true);
-    port(
-            clk : in std_logic;
-            rst : in std_logic;
-
-    -- Register File
-    readreg1, readreg2 : out reg_t;
-    writereg: out reg_t;
-    regWriteData: out word_t;
-    regReadData1, regReadData2 : in word_t;
-    regWrite : out std_logic;
-
-    -- Memory
-    top_addr : out addr_t;
-    top_dout : in word_t;
-    top_din : out word_t;
-    top_size : out ctrl_memwidth_t;
-    top_wr : out ctrl_t
-);
+entity cpu_no_IF_tb is
 end;
 
-architecture struct of cpu is
+architecture struct of cpu_no_IF_tb is
+    component regFile is
+    port (
+        readreg1, readreg2 : in reg_t;
+        writereg: in reg_t;
+        writedata: in word_t;
+        readData1, readData2 : out word_t;
+        clk : in std_logic;
+        rst : in std_logic;
+        regWrite : in std_logic
+    );
+    end component;
+
+    signal readreg1, readreg2 : reg_t := R0;
+    signal writereg: reg_t := R0;
+    signal regReadData1, regReadData2, regWriteData : word_t := ZERO;
+    signal regWrite : ctrl_t := '0';
+
+    component mem is
+    port (
+        addr : in addr_t;
+        din : in word_t;
+        dout : out word_t;
+        size : in ctrl_memwidth_t;
+        wr : in std_logic;
+        clk : in std_logic
+    );
+    end component;
 
     component InstructionFetch is
-        generic(PC_ADD : natural := PC_ADD;
-                CPI : natural := CPI;
-                SINGLE_ADDRESS_SPACE : boolean := SINGLE_ADDRESS_SPACE);
+        generic(PC_ADD, CPI : natural);
         port (
             clk : in std_logic;
             rst : in std_logic;
@@ -52,6 +53,7 @@ architecture struct of cpu is
             top_wr : out ctrl_t
         );
     end component;
+
 
     component InstructionDecode is
         port(
@@ -110,6 +112,7 @@ architecture struct of cpu is
         top_wr : out ctrl_t);
     end component;
 
+
     component WriteBack is
         port(
         Link, JumpReg, JumpDir, MemToReg, TakeBranch : in ctrl_t;
@@ -119,40 +122,59 @@ architecture struct of cpu is
         new_pc : out addr_t);
     end component;
 
-    signal Link, JumpReg, JumpDir, Branch, TakeBranch, MemToReg, SignExtend, Shift, ALUSrc, MemSex : ctrl_t;
+
+    -- control signals
+    signal Link, Branch, JumpReg, JumpDir, memToreg, TakeBranch, Shift, ALUSrc, MemSex : ctrl_t;
     signal MemRead, MemWrite : ctrl_memwidth_t;
     signal memReadData : word_t;
-    signal new_pc : addr_t := BOOT_ADDR;
+    signal new_pc : addr_t;
     signal pc_plus_4, jump_addr, branch_addr : addr_t;
     signal instr : instruction_t;
     signal zeroxed, sexed, aluResult: word_t;
     signal aluop : alu_op_t;
 
+    signal cpuclk : std_logic := '0';
+    signal regclk : std_logic := '0';
+    signal halt_cpu : boolean := false;
+
+    signal cpurst : std_logic := '0';
+    signal regrst : std_logic := '0';
+
+    signal done : boolean := false;
+
+    signal addr : addr_t;
+    signal din : word_t;
+    signal dout : word_t;
+    signal size : ctrl_memwidth_t;
+    signal wr : std_logic;
 begin
 
-    if1: InstructionFetch
-    generic map (PC_ADD => PC_ADD, CPI => CPI)
-    port map(
-                clk => clk,
-                rst => rst,
-                new_pc => new_pc,
-                pc_plus_4 => pc_plus_4,
-                instr => instr,
+    regFile1: regFile
+        port map(
+            readreg1 => readreg1, readreg2 => readreg2,
+            writereg => writereg, writedata => regWriteData,
+            readData1 => regReadData1, readData2 => regReadData2,
+            clk => regclk, rst => regrst,
+            regWrite => regWrite
+        );
 
-                top_addr => top_addr,
-                top_dout => top_dout,
-                top_din => top_din,
-                top_size => top_size,
-                top_wr => top_wr
-            );
+    mem_bus: mem port map (
+        addr => addr,
+        din => din,
+        dout => dout,
+        size => size,
+        wr => wr,
+        clk => cpuclk
+    );
+
     id1: InstructionDecode
     port map(instr => instr,
              pc_plus_4 => pc_plus_4,
              jump_addr => jump_addr,
 
-             regwrite => regwrite, link => link, jumpreg => jumpreg, jumpdirect => jumpDir, branch => Branch,
-             memread => memRead, memwrite => memWrite,
-             memtoreg => memToReg, memsex => memSex,
+             regwrite => regwrite, link => link, jumpreg => jumpreg, jumpdirect => jumpdir, branch => Branch,
+             memread => memread, memwrite => memwrite,
+             memtoreg => memtoreg, memsex => memsex,
              shift => shift, alusrc => aluSrc,
              aluop => aluOp,        
 
@@ -160,8 +182,8 @@ begin
 
              zeroxed => zeroxed, sexed => sexed,
 
-             clk => clk,
-             rst => rst
+             clk => cpuclk,
+             rst => cpurst
          );
     ex1: Execute
     port map(
@@ -177,8 +199,8 @@ begin
                 takeBranch => takeBranch,
                 ALUResult => ALUResult,
 
-                clk => clk,
-                rst => rst
+                clk => cpuclk,
+                rst => cpurst
     );
     ma1: memoryAccess
     port map( 
@@ -187,15 +209,15 @@ begin
         WriteData_in => regReadData2,
         ReadData_in => memReadData,
         MemRead_in => memRead, MemWrite_in => memWrite,
-        MemSex_in => MemSex,
-        clk => clk,
+        MemSex_in => memSex,
+        clk => cpuclk,
 
         -- outbound to top level module
-        top_addr => top_addr,
-        top_dout => top_dout,
-        top_din => top_din,
-        top_size => top_size,
-        top_wr => top_wr);
+        top_addr => addr,
+        top_dout => dout,
+        top_din => din,
+        top_size => size,
+        top_wr => wr);
 
     wb1: WriteBack
     port map(
@@ -212,5 +234,70 @@ begin
                 regReadData1 => regReadData1,
                 regWriteData => regWriteData,
                 new_pc => new_pc);
+    
+    test : process
+    begin
+        -- This halt_cpu thing doesn't work yet
+        --halt_cpu <= true;
+        --regrst <= '0';
+        --wait for 2 ns;
+        --regrst <= '1';
+        --wait for 2 ns;
+        --regrst <= '0';
+        --wait for 20 ns;
 
+        --readreg1 <= R1;
+        --wait for 2 ns;
+
+        --assert regReadData1 = ZERO report
+        --    ANSI_RED "Failed to reset. 0 /= " & to_hstring(regReadData1) & ANSI_NONE
+        --severity error;
+        --halt_cpu <= false;
+
+        cpurst <= '0';
+        wait for 2 ns;
+        cpurst <= '1';
+        wait for 2 ns;
+        cpurst <= '0';
+
+        instr <= B"001101"& R1 & R1 &X"F000"; -- ori r1, r1, 0xF000
+        wait for 100 ns;
+        instr <= B"001101"& R1 & R2 &X"0BAD"; -- ori r1, r2, 0x0BAD
+        wait for 1000 ns;
+
+        readreg1 <= R1;
+        wait for 2 ns;
+
+        assert regReadData1 = X"0000_F000" report
+                ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
+        severity error;
+
+        readreg1 <= R1;
+        readreg2 <= R2;
+        wait for 2 ns;
+
+        assert regReadData2 = X"0000_0BAD" report
+                ANSI_RED & "Failed to ori. 0x0BAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        severity error;
+
+        assert regReadData1 = X"0000_F000" report
+                ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData2) & ANSI_NONE
+        severity error;
+
+        done <= true;
+        wait;
+    end process;
+
+    clkproc: process
+    begin
+        regclk <= not regclk;
+        if not halt_cpu then
+            cpuclk <= not cpuclk;
+        end if;
+        wait for 1 ns;
+        if done then wait; end if;
+    end process;
 end struct;
+
+
+

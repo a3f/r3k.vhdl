@@ -151,27 +151,21 @@ begin
                     error_count := error_count + 1;
                 end if;
                 assert not error report
-                Character'Val(27) & "[31mFailure in testcase " & integer'image(i)
-                & Character'Val(27) & "[m" severity note;
+                ANSI_RED & "Failure in testcase " & integer'image(i) & ANSI_NONE severity note;
                 assert trap = TRAP_NONE report
-                Character'Val(27) & "[31mALU trapped.! " & integer'image(i)
-                & Character'Val(27) & "[m" severity note;
+                ANSI_RED & "ALU trapped.! " & integer'image(i)
+                & ANSI_NONE severity note;
 
-                assert not error report Character'Val(27) &
-                "[31m" & to_hstring(Src1) & " " &
+                assert not error report ANSI_RED & to_hstring(Src1) & " " &
                 alu_op_t'image(Op) & " " &
                 to_hstring(Src2)
                 & " = "    & to_hstring(AluResult) &
                 " (Expected: " & to_hstring(testcases(i).AluResult) & ")"
-                & Character'Val(27) & "[m" severity note;
+                & ANSI_NONE severity note;
             end loop;
-            assert error_count /= 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[32mTest's over." & Character'Val(27) & "[m"
-            severity note;
+            assert error_count /= 0 report ANSI_GREEN & "Test's over." & ANSI_NONE severity note;
             assert error_count = 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[31m" & integer'image(error_count) & " testcase(s) failed." & Character'Val(27) & "[m"
+            ANSI_RED & integer'image(error_count) & " testcase(s) failed." & ANSI_NONE
             severity failure;
             --  Wait forever; this will finish the simulation.
             wait;

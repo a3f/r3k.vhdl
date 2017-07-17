@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.utils.all;
+use work.txt_utils.all;
 
 entity regFile is
     port (
@@ -28,6 +29,7 @@ architecture behav of regFile is
             readdata2 <= reg(vtou(readreg2));
 
             if regWrite = '1' and writereg /= R0 then
+                printf(ANSI_GREEN & "R%s=%s\n", writereg, writedata);
                 reg(vtou(writereg)) <= writedata;
             end if;
             -- replace with loop

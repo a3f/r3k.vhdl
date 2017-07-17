@@ -25,11 +25,11 @@ architecture struct of mips is
 
     component mem is
     port (
-        Address : in addr_t;
-        WriteData : in word_t;
-        memReadData : out word_t;
-        MemRead, MemWrite : in ctrl_memwidth_t;
-        MemSex : in std_logic;
+        addr : in addr_t;
+        din : in word_t;
+        dout : out word_t;
+        size : in ctrl_memwidth_t;
+        wr : in std_logic;
         clk : in std_logic
     );
     end component;
@@ -48,11 +48,11 @@ architecture struct of mips is
         regWrite : out std_logic;
 
         -- Memory
-        Address : out addr_t;
-        memWriteData : out word_t;
-        memReadData : in word_t;
-        MemRead, MemWrite : out ctrl_memwidth_t;
-        MemSex : out std_logic
+        top_addr : out addr_t;
+        top_dout : in word_t;
+        top_din : out word_t;
+        top_size : out ctrl_memwidth_t;
+        top_wr : out ctrl_t
     );
     end component;
 
@@ -62,11 +62,11 @@ architecture struct of mips is
     signal readData1, readData2 : word_t;
     signal regWrite : std_logic;
 
-    signal Address : addr_t;
-    signal memWriteData : word_t;
-    signal memReadData : word_t;
-    signal MemRead, MemWrite : ctrl_memwidth_t;
-    signal MemSex : std_logic;
+    signal addr : addr_t;
+    signal din : word_t;
+    signal dout : word_t;
+    signal size : ctrl_memwidth_t;
+    signal wr : std_logic;
 
 begin
     regfile_inst: regFile port map (
@@ -80,11 +80,11 @@ begin
     );
 
     mem_bus: mem port map (
-        Address => Address,
-        WriteData => memWriteData,
-        memReadData => memReadData,
-        MemRead => memRead, MemWrite => MemWrite,
-        MemSex => MemSex,
+        addr => addr,
+        din => din,
+        dout => dout,
+        size => size,
+        wr => wr,
         clk => clk
     );
 
@@ -100,11 +100,11 @@ begin
         regWrite => regWrite,
 
         -- Memory
-        Address => Address,
-        memWriteData => memWriteData,
-        memReadData => memReadData,
-        MemRead => memRead, MemWrite => memWrite,
-        MemSex => memSex
+        top_addr => addr,
+        top_dout => dout,
+        top_din => din,
+        top_size => size,
+        top_wr => wr
     );
 end struct;
 

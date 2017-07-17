@@ -2,6 +2,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
+use work.txt_utils.all;
 
 entity InstructionDecode is
     port (
@@ -114,6 +115,8 @@ begin
     Shift      <= iShift;
     ALUSrc     <= iALUSrc;
     AluOp      <= iAluOp;
+
+    process(instr) begin printf(ANSI_RED & "Decoding instruction %s\n", instr); end process;
 
     readreg1 <= rs;
     readreg2 <= rt;

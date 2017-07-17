@@ -107,18 +107,16 @@ begin
                 end if;
 
                 assert not error report
-                Character'Val(27) & "[31mFailure in testcase " & integer'image(i) & ": " &
+                ANSI_GREEN & "Failure in testcase " & integer'image(i) & ": " &
                 to_hstring(testcases(i).instr)
-                & Character'Val(27) & "[m" severity note;
+                & ANSI_NONE severity note;
 
             end loop;
             assert error_count /= 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[32mTest's over." & Character'Val(27) & "[m"
+            ANSI_GREEN & "Test's over." & ANSI_NONE
             severity note;
             assert error_count = 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[31m" & integer'image(error_count) & " testcase(s) failed." & Character'Val(27) & "[m"
+            ANSI_RED & integer'image(error_count) & " testcase(s) failed." & ANSI_NONE
             severity failure;
             --  Wait forever; this will finish the simulation.
             done <= true;

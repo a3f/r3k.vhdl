@@ -1,6 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
+use work.txt_utils.all;
 
 --  A testbench has no ports.
 entity SignExtender_tb is
@@ -52,16 +53,11 @@ begin
                     error_count := error_count + 1;
                 end if;
                 assert not error report
-                Character'Val(27) & "[31mFailure in testcase " & integer'image(i)
-                & Character'Val(27) & "[m" severity note;
+                ANSI_RED & "Failure in testcase " & integer'image(i) & ANSI_NONE severity note;
             end loop;
-            assert error_count /= 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[32mTest's over." & Character'Val(27) & "[m"
-            severity note;
+            assert error_count /= 0 report ANSI_GREEN & "Test's over." & ANSI_NONE severity note;
             assert error_count = 0 report
-            -- ANSI escape characters for green text
-            Character'Val(27) & "[31m" & integer'image(error_count) & " testcase(s) failed." & Character'Val(27) & "[m"
+            ANSI_RED & integer'image(error_count) & " testcase(s) failed." & ANSI_NONE
             severity failure;
             --  Wait forever; this will finish the simulation.
             wait;

@@ -9,13 +9,21 @@ entity InstructionFetch is
     --      executed multiple times. Problematic with real world
     --      access (e.g. writing UART)
     generic(PC_ADD : natural := 4;
-            CPI : natural := 5);
+            CPI : natural := 5;
+            SINGLE_ADDRESS_SPACE : boolean := true);
     port (
         clk : in std_logic;
         rst : in std_logic;
         new_pc : in addr_t;
         pc_plus_4 : out addr_t;
-        instr : out instruction_t
+        instr : out instruction_t;
+
+        -- outbound to top level module
+        top_addr : out addr_t;
+        top_dout : in word_t;
+        top_din : out word_t;
+        top_size : out ctrl_memwidth_t;
+        top_wr : out ctrl_t
     );
 end;
 
@@ -38,10 +46,18 @@ component Adder is
     end component;
 
 component InstructionMem is
+    generic ( SINGLE_ADDRESS_SPACE : boolean := SINGLE_ADDRESS_SPACE );
     port (
         read_addr: in addr_t;
         clk : in std_logic;
-        instr : out instruction_t);
+        instr : out instruction_t;
+
+        -- outbound to top level module
+        top_addr : out addr_t;
+        top_dout : in word_t;
+        top_din : out word_t;
+        top_size : out ctrl_memwidth_t;
+        top_wr : out ctrl_t);
     end component;
 
 signal read_addr: addr_t;
@@ -63,8 +79,16 @@ pcAdd: Adder
         result => pc_plus_4);
 
 instructionMem1: InstructionMem
+    generic map ( SINGLE_ADDRESS_SPACE => SINGLE_ADDRESS_SPACE )
     port map (
          read_addr => read_addr,
          clk => clk,
-         instr => instr);
+         instr => instr,
+
+         -- outbound to top level module
+         top_addr => top_addr,
+         top_dout => top_dout,
+         top_din => top_din,
+         top_size => top_size,
+         top_wr => top_wr);
 end struct;

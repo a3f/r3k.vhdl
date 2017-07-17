@@ -2,8 +2,8 @@
 
 ## VHDL MIPS Implementation
 
-Eventually, a VHDL implementation of a MIPS R3000 with memory mapped 16550-class UART and VGA.
-Supplied Toolchain and BIOS can be used to cross-compile C application to run on it.
+A MIPS R3000 softcore written in VHDL with memory mapped 16550-class UART and VGA.
+(Eventually), Supplied Toolchain and BIOS can be used to cross-compile C application to run on it.
 
 (More to follow)
 
@@ -11,7 +11,7 @@ Supplied Toolchain and BIOS can be used to cross-compile C application to run on
 
 ![MIPS R3000 single-cycle datapath][datapath]
 
-The VHDL code is located in `vhdl/`. Build and run tests with `make test`.
+The VHDL code is located in `vhdl/`. Build and run tests with `make test`. Never mind the build failing at the moment. The GHDL version on the CI server is for some reason crashing on (my otherwise perfect!) code.
 
 ## BIOS
 
@@ -28,7 +28,7 @@ launches QEMU monitor mode. All three modes start a gdb server at port 51234.
 
 `apt-get install gdb-multiarch` for debugging.
 
-Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.g. 'SYS=mips" as environment variable to select one. '. You can also pass 'BIG=1' in order to build for big-endian. 
+Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.g. 'SYS=mips" as environment variable to select one. '. You can also pass 'BIG=1' in order to build for big-endian.
 
 ## C Toolchain
 

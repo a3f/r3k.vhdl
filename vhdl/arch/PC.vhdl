@@ -4,7 +4,6 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.memory_map.all;
 -- Remove for synthesize?
-use work.debugio_h.all;
 use work.txt_utils.all;
 
 entity PC is
@@ -25,12 +24,13 @@ begin process(next_addr, clk, rst)
 begin
     if rst = '1' then
         addr <= bootaddr;
-        printf("Next PC: %s\n", to_hstring(bootaddr));
+        printf("[RESET] Next PC: %s\n", bootaddr);
     elsif rising_edge(clk) then
+        printf("CPI++ = %d\n", cycles);
         cycles := cycles + 1;
         if cycles = CPI then
             addr <= next_addr;
-            printf("Next PC: %s\n", to_hstring(next_addr));
+            printf(ANSI_RED & "Next PC: %s\n", next_addr);
             cycles := 0;
         end if;
     end if;

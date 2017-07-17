@@ -5,14 +5,15 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.memory_map.all;
+use work.txt_utils.all;
 
 entity mem is
     port(
-            Address : in addr_t;
-            WriteData : in word_t;
-            memReadData : out word_t;
-            MemRead, MemWrite : in ctrl_memwidth_t;
-            MemSex : in std_logic;
+            addr : in addr_t;
+            din : in word_t;
+            dout : out word_t;
+            size : in ctrl_memwidth_t;
+            wr : in std_logic;
             clk : in std_logic
     );
 end mem;
@@ -25,25 +26,25 @@ architecture struct of mem is
 
     component rom is
     port ( a: in std_logic_vector(31 downto 0);
-           z: out std_logic_vector(31 downto 0)
+           z: out std_logic_vector(31 downto 0);
+           clk : in std_logic
          );
     end component;
 
     signal cs : memchipsel_t;
     signal instr : instruction_t;
 begin
-    -- addrdec_instance : addrdec port map(Address, cs);
+    -- addrdec_instance : addrdec port map(addr, cs);
 
     instruction_mem : rom
-        port map(Address, instr);
+        port map(addr, instr, clk);
 
-    memReadData <= HI_Z;
+--    dout <= HI_Z;
 
-    process(clk, instr, memRead)
+    dout <= instr;
+    process(instr, addr)
     begin
-        if rising_edge(clk) and memRead = WIDTH_WORD then
-            memReadData <= instr;
-        end if;
+            printf("Reading *0x%s => %s\n", addr, instr);
     end process;
 end struct;
 
