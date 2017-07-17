@@ -10,7 +10,6 @@ if [ $? -eq 0 ]; then
     wget https://sourceforge.net/projects/ghdl-updates/files/Builds/ghdl-0.33/debian/ghdl_0.33-1jessie1_amd64.deb/download -O/tmp/ghdl.deb
     sudo dpkg -i /tmp/ghdl.deb
     sudo ldconfig
-    ghdl --version
 else
    echo "This script is only for Debian-based systems. Install GHDL, QEMU and cross compiler manually or use a VM"
    exit 1
