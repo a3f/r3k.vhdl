@@ -6,6 +6,7 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.memory_map.all;
 use work.txt_utils.all;
+use work.utils.all;
 
 entity mem is
     port(
@@ -27,17 +28,17 @@ architecture struct of mem is
     component rom is
     port ( a: in std_logic_vector(31 downto 0);
            z: out std_logic_vector(31 downto 0);
-           clk : in std_logic
+           en : in std_logic
          );
     end component;
 
-    signal cs : memchipsel_t;
+    signal cs : memchipsel_t := (others => '1'); -- FIXME!
     signal instr : instruction_t;
 begin
-    -- addrdec_instance : addrdec port map(addr, cs);
+    --addrdec_instance : addrdec port map(addr, cs);
 
     instruction_mem : rom
-        port map(addr, instr, clk);
+        port map(addr, instr, cs(mmap_rom));
 
 --    dout <= HI_Z;
 

@@ -32,10 +32,16 @@ architecture behav of InstructionMem is
 
 begin
     use_bus_rom: if SINGLE_ADDRESS_SPACE generate
-        instr <= top_dout;
+                    instr <= (others => 'Z');
         process(read_addr, top_dout, clk)
+            variable clks : natural := 0;
         begin
             if rising_edge(clk) then
+                clks := clks + 1;
+                if clks = 2 then
+                    instr <= top_dout;
+                    clks := 0;
+                end if;
                 printf("[IMEM] *%s: %s\n", read_addr, top_dout);
                 top_addr <= read_addr;
                 top_size <= WIDTH_WORD;

@@ -23,6 +23,15 @@ package memory_map is
         (X"14000010", 16*B,  X"80")  -- Video configuration
     );
 
+    constant mmap_ram : positive := 1;
+    constant mmap_rom : positive := 2;
+    constant mmap_led : positive := 3;
+    constant mmap_dipswitch : positive := 4;
+    constant mmap_push : positive := 5;
+    constant mmap_uart : positive := 6;
+    constant mmap_vram : positive := 7;
+    constant mmap_videocfg : positive := 8;
+
     function inside(addr_vec, base_vec: addr_t; len : natural) return boolean;
 
     constant BOOT_ADDR : addr_t := X"0000_0000";
