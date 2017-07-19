@@ -75,7 +75,7 @@ pc1: PC
 pcAdd: Adder
     port map(
         src1 => read_addr,
-        src2 => std_logic_vector(to_unsigned(PC_ADD, 32)),
+        src2 => itow(PC_ADD),
         result => pc_plus_4);
 
 instructionMem1: InstructionMem

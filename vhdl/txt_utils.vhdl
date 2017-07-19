@@ -71,18 +71,20 @@ package txt_utils is
 --
 
 
-  function sprintf(fmt: string; s0, s1, s2: string; i0: integer) return string;
-  procedure printf(fmt: string; s0, s1, s2: string; i0: integer);
+  function sprintf(fmt: string; s0, s1, s2, s3: string; i0: integer) return string;
+  procedure printf(fmt: string; s0, s1, s2, s3: string; i0: integer);
   procedure printf(fmt: string);
   procedure printf(fmt: string; s1: string);
   procedure printf(fmt: string; s1, s2: string);
   procedure printf(fmt: string; i1: integer);
   procedure printf(fmt: string; i1: integer; s2: string);
   procedure printf(fmt: string; i1: integer; s2, s3: string);
-  procedure printf(fmt: string; s1: std_logic_vector);
-  procedure printf(fmt: string; s1, s2: std_logic_vector);
-  procedure printf(fmt: string; s1 : string; s2: std_logic_vector);
-  procedure printf(fmt: string; s1 : std_logic_vector; s2: string);
+  procedure printf(fmt: string; v0: std_logic_vector);
+  procedure printf(fmt: string; v0, v1: std_logic_vector);
+  procedure printf(fmt: string; v0, v1, v2: std_logic_vector);
+  procedure printf(fmt: string; v0, v1, v2, v3: std_logic_vector);
+  procedure printf(fmt: string; s0 : string; v0: std_logic_vector);
+  procedure printf(fmt: string; v0 : std_logic_vector; s0: string);
 
   function  pf(arg1: in boolean) return string;
 
@@ -225,7 +227,7 @@ package body txt_utils is
         return to_ostring (to_stdulogicvector (value));
     end function to_ostring;
 
-    function sprintf(fmt: string; s0, s1, s2: string; i0: integer) return string is
+    function sprintf(fmt: string; s0, s1, s2, s3: string; i0: integer) return string is
     variable W: line; variable i, fi, di: integer:=0;
   begin loop
       --write(W, string'("n=")); write(W, s0'length);
@@ -253,6 +255,11 @@ package body txt_utils is
                       if s2(i)=NUL then exit; end if;
                       write(W, s2(i)); i:=i+1;
                     end loop;
+          when 3 => i:=s3'left;
+                    while i<=s3'length loop
+                      if s3(i)=NUL then exit; end if;
+                      write(W, s3(i)); i:=i+1;
+                    end loop;
           when others =>
           end case;
           di:=di+1;
@@ -273,12 +280,12 @@ package body txt_utils is
   return W.all;
   end sprintf;
 
-  procedure printf(fmt: string; s0, s1, s2: string; i0: integer) is
+  procedure printf(fmt: string; s0, s1, s2, s3: string; i0: integer) is
     variable W: line;
     variable lastch : string(1 to 2) := fmt(fmt'high-1 to fmt'high);
   begin
       Write(W, ANSI_BLUE);
-      Write(W, sprintf(fmt(fmt'low to fmt'high-1), s0, s1, s2, i0));
+      Write(W, sprintf(fmt(fmt'low to fmt'high-1), s0, s1, s2, s3, i0));
       if not (fmt(fmt'high) = 'n' and fmt(fmt'high -1) = '\') then
         Write(W, fmt(fmt'high-1 to fmt'high-2));
       end if;
@@ -287,25 +294,29 @@ package body txt_utils is
   end printf;
 
   procedure printf(fmt: string) is
-    begin printf(fmt, "", "", "", 0); end printf;
+    begin printf(fmt, "", "", "", "", 0); end printf;
   procedure printf(fmt: string; s1: string) is
-    begin printf(fmt, s1, "", "", 0); end printf;
+    begin printf(fmt, s1, "", "", "", 0); end printf;
   procedure printf(fmt: string; s1, s2: string) is
-    begin printf(fmt, s1, s2, "", 0); end printf;
+    begin printf(fmt, s1, s2, "", "", 0); end printf;
   procedure printf(fmt: string; i1: integer) is
-    begin printf(fmt, "", "", "", i1); end printf; 
+    begin printf(fmt, "", "", "", "", i1); end printf; 
   procedure printf(fmt: string; i1: integer; s2: string) is
-    begin printf(fmt, "", s2, "", i1); end printf; 
+    begin printf(fmt, "", s2, "", "", i1); end printf; 
   procedure printf(fmt: string; i1: integer; s2, s3: string) is
-    begin printf(fmt, "", s2, s3, i1); end printf; 
-  procedure printf(fmt: string; s1: std_logic_vector) is
-      begin printf(fmt, to_hstring(s1), "", "", 0); end printf;
-  procedure printf(fmt: string; s1, s2: std_logic_vector) is
-      begin printf(fmt, to_hstring(s1), to_hstring(s2), "", 0); end printf;
-  procedure printf(fmt: string; s1 : string; s2: std_logic_vector) is
-      begin printf(fmt, s1, to_hstring(s2), "", 0); end printf;
-  procedure printf(fmt: string; s1 : std_logic_vector; s2: string) is
-      begin printf(fmt, to_hstring(s1), s2, "", 0); end printf;
+    begin printf(fmt, "", s2, s3, "", i1); end printf; 
+  procedure printf(fmt: string; v0, v1, v2, v3: std_logic_vector) is
+    begin printf(fmt, to_hstring(v0), to_hstring(v1), to_hstring(v2), to_hstring(v3), 0); end printf;
+  procedure printf(fmt: string; v0, v1, v2: std_logic_vector) is
+    begin printf(fmt, v0, v1, v2, ""); end printf;
+  procedure printf(fmt: string; v0: std_logic_vector) is
+      begin printf(fmt, to_hstring(v0), "", "", "", 0); end printf;
+  procedure printf(fmt: string; v0, v1: std_logic_vector) is
+      begin printf(fmt, to_hstring(v0), to_hstring(v1), "", "", 0); end printf;
+  procedure printf(fmt: string; s0 : string; v0: std_logic_vector) is
+      begin printf(fmt, s0, to_hstring(v0), "", "", 0); end printf;
+  procedure printf(fmt: string; v0 : std_logic_vector; s0: string) is
+      begin printf(fmt, to_hstring(v0), s0, "", "", 0); end printf;
 
   function pf(arg1: in boolean) return string is
   begin
