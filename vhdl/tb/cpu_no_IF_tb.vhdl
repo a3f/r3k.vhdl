@@ -263,10 +263,10 @@ begin
         instr <= B"001101"& R1 & R1 &X"F000"; -- ori r1, r1, 0xF000
         wait for 100 ns;
         instr <= B"001101"& R1 & R2 &X"0BAD"; -- ori r1, r2, 0x0BAD
-        wait for 1000 ns;
+        wait for 50 ns;
 
         readreg1 <= R1;
-        wait for 2 ns;
+        wait for 4 ns;
 
         assert regReadData1 = X"0000_F000" report
                 ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
@@ -274,10 +274,10 @@ begin
 
         readreg1 <= R1;
         readreg2 <= R2;
-        wait for 2 ns;
+        wait for 4 ns;
 
-        assert regReadData2 = X"0000_0BAD" report
-                ANSI_RED & "Failed to ori. 0x0BAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        assert regReadData2 = X"0000_FBAD" report
+                ANSI_RED & "Failed to ori. 0xFBAD /= " & to_hstring(regReadData2) & ANSI_NONE
         severity error;
 
         assert regReadData1 = X"0000_F000" report

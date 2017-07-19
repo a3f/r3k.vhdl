@@ -161,7 +161,7 @@ begin
         );
 
     if1: InstructionFetch
-    generic map (PC_ADD => 4, CPI => 4, SINGLE_ADDRESS_SPACE => false)
+    generic map (PC_ADD => 4, CPI => 7, SINGLE_ADDRESS_SPACE => false)
     port map(
                 clk => cpuclk,
                 rst => cpurst,
@@ -278,10 +278,12 @@ begin
         wait for 2 ns;
         cpurst <= '0';
 
-        wait for 2000 ns;
+        wait for 60 ns;
+        cpurst <= '0';
+        --halt_cpu <= true;
 
         readreg1 <= R1;
-        wait for 2 ns;
+        wait for 8 ns;
 
         assert regReadData1 = X"0000_F000" report
                 ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
@@ -289,10 +291,10 @@ begin
 
         readreg1 <= R1;
         readreg2 <= R2;
-        wait for 2 ns;
+        wait for 8 ns;
 
-        assert regReadData2 = X"0000_0BAD" report
-                ANSI_RED & "Failed to ori. 0x0BAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        assert regReadData2 = X"0000_FBAD" report
+                ANSI_RED & "Failed to ori. 0xFBAD /= " & to_hstring(regReadData2) & ANSI_NONE
         severity error;
 
         assert regReadData1 = X"0000_F000" report
