@@ -1,3 +1,4 @@
+-- SKIP because we need to buffer pipeline stages in registers first, I think
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
