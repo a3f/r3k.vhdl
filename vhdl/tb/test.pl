@@ -16,11 +16,12 @@ for (@tests) {
     push @skip, $_ if $line =~ /^\s*--\s*SKIP/i;
 }
 
-@tests = @only if @only;
 $total = @tests;
 
 %disabled = map {($_, 1)} @skip;
 @tests = grep {!$disabled{$_}} @tests;
+
+@tests = @only if @only;
 
 @aopts = @eopts = @ropts = @opts;
 # push @ropts, '--assert-level=note' if $ENV{FATAL};
