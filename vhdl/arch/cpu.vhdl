@@ -32,6 +32,46 @@ entity cpu is
 end;
 
 architecture struct of cpu is
+    
+    component register32bit is
+	port(
+ 	   data   : in std_logic_vector(31 downto 0);
+ 	   enable  : in std_logic; -- load/enable.
+	   clr : in std_logic; -- async. clear.
+ 	   clk : in std_logic; -- clock.
+  	   output   : out std_logic_vector(31 downto 0) -- output.
+	);
+    end component;
+
+    component register16bit is
+	port(
+ 	   data   : in std_logic_vector(15 downto 0);
+ 	   enable  : in std_logic; -- load/enable.
+ 	   clr : in std_logic; -- async. clear.
+  	   clk : in std_logic; -- clock.
+   	   output   : out std_logic_vector(15 downto 0) -- output.
+	);
+    end component;
+
+    component register8bit is
+	port(
+ 	   data   : in std_logic_vector(7 downto 0);
+  	   enable  : in std_logic; -- load/enable.
+   	   clr : in std_logic; -- async. clear.
+ 	   clk : in std_logic; -- clock.
+   	 output   : out std_logic_vector(7 downto 0) -- output.
+	);
+    end component;
+
+    component register1bit is
+	port(
+  	  data   : in std_logic;
+  	  enable  : in std_logic; -- load/enable.
+  	  clr : in std_logic; -- async. clear.
+  	  clk : in std_logic; -- clock.
+  	  output   : out std_logic -- output.
+	);
+    end component;
 
     component InstructionFetch is
         generic(PC_ADD : natural := PC_ADD;
@@ -119,13 +159,13 @@ architecture struct of cpu is
         new_pc : out addr_t);
     end component;
 
-    signal Link, JumpReg, JumpDir, Branch, TakeBranch, MemToReg, SignExtend, Shift, ALUSrc, MemSex : ctrl_t;
+    signal Link, JumpReg, JumpDir, Branch, TakeBranch, TakeBranch_reg_out, MemToReg, SignExtend, Shift, ALUSrc, MemSex : ctrl_t;
     signal MemRead, MemWrite : ctrl_memwidth_t;
-    signal memReadData : word_t;
+    signal memReadData, memReadData_reg_out : word_t;
     signal new_pc : addr_t := BOOT_ADDR;
-    signal pc_plus_4, jump_addr, branch_addr : addr_t;
-    signal instr : instruction_t;
-    signal zeroxed, sexed, aluResult: word_t;
+    signal pc_plus_4, pc_plus_4_reg_out, jump_addr, jump_addr_reg_out, branch_addr : addr_t;
+    signal instr, instr_reg_out : instruction_t;
+    signal zeroxed, sexed, zeroxed_reg_out, sexed_reg_out, aluResult, aluResult_reg_out: word_t;
     signal aluop : alu_op_t;
 
 begin
@@ -145,11 +185,30 @@ begin
                 top_size => top_size,
                 top_wr => top_wr
             );
-    id1: InstructionDecode
-    port map(instr => instr,
-             pc_plus_4 => pc_plus_4,
-             jump_addr => jump_addr,
+ 
+    pc_plus_4_reg: register32bit
+    port map (
+		data => pc_plus_4,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => pc_plus_4_reg_out
+		);
+    
+    instr_reg: register32bit
+    port map (
+		data => instr,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => instr_reg_out
+		); 
 
+    id1: InstructionDecode
+    port map(
+	     instr => instr_reg_out,
+             pc_plus_4 => pc_plus_4_reg_out,
+             jump_addr => jump_addr,
              regwrite => regwrite, link => link, jumpreg => jumpreg, jumpdirect => jumpDir, branch => Branch,
              memread => memRead, memwrite => memWrite,
              memtoreg => memToReg, memsex => memSex,
@@ -163,16 +222,42 @@ begin
              clk => clk,
              rst => rst
          );
+
+    jump_addr_reg: register32bit
+    port map (
+		data => jump_addr,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => jump_addr_reg_out
+		);
+
+    zeroxed_reg: register32bit
+    port map (
+		data => zeroxed,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => zeroxed_reg_out
+		);
+    sexed_reg: register32bit
+    port map (
+		data => sexed,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => sexed_reg_out
+		);
     ex1: Execute
     port map(
-                pc_plus_4 => pc_plus_4,
+                pc_plus_4 => pc_plus_4_reg_out,
                 regReadData1 => regReadData1, regReadData2 => regReadData2,
                 branch_addr => branch_addr,
                 branch_in => Branch,
                 shift_in => shift, alusrc_in => ALUSrc,
                 aluop_in => ALUOp,
 
-                zeroxed => zeroxed, sexed => sexed,
+                zeroxed => zeroxed_reg_out, sexed => sexed_reg_out,
 
                 takeBranch => takeBranch,
                 ALUResult => ALUResult,
@@ -180,13 +265,31 @@ begin
                 clk => clk,
                 rst => rst
     );
+
+    takeBranch_reg: register1bit
+    port map (
+		data =>takeBranch,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => takeBranch_reg_out
+		);
+    aluResult_reg: register32bit
+    port map (
+		data => aluResult,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => aluResult_reg_out
+		);
     ma1: memoryAccess
     port map( 
         -- inbound
-        Address_in => AluResult,
+        Address_in => AluResult_reg_out,
         WriteData_in => regReadData2,
         ReadData_in => memReadData,
-        MemRead_in => memRead, MemWrite_in => memWrite,
+        MemRead_in => memRead, 
+	MemWrite_in => memWrite,
         MemSex_in => MemSex,
         clk => clk,
 
@@ -197,18 +300,26 @@ begin
         top_size => top_size,
         top_wr => top_wr);
 
+    memReadData_reg: register32bit
+    port map (
+		data => memReadData,
+		enable => '1',
+		clr => '0',
+		clk => clk,
+		output => memReadData_reg_out
+		);
     wb1: WriteBack
     port map(
                 Link => Link,
                 JumpReg => JumpReg,
                 JumpDir => JumpDir,
                 MemToReg => MemToReg,
-                TakeBranch => TakeBranch,
-                pc_plus_4 => pc_plus_4,
+                TakeBranch => TakeBranch_reg_out,
+                pc_plus_4 => pc_plus_4_reg_out,
                 branch_addr => branch_addr,
                 jump_addr => jump_addr,
-                aluResult => aluResult,
-                memReadData => memReadData,
+                aluResult => aluResult_reg_out,
+                memReadData => memReadData_reg_out,
                 regReadData1 => regReadData1,
                 regWriteData => regWriteData,
                 new_pc => new_pc);

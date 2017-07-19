@@ -1,3 +1,8 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use work.arch_defs.all;
+
+
 entity register32bit is
 port(
     data   : in std_logic_vector(31 downto 0);
@@ -6,9 +11,9 @@ port(
     clk : in std_logic; -- clock.
     output   : out std_logic_vector(31 downto 0) -- output.
 );
-END register1;
+end register32bit;
 
-architecture behav of register32 is
+architecture behav of register32bit is
 
 begin
     process(clk, clr)

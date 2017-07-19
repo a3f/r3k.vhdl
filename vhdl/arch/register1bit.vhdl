@@ -1,3 +1,8 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use work.arch_defs.all;
+
+
 entity register1bit is
 port(
     data   : in std_logic;
@@ -6,9 +11,9 @@ port(
     clk : in std_logic; -- clock.
     output   : out std_logic -- output.
 );
-END register1;
+end register1bit;
 
-architecture behav of register1 is
+architecture behav of register1bit is
 
 begin
     process(clk, clr)
