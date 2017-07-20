@@ -33,11 +33,11 @@ for (keys %tests) {
     run 'ghdl', '-a', @aopts, "$_.vhdl" or next;
     run 'ghdl', '-e', '-g', @eopts, $_, or next;
     @out = qx(ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-);
-    $? == 0 or next;
     for $line (@out) {
         $tests{$_} = -1 if $line =~ /:\(assertion error\):/;
         print $line if !$ENV{NO_WARN_NUMERIC_STD} || $line !~ /:\(assertion warning\): NUMERIC_STD/ 
     }
+    $? == 0 or next;
 
     $ok++ if ++$tests{$_};
 }
@@ -53,6 +53,6 @@ if ($errors) {
 } else {
     print "\n \33[32m=> All $tests tests were successful\33[m";
 }
-print " => $skipped skipped.\n";
+print " => ${ \($skipped // 0) } skipped.\n";
 exit $errors;
 
