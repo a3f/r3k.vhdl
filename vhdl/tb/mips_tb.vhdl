@@ -1,12 +1,9 @@
--- SKIP because I can't get it to work yet :-(
--- Will try less involved instr_tb.vhdl first
+-- This is the top level MIPS architecture
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
-use work.utils.all;
 use work.txt_utils.all;
 
--- A testbench has no ports
 entity mips_tb is
 end;
 
@@ -25,17 +22,18 @@ architecture struct of mips_tb is
 
     component mem is
     port (
-        Address : in addr_t;
-        WriteData : in word_t;
-        memReadData : out word_t;
-        MemRead, MemWrite : in ctrl_memwidth_t;
-        MemSex : in std_logic;
+        addr : in addr_t;
+        din : in word_t;
+        dout : out word_t;
+        size : in ctrl_memwidth_t;
+        wr : in std_logic;
         clk : in std_logic
     );
     end component;
 
     component cpu is
-    generic(PC_ADD : addrdiff_t := X"0000_0004");
+    generic(PC_ADD : natural := 4;
+               SINGLE_ADDRESS_SPACE : boolean := true);
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -48,94 +46,119 @@ architecture struct of mips_tb is
         regWrite : out std_logic;
 
         -- Memory
-        Address : out addr_t;
-        memWriteData : out word_t;
-        memReadData : in word_t;
-        MemRead, MemWrite : out ctrl_memwidth_t;
-        MemSex : out std_logic
+        top_addr : out addr_t;
+        top_dout : in word_t;
+        top_din : out word_t;
+        top_size : out ctrl_memwidth_t;
+        top_wr : out ctrl_t
     );
     end component;
 
+    signal readreg1, readreg2 : reg_t;
+    signal writereg: reg_t;
+    signal regWriteData: word_t;
+    signal regReadData1, regReadData2 : word_t;
+    signal regWrite : std_logic;
+
+    signal addr : addr_t;
+    signal din : word_t;
+    signal dout : word_t;
+    signal size : ctrl_memwidth_t;
+    signal wr : std_logic;
+
     signal clk : std_logic := '0';
-    signal rst : std_logic := '1';
-
-    signal readreg1 : reg_t := R0;
-    signal readreg2 : reg_t := R0;
-    signal writereg: reg_t := R0;
-    signal regWriteData: word_t := ZERO;
-    signal readData1 : word_t := ZERO;
-    signal readData2 : word_t := ZERO;
-    signal regWrite : std_logic := '0';
-
-    signal Address : addr_t := ZERO;
-    signal memWriteData : word_t := ZERO;
-    signal memReadData : word_t := ZERO;
-    signal MemRead  : ctrl_memwidth_t := WIDTH_NONE;
-    signal MemWrite : ctrl_memwidth_t := WIDTH_NONE;
-    signal MemSex : std_logic := '0';
-
-    signal done : boolean := false;
+    signal regrst : std_logic := '0';
+    signal rst : std_logic := '0';
+    signal online : boolean := true;
+    signal cpu_regWrite  : std_logic;
+    signal cpu_readreg1  : reg_t;
+    signal cpu_readreg2  : reg_t;
+    signal test_readreg1  : reg_t;
+    signal test_readreg2  : reg_t;
 begin
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         writeData => regWriteData,
-        readData1 => readData1, readData2 => readData2,
+        readData1 => regReadData1, readData2 => regReadData2,
         clk => clk,
-        rst => rst,
+        rst => regrst,
         regWrite => regWrite
     );
 
     mem_bus: mem port map (
-        Address => Address,
-        WriteData => memWriteData,
-        memReadData => memReadData,
-        MemRead => memRead, MemWrite => MemWrite,
-        MemSex => MemSex,
+        addr => addr,
+        din => din,
+        dout => dout,
+        size => size,
+        wr => wr,
         clk => clk
     );
 
     cpu_inst: cpu
-    generic map (PC_ADD => X"0000_0000")
+    generic map(SINGLE_ADDRESS_SPACE => false)
     port map (
         clk => clk,
         rst => rst,
 
         -- Register File
-        readreg1 => readreg1, readreg2 => readreg2,
+        readreg1 => cpu_readreg1, readreg2 => cpu_readreg2,
         writereg => writereg,
         regWriteData => regWriteData,
-        regReadData1 => readData1, regReadData2 => readData2,
-        regWrite => regWrite,
+        regReadData1 => regReadData1, regReadData2 => regReadData2,
+        regWrite => cpu_RegWrite,
 
         -- Memory
-        Address => Address,
-        memWriteData => memWriteData,
-        memReadData => memReadData,
-        MemRead => memRead, MemWrite => memWrite,
-        MemSex => memSex
+        top_addr => addr,
+        top_dout => dout,
+        top_din => din,
+        top_size => size,
+        top_wr => wr
     );
 
+    regwrite <= cpu_RegWrite when online else '0';
+    readreg1 <= cpu_readreg1 when online else test_readreg1;
+    readreg2 <= cpu_readreg2 when online else test_readreg2;
+
     test: process begin
-        wait for 20 ns;
+        wait for 4 ns;
         rst <= '1';
-        wait for 20 ns;
+        wait for 4 ns;
         rst <= '0';
+        wait for 4 ns;
+
+        wait for 316 ns;
+
+        rst <= '0';
+        online <= false;
         wait for 20 ns;
 
-        readreg1 <= R1;
-        wait for 20 ns;
+        test_readreg1 <= R1;
+        wait for 8 ns;
 
-        assert readdata1 = X"01234567" report
-            "Failed writing regfile: " & to_string(readdata1)
+        assert regReadData1 = X"0000_F000" report
+                ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
+        severity error;
+
+        test_readreg1 <= R1;
+        test_readreg2 <= R2;
+        wait for 16 ns;
+
+        assert regReadData2 = X"0000_FBAD" report
+                ANSI_RED & "Failed to ori. 0xFBAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        severity error;
+
+        assert regReadData1 = X"0000_F000" report
+                ANSI_RED & "Failed to ori. 0xF000 /= " & to_hstring(regReadData2) & ANSI_NONE
         severity error;
 
 
-        done <= true;
         wait;
     end process;
 
-    clkproc: process begin clk <= not clk; wait for 1 ns; if done then wait; end if; end process;
-end struct;
+    clkproc: process begin
+        clk <= not clk; wait for 1 ns; if not online then clk <= '0'; wait; end if;
+    end process;
 
+end struct;
 

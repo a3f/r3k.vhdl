@@ -9,7 +9,6 @@ use work.memory_map.all;
 -- and check whether everything works as expected
 entity cpu is
     generic(PC_ADD : natural := 4;
-               CPI : natural := 5;
                SINGLE_ADDRESS_SPACE : boolean := true);
     port(
             clk : in std_logic;
@@ -32,50 +31,44 @@ entity cpu is
 end;
 
 architecture struct of cpu is
-    
-    component register32bit is
+    component Pipeliner is
+    port(
+        clk, rst : in std_logic;
+        ID_en, IF_en, EX_en, MEM_en, WB_en : out std_logic
+    );
+    end component;
+
+    component PipeReg is
+    generic (BITS : natural := 32);
 	port(
- 	   data   : in std_logic_vector(31 downto 0);
+ 	   data   : in std_logic_vector(BITS-1 downto 0);
  	   enable  : in std_logic; -- load/enable.
 	   clr : in std_logic; -- async. clear.
  	   clk : in std_logic; -- clock.
-  	   output   : out std_logic_vector(31 downto 0) -- output.
+  	   output   : out std_logic_vector(BITS-1 downto 0) -- output.
 	);
     end component;
 
-    component register16bit is
-	port(
- 	   data   : in std_logic_vector(15 downto 0);
+    component CtrlReg is port(
+ 	   data   : in std_logic;
  	   enable  : in std_logic; -- load/enable.
- 	   clr : in std_logic; -- async. clear.
-  	   clk : in std_logic; -- clock.
-   	   output   : out std_logic_vector(15 downto 0) -- output.
-	);
-    end component;
-
-    component register8bit is
-	port(
- 	   data   : in std_logic_vector(7 downto 0);
-  	   enable  : in std_logic; -- load/enable.
-   	   clr : in std_logic; -- async. clear.
+	   clr : in std_logic; -- async. clear.
  	   clk : in std_logic; -- clock.
-   	 output   : out std_logic_vector(7 downto 0) -- output.
+  	   output   : out std_logic
 	);
     end component;
 
-    component register1bit is
-	port(
-  	  data   : in std_logic;
-  	  enable  : in std_logic; -- load/enable.
-  	  clr : in std_logic; -- async. clear.
-  	  clk : in std_logic; -- clock.
-  	  output   : out std_logic -- output.
+    component AluOpReg is port(
+ 	   data   : in alu_op_t;
+ 	   enable  : in std_logic; -- load/enable.
+	   clr : in std_logic; -- async. clear.
+ 	   clk : in std_logic; -- clock.
+  	   output   : out alu_op_t
 	);
     end component;
 
     component InstructionFetch is
         generic(PC_ADD : natural := PC_ADD;
-                CPI : natural := CPI;
                 SINGLE_ADDRESS_SPACE : boolean := SINGLE_ADDRESS_SPACE);
         port (
             clk : in std_logic;
@@ -159,25 +152,42 @@ architecture struct of cpu is
         new_pc : out addr_t);
     end component;
 
-    signal Link, JumpReg, JumpDir, Branch, TakeBranch, TakeBranch_reg_out, MemToReg, SignExtend, Shift, ALUSrc, MemSex : ctrl_t;
+    signal IF_en  : std_logic := '0';
+    signal ID_en  : std_logic := '0';
+    signal EX_en  : std_logic := '0';
+    signal MEM_en : std_logic := '0';
+    signal WB_en  : std_logic := '0';
+
+    signal regwrite_pre_reg : ctrl_t;
+    signal Link, JumpReg, JumpDir, Branch,  MemToReg, Shift, ALUSrc, MemSex : ctrl_t;
+    signal Link_pre_reg, JumpReg_pre_reg, JumpDir_pre_reg, Branch_pre_reg,  MemToReg_pre_reg, Shift_pre_reg, ALUSrc_pre_reg, MemSex_pre_reg : ctrl_t;
+    signal TakeBranch, TakeBranch_pre_reg : ctrl_t;
     signal MemRead, MemWrite : ctrl_memwidth_t;
-    signal memReadData, memReadData_reg_out : word_t;
-    signal new_pc : addr_t := BOOT_ADDR;
-    signal pc_plus_4, pc_plus_4_reg_out, jump_addr, jump_addr_reg_out, branch_addr : addr_t;
-    signal instr, instr_reg_out : instruction_t;
-    signal zeroxed, sexed, zeroxed_reg_out, sexed_reg_out, aluResult, aluResult_reg_out: word_t;
+    signal MemRead_pre_reg, MemWrite_pre_reg : ctrl_memwidth_t;
+    signal memReadData, memReadData_pre_reg : word_t;
+    signal new_pc, new_pc_pre_reg : addr_t := BOOT_ADDR;
+    signal pc_plus_4, pc_plus_4_pre_reg, jump_addr, jump_addr_pre_reg, branch_addr : addr_t;
+    signal instr, instr_pre_reg : instruction_t;
+    signal zeroxed, sexed, zeroxed_pre_reg, sexed_pre_reg, aluResult, aluResult_pre_reg: word_t;
+
+    signal readreg1_pre_reg, readreg2_pre_reg, writereg_pre_reg : reg_t;
+
+    signal regwritedata_pre_reg : word_t;
     signal aluop : alu_op_t;
+    signal aluop_slv : natural; -- debug only;
+    signal aluop_pre_reg : alu_op_t;
 
 begin
+    aluop_slv <= alu_op_t'pos(aluop);
 
     if1: InstructionFetch
-    generic map (PC_ADD => PC_ADD, CPI => CPI)
+    generic map (PC_ADD => PC_ADD)
     port map(
                 clk => clk,
                 rst => rst,
                 new_pc => new_pc,
-                pc_plus_4 => pc_plus_4,
-                instr => instr,
+                pc_plus_4 => pc_plus_4_pre_reg,
+                instr => instr_pre_reg,
 
                 top_addr => top_addr,
                 top_dout => top_dout,
@@ -185,110 +195,178 @@ begin
                 top_size => top_size,
                 top_wr => top_wr
             );
- 
-    pc_plus_4_reg: register32bit
+
+    new_pc_reg: PipeReg
+    generic map(32)
     port map (
-		data => pc_plus_4,
-		enable => '1',
-		clr => '0',
+		data => new_pc_pre_reg,
+        enable => WB_en,
+		clr => rst,
 		clk => clk,
-		output => pc_plus_4_reg_out
+		output => new_pc
 		);
-    
-    instr_reg: register32bit
+
+    pc_plus_4_reg: PipeReg
+    generic map(32)
     port map (
-		data => instr,
-		enable => '1',
-		clr => '0',
+		data => pc_plus_4_pre_reg,
+        enable => IF_en,
+		clr => rst,
 		clk => clk,
-		output => instr_reg_out
-		); 
+		output => pc_plus_4
+		);
+
+    instr_reg: PipeReg
+    generic map(32)
+    port map (
+		data => instr_pre_reg,
+		enable => IF_en,
+		clr => rst,
+		clk => clk,
+		output => instr
+		);
 
     id1: InstructionDecode
     port map(
-	     instr => instr_reg_out,
-             pc_plus_4 => pc_plus_4_reg_out,
-             jump_addr => jump_addr,
-             regwrite => regwrite, link => link, jumpreg => jumpreg, jumpdirect => jumpDir, branch => Branch,
+	     instr => instr,
+             pc_plus_4 => pc_plus_4,
+             jump_addr => jump_addr_pre_reg,
+             regwrite => regwrite_pre_reg, link => link_pre_reg, jumpreg => jumpreg_pre_reg, jumpdirect => jumpDir_pre_reg, branch => Branch_pre_reg,
              memread => memRead, memwrite => memWrite,
-             memtoreg => memToReg, memsex => memSex,
-             shift => shift, alusrc => aluSrc,
-             aluop => aluOp,        
+             memtoreg => memToReg_pre_reg, memsex => memSex_pre_reg,
+             shift => shift_pre_reg, alusrc => aluSrc_pre_reg,
+             aluop => aluOp_pre_reg,
 
-             readreg1 => readReg1, readreg2 => readReg2, writeReg => writeReg,
+             readreg1 => readReg1_pre_reg, readreg2 => readReg2_pre_reg, writeReg => writeReg_pre_reg,
 
-             zeroxed => zeroxed, sexed => sexed,
+             zeroxed => zeroxed_pre_reg, sexed => sexed_pre_reg,
 
              clk => clk,
              rst => rst
          );
-
-    jump_addr_reg: register32bit
+    readreg1_reg: PipeReg
+    generic map(5)
     port map (
-		data => jump_addr,
-		enable => '1',
-		clr => '0',
+		data => readreg1_pre_reg,
+		enable => ID_en,
+		clr => rst,
 		clk => clk,
-		output => jump_addr_reg_out
+		output => readreg1
+    );
+    readreg2_reg: PipeReg
+    generic map(5)
+    port map (
+		data => readreg2_pre_reg,
+		enable => ID_en,
+		clr => rst,
+		clk => clk,
+		output => readreg2
+    );
+    writereg_reg: PipeReg
+    generic map(5)
+    port map (
+		data => writereg_pre_reg,
+		enable => ID_en,
+		clr => rst,
+		clk => clk,
+		output => writereg
+    );
+
+    pipeliner1: pipeliner port map (
+        clk => clk,
+        rst => rst,
+        IF_en => IF_en,
+        ID_en => ID_en,
+        EX_en => EX_en,
+        MEM_en => MEM_en,
+        WB_en => WB_en
+    );
+
+    ctrlvec_regwrite_reg : CtrlReg port map (data => regwrite_pre_reg, enable => ID_en, clr => rst, clk => clk, output => regwrite);
+    --ctrlvec_regdst_reg : CtrlReg port map (data => regdst_pre_reg, enable => ID_en, clr => rst, clk => clk, output => regdst);
+    ctrlvec_link_reg : CtrlReg port map (data => link_pre_reg, enable => ID_en, clr => rst, clk => clk, output => link);
+    ctrlvec_jumpreg_reg : CtrlReg port map (data => jumpreg_pre_reg, enable => ID_en, clr => rst, clk => clk, output => jumpreg);
+    ctrlvec_jumpdirect_reg : CtrlReg port map (data => jumpdir_pre_reg, enable => ID_en, clr => rst, clk => clk, output => jumpdir);
+    ctrlvec_branch_reg : CtrlReg port map (data => branch_pre_reg, enable => ID_en, clr => rst, clk => clk, output => branch);
+    ctrlvec_memread_reg : PipeReg generic map(2) port map (data => memread_pre_reg, enable => ID_en, clr => rst, clk => clk, output => memread);
+    ctrlvec_memtoreg_reg : CtrlReg port map (data => memtoreg_pre_reg, enable => ID_en, clr => rst, clk => clk, output => memtoreg);
+    ctrlvec_memsex_reg : CtrlReg port map (data => memsex_pre_reg, enable => ID_en, clr => rst, clk => clk, output => memsex);
+    ctrlvec_memwrite_reg : PipeReg generic map (2) port map (data => memwrite_pre_reg, enable => ID_en, clr => rst, clk => clk, output => memwrite);
+    ctrlvec_shift_reg : CtrlReg port map (data => shift_pre_reg, enable => ID_en, clr => rst, clk => clk, output => shift);
+    ctrlvec_alusrc_reg : CtrlReg port map (data => alusrc_pre_reg, enable => ID_en, clr => rst, clk => clk, output => alusrc);
+    ctrlvec_aluop_reg : AluOpReg port map (data => aluop_pre_reg, enable => ID_en, clr => rst, clk => clk, output => aluop);
+
+
+    jump_addr_reg: PipeReg
+    generic map(32)
+    port map (
+		data => jump_addr_pre_reg,
+        enable => ID_en,
+		clr => rst,
+		clk => clk,
+		output => jump_addr
 		);
 
-    zeroxed_reg: register32bit
+    zeroxed_reg: PipeReg
+    generic map(32)
     port map (
-		data => zeroxed,
-		enable => '1',
-		clr => '0',
+		data => zeroxed_pre_reg,
+		enable => ID_en,
+		clr => rst,
 		clk => clk,
-		output => zeroxed_reg_out
+		output => zeroxed
 		);
-    sexed_reg: register32bit
+    sexed_reg: PipeReg
+    generic map(32)
     port map (
-		data => sexed,
-		enable => '1',
-		clr => '0',
+		data => sexed_pre_reg,
+		enable => ID_en,
+		clr => rst,
 		clk => clk,
-		output => sexed_reg_out
+		output => sexed
 		);
     ex1: Execute
     port map(
-                pc_plus_4 => pc_plus_4_reg_out,
+                pc_plus_4 => pc_plus_4,
                 regReadData1 => regReadData1, regReadData2 => regReadData2,
                 branch_addr => branch_addr,
                 branch_in => Branch,
                 shift_in => shift, alusrc_in => ALUSrc,
                 aluop_in => ALUOp,
 
-                zeroxed => zeroxed_reg_out, sexed => sexed_reg_out,
+                zeroxed => zeroxed, sexed => sexed,
 
-                takeBranch => takeBranch,
-                ALUResult => ALUResult,
+                takeBranch => takeBranch_pre_reg,
+                ALUResult => ALUResult_pre_reg,
 
                 clk => clk,
                 rst => rst
     );
 
-    takeBranch_reg: register1bit
+    takeBranch_reg: CtrlReg
     port map (
-		data =>takeBranch,
-		enable => '1',
-		clr => '0',
+		data =>takeBranch_pre_reg,
+		enable => EX_en,
+		clr => rst,
 		clk => clk,
-		output => takeBranch_reg_out
+		output => takeBranch
 		);
-    aluResult_reg: register32bit
+    aluResult_reg: PipeReg
+    generic map(32)
     port map (
-		data => aluResult,
-		enable => '1',
-		clr => '0',
+		data => aluResult_pre_reg,
+		enable => EX_en,
+		clr => rst,
 		clk => clk,
-		output => aluResult_reg_out
+		output => aluResult
 		);
     ma1: memoryAccess
-    port map( 
+    port map(
         -- inbound
-        Address_in => AluResult_reg_out,
+        Address_in => AluResult,
         WriteData_in => regReadData2,
         ReadData_in => memReadData,
-        MemRead_in => memRead, 
+        MemRead_in => memRead,
 	MemWrite_in => memWrite,
         MemSex_in => MemSex,
         clk => clk,
@@ -300,13 +378,23 @@ begin
         top_size => top_size,
         top_wr => top_wr);
 
-    memReadData_reg: register32bit
+    memReadData_reg: PipeReg
+    generic map (32)
     port map (
-		data => memReadData,
-		enable => '1',
-		clr => '0',
+		data => memReadData_pre_reg,
+		enable => MEM_en,
+		clr => rst,
 		clk => clk,
-		output => memReadData_reg_out
+		output => memReadData
+		);
+    regWrite_data_reg: PipeReg
+    generic map(32)
+    port map (
+		data => regwritedata_pre_reg,
+		enable => WB_en,
+		clr => rst,
+		clk => clk,
+		output => regwritedata
 		);
     wb1: WriteBack
     port map(
@@ -314,14 +402,14 @@ begin
                 JumpReg => JumpReg,
                 JumpDir => JumpDir,
                 MemToReg => MemToReg,
-                TakeBranch => TakeBranch_reg_out,
-                pc_plus_4 => pc_plus_4_reg_out,
+                TakeBranch => TakeBranch,
+                pc_plus_4 => pc_plus_4,
                 branch_addr => branch_addr,
                 jump_addr => jump_addr,
-                aluResult => aluResult_reg_out,
-                memReadData => memReadData_reg_out,
+                aluResult => aluResult,
+                memReadData => memReadData,
                 regReadData1 => regReadData1,
-                regWriteData => regWriteData,
-                new_pc => new_pc);
+                regWriteData => regWriteData_pre_reg,
+                new_pc => new_pc_pre_reg);
 
 end struct;

@@ -8,8 +8,8 @@ entity InstructionFetch is
     -- NOTE I think, too high a CPI may lead to the same instruction
     --      executed multiple times. Problematic with real world
     --      access (e.g. writing UART)
+    -- The pipeliner should fix this
     generic(PC_ADD : natural := 4;
-            CPI : natural := 5;
             SINGLE_ADDRESS_SPACE : boolean := true);
     port (
         clk : in std_logic;
@@ -30,7 +30,6 @@ end;
 architecture struct of InstructionFetch is
 
 component PC is
-    generic (CPI : natural := CPI);
     port (
         next_addr : in addr_t;
         clk : in std_logic;
@@ -65,7 +64,6 @@ signal read_addr: addr_t;
 begin
 
 pc1: PC
-    generic map(CPI => CPI)
     port map (
         next_addr => new_pc,
         clk => clk,

@@ -19,23 +19,23 @@ entity regFile is
 
 architecture behav of regFile is
     type regfile_t is array (31 downto 0) of word_t;
-    signal reg : regfile_t := (0 => ZERO, others => DONT_CARE);
+    signal reg : regfile_t := (0 => ZERO, others => ZERO);
+    signal reg1, reg2 : word_t; -- for debug purposes only
 
 
-    begin process(readreg1, readreg2, writereg, writedata, regWrite, clk, rst)
+    begin process(clk, rst, readreg1, readreg2)
     begin
-        if rising_edge(clk) then
-            readdata1 <= reg(vtou(readreg1));
-            readdata2 <= reg(vtou(readreg2));
-
+        readdata1 <= reg(vtou(readreg1));
+        readdata2 <= reg(vtou(readreg2));
+        if rst = '1' then
+            for i in 0 to 31 loop reg(i) <= ZERO; end loop;
+        elsif rising_edge(clk) then
             if regWrite = '1' and writereg /= R0 then
                 printf(ANSI_GREEN & "R%s=%s\n", writereg, writedata);
                 reg(vtou(writereg)) <= writedata;
             end if;
-            -- replace with loop
-            if rst = '1' then
-                for i in 0 to 31 loop reg(i) <= ZERO; end loop;
-            end if;
         end if;
     end process;
+    reg1 <= reg(1);
+    reg2 <= reg(2);
 end behav;

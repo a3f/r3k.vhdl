@@ -55,6 +55,7 @@ architecture struct of InstructionDecode is
     signal iRegWrite, iRegDst, iLink, iJumpReg, iJumpDirect, iBranch, iMemToReg, iMemSex, iShift, iALUSrc, ireturnAddrControl, iBranchORJumpDirOut: ctrl_t;
     signal iMemRead, iMemWrite : ctrl_memwidth_t;
     signal iAluOp : alu_op_t;
+    signal iReadReg1, iReadReg2, iWriteReg : reg_t;
     signal returnAddrControl : ctrl_t;
 
     -- instruction signals
@@ -101,7 +102,7 @@ begin
     regDstMux1: regDstMux
     port map (RegDst => iRegDst, rt => rt, rd => rd, output => RegDstMuxOut);
     returnAddrMux1: returnAddrMux
-    port map (returnAddrControl => returnAddrControl, returnAddrReg => R31, regDstMux => regDstMuxOut, output => writereg);
+    port map (returnAddrControl => returnAddrControl, returnAddrReg => R31, regDstMux => regDstMuxOut, output => iWritereg);
 
     RegWrite   <= iRegWrite;
     Link       <= iLink;
@@ -117,7 +118,12 @@ begin
     AluOp      <= iAluOp;
 
     process(instr) begin printf(ANSI_RED & "Decoding instruction %s\n", instr); end process;
+    process(instr) begin printf(ANSI_RED & "readreg1=%s, readreg2=%s, writereg %s\n", iReadreg1, iReadreg2, iWritereg); end process;
 
-    readreg1 <= rs;
-    readreg2 <= rt;
+    ReadReg1 <= rs;
+    ReadReg2 <= rt;
+
+    iReadReg1 <= rs;
+    iReadReg2 <= rt;
+    WriteReg <= iWriteReg;
 end struct;

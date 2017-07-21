@@ -35,7 +35,8 @@ architecture struct of mips is
     end component;
 
     component cpu is
-    generic(PC_ADD : addrdiff_t := X"0000_0004");
+    generic(PC_ADD : natural := 4;
+               SINGLE_ADDRESS_SPACE : boolean := true);
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -44,7 +45,7 @@ architecture struct of mips is
         readreg1, readreg2 : out reg_t;
         writereg: out reg_t;
         regWriteData: out word_t;
-        readData1, readData2 : in word_t;
+        regReadData1, regReadData2 : in word_t;
         regWrite : out std_logic;
 
         -- Memory
@@ -59,7 +60,7 @@ architecture struct of mips is
     signal readreg1, readreg2 : reg_t;
     signal writereg: reg_t;
     signal regWriteData: word_t;
-    signal readData1, readData2 : word_t;
+    signal regReadData1, regReadData2 : word_t;
     signal regWrite : std_logic;
 
     signal addr : addr_t;
@@ -73,7 +74,7 @@ begin
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         writeData => regWriteData,
-        readData1 => readData1, readData2 => readData2,
+        readData1 => regReadData1, readData2 => regReadData2,
         clk => clk,
         rst => rst,
         regWrite => regWrite
@@ -96,7 +97,7 @@ begin
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         regWriteData => regWriteData,
-        readData1 => readData1, readData2 => readData2,
+        regReadData1 => regReadData1, regReadData2 => regReadData2,
         regWrite => regWrite,
 
         -- Memory
