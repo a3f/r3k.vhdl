@@ -69,6 +69,7 @@ void vprintf(const char * restrict fmt, va_list args)
 					putc('-');
 					val = -val;
 				}
+                /* fallthrough */
 			case 'u':
 				puts(itodec(val, buf, sizeof buf));
 				break;
@@ -80,6 +81,7 @@ void vprintf(const char * restrict fmt, va_list args)
 				break;
 			case 'p':
 				puts("0x");
+                /* fallthrough */
 			case 'x':
 			case 'X':
 				puts(itopow2(val, 4, buf, sizeof buf));

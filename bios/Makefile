@@ -1,12 +1,15 @@
 include ../toolchain/*.mk
 
+PATH := ../toolchain:$(PATH) # Put symlinks there if your cross compiler calls system as(1)
 MMAP = mmap.x
-ifneq ($(BIG), 1)
+ifeq ($(BIG), 1)
+	ENDIANNESS = -EB
+else
 	ENDIANNESS = -EL
 endif
 PIC ?=
 CFLAGS = -O0 -march=r3k $(PIC) -g3 -Wall -Wextra -Wno-main $(ENDIANNESS) \
-         -ffreestanding -nostdlib -nostartfiles -msoft-float
+         -ffreestanding -nostdlib -nostartfiles -msoft-float -std=gnu99
 ifeq ($(SYS), mips)
 	CPPFLAGS += -DSYS_MIPS=1
 else
@@ -28,9 +31,9 @@ endif
 
 VGA_OBJS ?= vga.o
 
-ASFLAGS = -march=r3k $(PIC) $(ENDIANNESS)
+ASFLAGS = -march=r3k $(PIC) $(ENDIANNESS) -msoft-float
 LDFLAGS = -ffreestanding $(PIC) -nostdlib -nostartfiles -march=r3k $(ENDIANNESS) \
-          -Werror=implicit-function-declaration -T$(MMAP)
+          -Werror=implicit-function-declaration -T$(MMAP) -B$(AS)
 LDLIBS  = -static-libgcc -lgcc
 
 export
@@ -55,7 +58,7 @@ qemu-vga/vga.a:
 	$(MAKE) -C qemu-vga
 
 mmap.x: mmap.x.inc
-	cpp $(CPPFLAGS) -nostdinc -P -o$@ -C $<
+	$(CC) -E -xc $(CPPFLAGS) -nostdinc -P -o$@ -C $<
 
 .PHONY: clean
 clean:

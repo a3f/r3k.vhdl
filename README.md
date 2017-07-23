@@ -35,6 +35,17 @@ Three virtual boards are supported: MIPS Pseudoboard, MIPSSim and Malta. Pass e.
 `toolchain/` contains Linux i686 and x86-64 cross MIPS toolchain binaries.
 Add them to your PATH with `source toolchain/setenv.sh`
 
+Prebuilt Out-of-tree binutils and cross GCC are available [here](https://github.com/a3f/Cross-mips-elf-gcc-for-macOS).
+
+If you rather build your own, unpack binutils and GCC source tarballs to e.g. `/opt/cross`
+and run:
+
+```
+export PREFIX=/opt/cross/gcc-mips
+export PATH=${PREFIX}/bin:${PATH}
+../binutils-2.*/configure --target=mipsel-elf --prefix=$PREFIX
+../gcc-7.*/configure --target=mipsel-elf --prefix=$PREFIX --without-headers --with-gnu-as --with-gnu-ld --disable-shared --enable-languages=c --disable-libssp
+```
 
 ## Copyright and License
 

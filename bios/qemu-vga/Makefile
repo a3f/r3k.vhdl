@@ -1,4 +1,6 @@
 CPPFLAGS = -isystem .. -Iinclude
+CFLAGS += -Wno-implicit-fallthrough
+PATH := ../../toolchain:$(PATH)
 
 
 vga.a: mips/gt64120.o mips/pci.o sys/stdvga.o qsort.o sys/physmem.o mips/malta.o sys/pci_ids.o

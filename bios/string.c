@@ -77,6 +77,8 @@ int memcmp(const void *_s1, const void *_s2, size_t len)
 
 void *memcpy(void * restrict _dst, const void * restrict _src, size_t len)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 	      unsigned char *dst = _dst;
 	const unsigned char *src = _src;
 
@@ -96,6 +98,7 @@ void *memcpy(void * restrict _dst, const void * restrict _src, size_t len)
     }
 
 	return _dst;
+#pragma GCC diagnostic pop
 }
 
 void *memmove(void *_dst, const void *_src, size_t len)
