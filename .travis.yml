@@ -23,8 +23,7 @@ install:
 script:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
   - source toolchain/setenv.sh
-# Skip building BIOS till running the cross compiler on Travis works
-#  - make
+  - make bios
   - make -C vhdl all
   - make -C vhdl test
 
