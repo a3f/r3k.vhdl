@@ -10,7 +10,11 @@ use IO::Handle;
 use Getopt::Std;
 use File::Temp qw(tempdir tempfile);
 use FindBin '$Bin';
+use File::Basename;
 use Data::Dumper;
+
+my $env = `make -C tools/$Bin/../bios printenv`;
+$env =~ s{^(.+)?=(.+)\n}{$ENV{$1} //= $2}egm;
 
 my $workdir = "--workdir=$Bin/../vhdl/work";
 my @opts = qw(--std=93c -fexplicit --ieee=synopsys);
@@ -19,8 +23,6 @@ my @args = @ARGV;
 sub cmdline { shift @args }
 my %opts;
 BEGIN {getopts 'rs:', \%opts; *arg = @ARGV ? \&cmdline : \&CORE::readline }
-
-my %mips = do "$Bin/parse-mips.mk.pm" or die "Can't retrieve info from toolchain/mips.mk\n";
 
 my $packsize = $opts{s} // 'L>';
 
@@ -37,8 +39,8 @@ while (defined(my $instr = arg)) {
         # We got an instruction. Assemble it
 
         # pass as stdin to
-        system "printf '.set mips1\n.set noat\n$instr\n' | $mips{AS} -EB -o$aout" and die;
-        system "$mips{OBJCOPY} -j .text -Obinary $aout $bin" and die;
+        system "printf '.set mips1\n.set noat\n$instr\n' | $ENV{AS} -EB -o$aout" and die;
+        system "$ENV{OBJCOPY} -j .text -Obinary $aout $bin" and die;
         $instr = sprintf q/X"%08X"/, unpack($packsize, do { local $/; <$tmp2fh> });
     }
 

@@ -60,6 +60,10 @@ qemu-vga/vga.a:
 mmap.x: mmap.x.inc
 	$(CC) -E -xc $(CPPFLAGS) -nostdinc -P -o$@ -C $<
 
+# For the perl scripts to get access to CC, AS and co
+printenv:
+	@printenv
+
 .PHONY: clean
 clean:
 	$(MAKE) -C qemu-vga clean
