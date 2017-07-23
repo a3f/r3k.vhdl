@@ -10,6 +10,7 @@ use IO::Handle;
 use Getopt::Std;
 use File::Temp qw(tempdir tempfile);
 use FindBin '$Bin';
+use Data::Dumper;
 
 my $workdir = "--workdir=$Bin/../vhdl/work";
 my @opts = qw(--std=93c -fexplicit --ieee=synopsys);
@@ -17,9 +18,10 @@ my @opts = qw(--std=93c -fexplicit --ieee=synopsys);
 my @args = @ARGV;
 sub cmdline { shift @args }
 my %opts;
-BEGIN {getopts 'ra:c:', \%opts; *arg = @ARGV ? \&cmdline : \&CORE::readline }
+BEGIN {getopts 'rs:', \%opts; *arg = @ARGV ? \&cmdline : \&CORE::readline }
 
-my $PREFIX   = $opts{p} // 'mips-';
+my %mips = do "$Bin/parse-mips.mk.pm" or die "Can't retrieve info from toolchain/mips.mk\n";
+
 my $packsize = $opts{s} // 'L>';
 
 my $dir = tempdir(CLEANUP => 1);
@@ -35,8 +37,8 @@ while (defined(my $instr = arg)) {
         # We got an instruction. Assemble it
 
         # pass as stdin to
-        system "printf '.set mips1\n.set noat\n$instr\n' | ${PREFIX}as -EB -o$aout" and die;
-        system "${PREFIX}objcopy -j .text -Obinary $aout $bin" and die;
+        system "printf '.set mips1\n.set noat\n$instr\n' | $mips{AS} -EB -o$aout" and die;
+        system "$mips{OBJCOPY} -j .text -Obinary $aout $bin" and die;
         $instr = sprintf q/X"%08X"/, unpack($packsize, do { local $/; <$tmp2fh> });
     }
 
@@ -47,13 +49,24 @@ while (defined(my $instr = arg)) {
     print $tmp1fh $tb;
 
 
-    #system 'ghdl', '--remove', $workdir, "control_vec_test" and die;
+    #system 'ghdl', '--remove', $workdir, "control_vec_assembler" and die;
+    remove_from_work_library('control_vec_assembler');
     system 'ghdl', '-a', @opts, $workdir, $aout and die;
-    system 'ghdl', '-e', @opts, $workdir, "control_vec_test" and die;
-    my $out =  `ghdl -r @opts $workdir control_vec_test 2>&1` or die;
-    $out =~ s/^.*\(assertion note\)://gm;
+    system 'ghdl', '-e', @opts, $workdir, "control_vec_assembler" and die;
+    my $out =  `ghdl -r @opts $workdir control_vec_assembler 2>&1` or die;
+    $out =~ s/^.*\(assertion note\):|//gm;
 
     print $out;
+}
+
+sub remove_from_work_library {
+    my ($file, $obj) = (shift,"$Bin/../vhdl/work/work-obj93.cf");
+    local $/;
+    open my $work, '<', $obj or return;
+    defined($_ = <$work>) or return;
+    s{file .*? entity $file .*? architecture behav of $file at .*?;\n}{}s;
+    open $work, '>', $obj or return;
+    print $work $_;
 }
 
 __DATA__
@@ -66,10 +79,10 @@ use work.arch_defs.all;
 use work.txt_utils.all;
 
 --  A testbench has no ports.
-entity control_vec_test is
-    end control_vec_test;
+entity control_vec_assembler is
+    end control_vec_assembler;
 
-architecture behav of control_vec_test is
+architecture behav of control_vec_assembler is
 
 component maindec is
     port (  instr     : in std_logic_vector(31 downto 0); -- instruction_t
