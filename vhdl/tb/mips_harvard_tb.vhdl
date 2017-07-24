@@ -1,13 +1,14 @@
 -- This is the top level MIPS architecture
+-- With the instruction memory not mapped on the Data/IO memory bus
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 use work.txt_utils.all;
 
-entity mips_tb is
+entity mips_harvard_tb is
 end;
 
-architecture struct of mips_tb is
+architecture struct of mips_harvard_tb is
     component regFile is
     port (
             readreg1, readreg2 : in reg_t;
@@ -123,7 +124,7 @@ begin
     );
 
     cpu_inst: cpu
-    generic map(SINGLE_ADDRESS_SPACE => true)
+    generic map(SINGLE_ADDRESS_SPACE => false)
     port map (
         clk => clk,
         rst => rst,
@@ -200,4 +201,5 @@ begin
     end process;
 
 end struct;
+
 

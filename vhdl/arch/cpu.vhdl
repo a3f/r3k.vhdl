@@ -391,8 +391,8 @@ begin
 		);
     process (clk)
     begin
-        if rising_edge(clk) and (EX_en = '1' or IF_en = '1') then
-            selMem <= not selMem;
+        if rising_edge(clk) and (EX_en = '1' or WB_en = '1') then
+            selMEM <= not selMEM;
         end if;
     end process;
     addrMux: MUX port map(sel=>selMEM,input0=>top_addr_if,input1=>top_addr_mem,output=>top_addr);

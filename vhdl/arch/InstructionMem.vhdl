@@ -41,7 +41,6 @@ architecture behav of InstructionMem is
 
 begin
     use_bus_rom: if SINGLE_ADDRESS_SPACE generate
-                    instr <= (others => 'Z');
         process(read_addr, top_dout, clk)
         begin
             if rising_edge(clk) then

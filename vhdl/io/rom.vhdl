@@ -17,39 +17,31 @@ entity rom is
 end rom;
 
 architecture rtl of rom is
-    type code_t is array (natural range <>) of instruction_t;
-    constant code : code_t := (
-        -- start:
-        --B"001101" &R1&R1& X"f000", -- ori r1, r1, 0xf000
-        --B"001101" &R1&R2& X"0bad", -- ori r1, r2, 0x0bad
-        --X"08_000000"  -- j start
-        X"3421_f000",     -- ori     at,at,0xf000
-        X"3441_0bad",     -- ori     at,v0,0xbad
-        --X"3c03_a000",     -- lui     v1,0xa000
-        --X"a062_0000",     -- sb      v0,0(v1)
-        --X"8064_0000",     -- lb      a0,0(v1)
-        X"0800_0000"      -- j       0 <_start>
-    );
     signal my_z : word_t;
-    begin
+begin
     z <= my_z when en = '1' else HI_Z;
     process(a)
     begin
         if en = '1' then
             printf("Address = %s\n", a);
             case a is
+                -- _start:
+                -- FIXME the first instruction won't be executed.
+                -- No idea why, so keep that in mind and place a nop there or something
+                when X"0000_0000" => my_z <= X"0000_0000";
+                when X"0000_0004" => my_z <= X"3421_f000";    -- ori     $1,$1,0xf000
+                when X"0000_0008" => my_z <= X"0000_0000";
+                when X"0000_000C" => my_z <= X"3422_0bad";    -- ori     $1,$2,0xbad
+                when X"0000_0010" => my_z <= X"0000_0000";
+                when X"0000_0014" => my_z <= X"3c03_A000";    -- lui     $3,0xA000
+                when X"0000_0018" => my_z <= X"0000_0000";
+                when X"0000_001C" => my_z <= X"a062_0000";    -- sb      $2,0($3)
+                when X"0000_0020" => my_z <= X"0000_0000";
+                when X"0000_0024" => my_z <= X"0000_0000";
+                when X"0000_0028" => my_z <= X"8064_0000";    -- lb      $4,0($3)
+                when X"0000_002C" => my_z <= X"0800_0000";  -- j       0 <_start>
 
-            -- _start:
-            when X"0000_0000" => my_z <= X"3421_f000"; -- ori $1, $1, 0xF000
-            when X"0000_0004" => my_z <= X"3422_0BAD"; -- ori $2, $1, 0x0BAD
-            --when X"0000_0008" => my_z <= X"3c03_a000"; -- lui     v1,0xa000
-            --when X"0000_0008" => my_z <= X"0000_0000"; -- lui     v1,0xa000
-            when X"0000_0008" => my_z <= X"0800_0000"; -- j       0 <_start>
-            --when X"0000_0010" => my_z <= X"a062_0000"; -- sb      v0,0(v1)
-            --when X"0000_0014" => my_z <= X"8064_0000"; -- lb      a0,0(v1)
-            --when X"0000_0018" => my_z <= X"0000_0000";
-
-            when others => my_z <= X"DEADBEEF";
+                when others => null;
             end case;
         end if;
     end process;
