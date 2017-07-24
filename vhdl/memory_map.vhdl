@@ -4,6 +4,8 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 
 package memory_map is
+    constant BOOT_ADDR : addr_t := X"0000_0000";
+
     constant B : natural := 1; constant K : natural := 1024*B; constant M : natural := K*K;
     subtype memchipsel_t is std_logic_vector(7 downto 0);
 
@@ -13,8 +15,8 @@ package memory_map is
     type mmap_t is array (natural range <>) of mblock_t;
 
     constant mmap : mmap_t := (
-        (X"a0000000", 128*M, X"01"), -- RAM
-        (X"bfc00000", 128*K, X"02"), -- ROM
+        (X"70000000", 128*M, X"01"), -- RAM
+        (BOOT_ADDR,   128*K, X"02"), -- ROM
         (X"14000000", 1*B,   X"04"), -- LEDs
         (X"14000001", 1*B,   X"08"), -- DIP-Switch
         (X"14000002", 1*B,   X"10"), -- Pushbuttons
@@ -23,18 +25,17 @@ package memory_map is
         (X"14000010", 16*B,  X"80")  -- Video configuration
     );
 
-    constant mmap_ram : positive := 1;
-    constant mmap_rom : positive := 2;
-    constant mmap_led : positive := 3;
-    constant mmap_dipswitch : positive := 4;
-    constant mmap_push : positive := 5;
-    constant mmap_uart : positive := 6;
-    constant mmap_vram : positive := 7;
-    constant mmap_videocfg : positive := 8;
+    constant mmap_ram : natural := 0;
+    constant mmap_rom : natural := 1;
+    constant mmap_led : natural := 2;
+    constant mmap_dipswitch : natural := 3;
+    constant mmap_push : natural := 4;
+    constant mmap_uart : natural := 5;
+    constant mmap_vram : natural := 6;
+    constant mmap_videocfg : natural := 7;
 
     function inside(addr_vec, base_vec: addr_t; len : natural) return boolean;
 
-    constant BOOT_ADDR : addr_t := X"0000_0000";
 end memory_map;
 
 package body memory_map is

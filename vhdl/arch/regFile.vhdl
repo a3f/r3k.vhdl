@@ -20,7 +20,7 @@ entity regFile is
 architecture behav of regFile is
     type regfile_t is array (31 downto 0) of word_t;
     signal reg : regfile_t := (0 => ZERO, others => ZERO);
-    signal reg1, reg2 : word_t; -- for debug purposes only
+    signal reg1, reg2, reg3, reg4 : word_t; -- for debug purposes only
 
 
     begin process(clk, rst, readreg1, readreg2)
@@ -38,4 +38,6 @@ architecture behav of regFile is
     end process;
     reg1 <= reg(1);
     reg2 <= reg(2);
+    reg3 <= reg(3);
+    reg4 <= reg(4);
 end behav;

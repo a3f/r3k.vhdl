@@ -32,7 +32,7 @@ architecture behav of alu is
 begin
         trap <= TRAP_NONE; -- rethink
         process (Src1, Src2, AluOp, immediate)
-            variable result : word_t := X"DEADBEEF";
+            variable result : word_t := X"8BAD_F00D";
         begin
             case AluOp is
                 -- Trapping not implemented

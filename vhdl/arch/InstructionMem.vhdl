@@ -25,9 +25,16 @@ architecture behav of InstructionMem is
     type code_t is array (natural range <>) of instruction_t;
     constant example_code : code_t := (
         -- start:
-        B"001101_00001_00001" & X"f000", -- ori r1, r1, 0xf000
-        B"001101_00001_00010" & X"0bad", -- ori r1, r2, 0x0bad
-        X"08_000000"  -- j start
+        --B"001101" &R1&R1& X"f000", -- ori r1, r1, 0xf000
+        --B"001101" &R1&R2& X"0bad", -- ori r1, r2, 0x0bad
+        --X"08_000000"  -- j start
+        X"3421_f000",     -- ori     at,at,0xf000
+        --X"3c02_1337",     -- lui     v0,0x1337
+        X"3422_0bad",     -- ori     at,v0,0xbad
+        X"3c03_7000",     -- lui     v1,0x7000
+        X"a062_0000",     -- sb      v0,0(v1)
+        X"8064_0000",     -- lb      a0,0(v1)
+        X"0800_0000"      -- j       0 <_start>
     );
 
 begin
@@ -37,11 +44,7 @@ begin
             variable clks : natural := 0;
         begin
             if rising_edge(clk) then
-                clks := clks + 1;
-                if clks = 2 then
-                    instr <= top_dout;
-                    clks := 0;
-                end if;
+                instr <= top_dout;
                 printf("[IMEM] *%s: %s\n", read_addr, top_dout);
                 top_addr <= read_addr;
                 top_size <= WIDTH_WORD;
@@ -58,6 +61,7 @@ begin
             if rising_edge(clk) then
                 instr <= example_code(vtou(instrnum));
                 printf("[IMEM] %s: %s\n", read_addr, example_code(vtou(instrnum)));
+                top_wr <= '0';
             end if;
         end process;
     end generate;

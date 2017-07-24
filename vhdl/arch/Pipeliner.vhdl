@@ -6,7 +6,8 @@ use work.txt_utils.all;
 entity Pipeliner is
     port(
         clk, rst : in std_logic;
-        IF_en, ID_en, EX_en, MEM_en, WB_en : out std_logic
+        IF_en, ID_en, EX_en, MEM_en, WB_en : out std_logic;
+        Instruction_done : out std_logic
     );
 end;
 
@@ -24,19 +25,20 @@ begin
             EX_en  <= '0';
             MEM_en <= '0';
             WB_en  <= '0';
+            Instruction_done <= '0';
 
             case ticks is
                 when 2 => IF_en  <= '1';
                           printf("===== IF  ===== \n");
-                when 4 => ID_en  <= '1';
+                when 5 => ID_en  <= '1';
                           printf("===== ID  ===== \n");
-                when 7 => EX_en  <= '1';
+                when 8 => EX_en  <= '1';
                           printf("===== EX  ===== \n");
-                when 8 => MEM_en <= '1';
+                when 9 => MEM_en <= '1';
                           printf("===== MEM ===== \n");
-                when 10 => WB_en  <= '1';
+                when 11 => WB_en  <= '1';
                           printf("===== WB  ===== \n");
-                when 12 => ticks := 0;
+                when 15 => Instruction_done <= '1'; ticks := 0;
               when others => null;
             end case;
             --if ticks = CPI then

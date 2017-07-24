@@ -5,6 +5,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use work.txt_utils.all;
 use work.arch_defs.all;
+use work.utils.all;
 
 entity rom is
     port ( a: in std_logic_vector(31 downto 0);
@@ -16,18 +17,38 @@ entity rom is
 end rom;
 
 architecture rtl of rom is
+    type code_t is array (natural range <>) of instruction_t;
+    constant code : code_t := (
+        -- start:
+        --B"001101" &R1&R1& X"f000", -- ori r1, r1, 0xf000
+        --B"001101" &R1&R2& X"0bad", -- ori r1, r2, 0x0bad
+        --X"08_000000"  -- j start
+        X"3421_f000",     -- ori     at,at,0xf000
+        X"3441_0bad",     -- ori     at,v0,0xbad
+        --X"3c03_a000",     -- lui     v1,0xa000
+        --X"a062_0000",     -- sb      v0,0(v1)
+        --X"8064_0000",     -- lb      a0,0(v1)
+        X"0800_0000"      -- j       0 <_start>
+    );
     begin
     process(a)
     begin
+        z <= HI_Z;
         if en = '1' then
             printf("Address = %s\n", a);
             case a is
 
-            when X"0000_0000" => z <= B"001101_00001_00001" & X"f000"; -- ori r1, r1, 0xf000
-            when X"0000_0004" => z <= B"001101_00010_00010" & X"0b00"; -- ori r1, r2, 0x0b00
-            when X"0000_0008" => z <= X"08_000000"; -- j start
+            -- _start:
+            when X"0000_0000" => z <= X"3421_f000"; -- ori $1, $1, 0xF000
+            when X"0000_0004" => z <= X"3422_0BAD"; -- ori $2, $1, 0x0BAD
+            --when X"0000_0008" => z <= X"3c03_a000"; -- lui     v1,0xa000
+            --when X"0000_0008" => z <= X"0000_0000"; -- lui     v1,0xa000
+            when X"0000_0008" => z <= X"0800_0000"; -- j       0 <_start>
+            --when X"0000_0010" => z <= X"a062_0000"; -- sb      v0,0(v1)
+            --when X"0000_0014" => z <= X"8064_0000"; -- lb      a0,0(v1)
+            --when X"0000_0018" => z <= X"0000_0000";
 
-            when others => null;
+            when others => z <= X"DEADBEEF";
             end case;
         end if;
     end process;

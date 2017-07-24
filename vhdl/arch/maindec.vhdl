@@ -93,14 +93,14 @@ architecture behave of maindec is
             when B"000_010" => ctrl <= "0XX01X00X00X"; -- j
             when B"000_011" => ctrl <= "1X101X00X00X"; -- jal
 
-            when B"100_000" => ctrl <= "100000111001"; memwidth <= WIDTH_BYTE; -- lb
-            when B"100_100" => ctrl <= "100000110001"; memwidth <= WIDTH_BYTE; -- lbu
-            when B"100_001" => ctrl <= "100000111001"; memwidth <= WIDTH_HALF; -- lh
-            when B"100_101" => ctrl <= "100000110001"; memwidth <= WIDTH_HALF; -- lhu
-            when B"100_011" => ctrl <= "00000011X001"; memwidth <= WIDTH_WORD; -- lw
-            when B"101_000" => ctrl <= "00000000X101"; memwidth <= WIDTH_BYTE; -- sb
-            when B"101_001" => ctrl <= "00000000X101"; memwidth <= WIDTH_HALF; -- sh
-            when B"101_011" => ctrl <= "00000000X101"; memwidth <= WIDTH_WORD; -- sw
+            when B"100_000" => ctrl <= "100000111001"; aluop <= ALU_ADD; memwidth <= WIDTH_BYTE; -- lb
+            when B"100_100" => ctrl <= "100000110001"; aluop <= ALU_ADD; memwidth <= WIDTH_BYTE; -- lbu
+            when B"100_001" => ctrl <= "100000111001"; aluop <= ALU_ADD; memwidth <= WIDTH_HALF; -- lh
+            when B"100_101" => ctrl <= "100000110001"; aluop <= ALU_ADD; memwidth <= WIDTH_HALF; -- lhu
+            when B"100_011" => ctrl <= "00000011X001"; aluop <= ALU_ADD; memwidth <= WIDTH_WORD; -- lw
+            when B"101_000" => ctrl <= "00000000X101"; aluop <= ALU_ADD; memwidth <= WIDTH_BYTE; -- sb
+            when B"101_001" => ctrl <= "00000000X101"; aluop <= ALU_ADD; memwidth <= WIDTH_HALF; -- sh
+            when B"101_011" => ctrl <= "00000000X101"; aluop <= ALU_ADD; memwidth <= WIDTH_WORD; -- sw
 
             when B"000_100" => ctrl <= "0X0001000000"; aluop <= ALU_EQ; -- beq
             when B"000_101" => ctrl <= "0X0001000000"; aluop <= ALU_NE; -- bne
