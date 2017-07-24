@@ -27,7 +27,20 @@ architecture struct of mips_tb is
         dout : out word_t;
         size : in ctrl_memwidth_t;
         wr : in std_logic;
-        clk : in std_logic
+        clk : in std_logic;
+
+        -- VGA I/O
+        vgaclk, rst : in std_logic;
+        r, g, b : out std_logic_vector (3 downto 0);
+
+        hsync, vsync : out std_logic;
+
+        -- LEDs
+        leds : out std_logic_vector(7 downto 0);
+        -- Push buttons
+        buttons : in std_logic_vector(3 downto 0);
+        -- DIP Switch IO
+        switch : in std_logic_vector(7 downto 0)
     );
     end component;
 
@@ -75,6 +88,9 @@ architecture struct of mips_tb is
     signal cpu_readreg2  : reg_t;
     signal test_readreg1  : reg_t;
     signal test_readreg2  : reg_t;
+
+    -- VGA
+    -- nothing yet
 begin
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
@@ -92,7 +108,18 @@ begin
         dout => dout,
         size => size,
         wr => wr,
-        clk => clk
+        clk => clk,
+
+        vgaclk => '0', rst => '1',
+        r => open, g => open, b => open,
+
+        hsync => open, vsync => open,
+
+        leds => open,
+        -- Push buttons
+        buttons => B"0000",
+        -- DIP Switch IO
+        switch => B"1010_1010"
     );
 
     cpu_inst: cpu
@@ -156,8 +183,8 @@ begin
         test_readreg2 <= R4;
         wait for 16 ns;
 
-        assert regReadData1 = X"7000_0000" report
-                ANSI_RED & "[r3] 0x7000_0000 /= " & to_hstring(regReadData1) & ANSI_NONE
+        assert regReadData1 = X"A000_0000" report
+                ANSI_RED & "[r3] 0xA000_0000 /= " & to_hstring(regReadData1) & ANSI_NONE
         severity error;
 
         assert regReadData2 = X"FFFF_FFAD" report

@@ -15,7 +15,7 @@ package memory_map is
     type mmap_t is array (natural range <>) of mblock_t;
 
     constant mmap : mmap_t := (
-        (X"70000000", 128*M, X"01"), -- RAM
+        (X"A0000000", 128*M, X"01"), -- RAM
         (BOOT_ADDR,   128*K, X"02"), -- ROM
         (X"14000000", 1*B,   X"04"), -- LEDs
         (X"14000001", 1*B,   X"08"), -- DIP-Switch

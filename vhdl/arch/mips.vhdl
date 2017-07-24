@@ -6,7 +6,20 @@ use work.arch_defs.all;
 entity mips is
     port (
         clk : in std_logic;
-        rst : in std_logic
+        rst : in std_logic;
+
+        -- VGA I/O
+        vgaclk : in std_logic;
+        r, g, b : out std_logic_vector (3 downto 0);
+
+        hsync, vsync : out std_logic;
+
+        -- LEDs
+        leds : out std_logic_vector(7 downto 0);
+        -- Push buttons
+        buttons : in std_logic_vector(3 downto 0);
+        -- DIP Switch IO
+        switch : in std_logic_vector(7 downto 0)
     );
 end;
 
@@ -30,7 +43,20 @@ architecture struct of mips is
         dout : out word_t;
         size : in ctrl_memwidth_t;
         wr : in std_logic;
-        clk : in std_logic
+        clk : in std_logic;
+
+        -- VGA I/O
+        vgaclk, rst : in std_logic;
+        r, g, b : out std_logic_vector (3 downto 0);
+
+        hsync, vsync : out std_logic;
+
+        -- LEDs
+        leds : out std_logic_vector(7 downto 0);
+        -- Push buttons
+        buttons : in std_logic_vector(3 downto 0);
+        -- DIP Switch IO
+        switch : in std_logic_vector(7 downto 0)
     );
     end component;
 
@@ -86,7 +112,16 @@ begin
         dout => dout,
         size => size,
         wr => wr,
-        clk => clk
+        clk => clk,
+
+        vgaclk => vgaclk, rst => rst,
+        r => r, g => g, b => b,
+
+        hsync => hsync, vsync => vsync,
+
+        leds => leds,
+        buttons => buttons,
+        switch => switch
     );
 
     cpu_inst: cpu port map (

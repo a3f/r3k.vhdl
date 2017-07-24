@@ -49,7 +49,6 @@ while (defined(my $instr = arg)) {
     print $tmp1fh $tb;
 
 
-    #system 'ghdl', '--remove', $workdir, "control_vec_assembler" and die;
     remove_from_work_library('control_vec_assembler');
     system 'ghdl', '-a', @opts, $workdir, $aout and die;
     system 'ghdl', '-e', @opts, $workdir, "control_vec_assembler" and die;

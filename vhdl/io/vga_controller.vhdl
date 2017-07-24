@@ -5,7 +5,7 @@ use work.arch_defs.all;
 use work.utils.all;
 --use work.shader.all;
 
-entity vga_controller is
+entity mmio_vga is
 port(
         -- static
         addr : in addr_t;
@@ -13,17 +13,18 @@ port(
         dout: out word_t;
         size : in std_logic_vector(1 downto 0); -- is also enable when = "00"
         wr : in std_logic;
+        en : in std_logic;
         memclk : in std_logic;
         trap : out traps_t := TRAP_NONE;
 
-        -- stuff
-        vgaclk, rstclk : in std_logic;
+        -- I/O
+        vgaclk, rst : in std_logic;
         r, g, b : out std_logic_vector (3 downto 0);
 
         hsync, vsync : out std_logic
     );
-end vga_controller;
-architecture struct of vga_controller is
+end mmio_vga;
+architecture mmio of mmio_vga is
 
     component sync
     port (
@@ -99,9 +100,11 @@ signal mode_idx : std_logic_vector(1 downto 0) := "01";
 signal vram_addr : addr_t;
 signal vram_din, vram_dout : word_t;
 
+signal data_out : word_t;
+
 begin
     --  FIXME: make shader selectable
-    inst_sync_640_480:     sync     port map (clk => vgaclk, en => '1', hsync => hsync, vsync => vsync, retracing => retracing, col => col, row => row);
+    --inst_sync_640_480:     sync     port map (clk => vgaclk, en => '1', hsync => hsync, vsync => vsync, retracing => retracing, col => col, row => row);
     --inst_vram:     dualport_bram
 --generic map(WORD_WIDTH => 32, ADDR_WIDTH => 8)
 -- TODO ISE has a Block RAM generator, that generates VHDL. Generate the VHDL for the RAM with it and plug it in here
@@ -121,13 +124,11 @@ begin
 
 --inst_shader: shader
     --port map (col => col, row => row, retracing => retracing, r => r, g => g, b => b); --, memclk => memclk, addr => rdaddr, din, dout, size, wr);
-
-    dout <= HI_Z;
+    dout <= data_out when en = '1' and wr = '0' else HI_Z;
 
     process(memclk)
     begin
-        if rising_edge(memclk) and size /= "00" then
-            dout <= NEG_ONE;
+        if rising_edge(memclk) and en = '1' and size /= "00" then
             case addr(31 downto 24) is
                 -- 0x14xx_xxxx is IO configuration space
                 -- TODO use work.memory_map.mmap instead of hardcoded address base
@@ -136,7 +137,7 @@ begin
                         if wr = writing then
                             mode_idx <= din(mode_idx'High downto mode_idx'Low);
                         else
-                            zeroextend(dout, mode_idx);
+                            zeroextend(data_out, mode_idx);
 
                         end if;
                     when others => null;
@@ -149,6 +150,4 @@ begin
             end case;
         end if;
     end process;
-end struct;
-
-
+end mmio;
