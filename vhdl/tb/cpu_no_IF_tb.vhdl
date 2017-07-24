@@ -25,17 +25,6 @@ architecture struct of cpu_no_IF_tb is
     signal regReadData1, regReadData2, regWriteData : word_t := ZERO;
     signal regWrite : ctrl_t := '0';
 
-    component mem is
-    port (
-        addr : in addr_t;
-        din : in word_t;
-        dout : out word_t;
-        size : in ctrl_memwidth_t;
-        wr : in std_logic;
-        clk : in std_logic
-    );
-    end component;
-
     component InstructionFetch is
         generic(PC_ADD, CPI : natural);
         port (
@@ -157,15 +146,6 @@ begin
             clk => regclk, rst => regrst,
             regWrite => regWrite
         );
-
-    mem_bus: mem port map (
-        addr => addr,
-        din => din,
-        dout => dout,
-        size => size,
-        wr => wr,
-        clk => cpuclk
-    );
 
     id1: InstructionDecode
     port map(instr => instr,
