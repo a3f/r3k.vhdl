@@ -1,15 +1,18 @@
 ifneq (, $(shell command -v mips-gcc))
 	PREFIX ?= mips-
-else ifneq (, $(shell command -v mipsel-elf-gcc))
-	PREFIX ?= mipsel-elf-
+else ifneq (, $(shell command -v mipsel-gcc))
+	PREFIX ?= mipsel-
+
 else ifneq (, $(shell command -v mips-elf-gcc))
 	PREFIX ?= mips-elf-
-else ifneq (, $(shell which mipsel-none-elf-gcc))
-	PREFIX ?= mipsel-none-elf-
-else ifneq (, $(shell which mips-none-elf-gcc))
-	PREFIX ?= mipsel-none-elf-
+else ifneq (, $(shell command -v mipsel-elf-gcc))
+	PREFIX ?= mipsel-elf-
+
 else ifneq (, $(shell which mips-none-elf-gcc))
 	PREFIX ?= mips-none-elf-
+else ifneq (, $(shell which mipsel-none-elf-gcc))
+	PREFIX ?= mipsel-none-elf-
+
 else
 	PREFIX ?= mips-
 endif

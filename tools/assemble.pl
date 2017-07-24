@@ -10,10 +10,8 @@ use IO::Handle;
 use Getopt::Std;
 use File::Temp qw(tempdir tempfile);
 use FindBin '$Bin';
-use File::Basename;
-use Data::Dumper;
 
-my $env = `make -C tools/$Bin/../bios printenv`;
+my $env = `make -C $Bin/../bios printenv`;
 $env =~ s{^(.+)?=(.+)\n}{$ENV{$1} //= $2}egm;
 
 my $workdir = "--workdir=$Bin/../vhdl/work";
