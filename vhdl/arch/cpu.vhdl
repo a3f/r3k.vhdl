@@ -391,7 +391,7 @@ begin
 		);
     process (clk)
     begin
-        if rising_edge(clk) and EX_en = '1' then
+        if rising_edge(clk) and (EX_en = '1' or IF_en = '1') then
             selMem <= not selMem;
         end if;
     end process;

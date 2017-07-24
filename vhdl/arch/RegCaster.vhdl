@@ -17,9 +17,9 @@ Architecture behav of RegCaster is
     constant ONES  : byte_t := X"ff";
 
     alias byte     is input( 7 downto 0);
-    alias byte_msb is input(byte'high);
+    alias byte_msb is input(7);
     alias half     is input(15 downto 0);
-    alias half_msb is input(half'high);
+    alias half_msb is input(15);
     alias word     is input(31 downto 0);
 begin
     extended <= X"FFFF_FF" & byte when size = WIDTH_BYTE and SignExtend = '1' and byte_msb = '1'

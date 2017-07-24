@@ -26,20 +26,25 @@ architecture behav of InstructionMem is
     constant example_code : code_t := (
     -- _start:
         X"3421_f000",     -- ori     $1,$1,0xf000
+        X"0000_0000",
         --X"3c02_0000",     -- lui     $2,0x1337
         --X"3c02_1337",     -- lui     $2,0x1337
+        X"0000_0000",
         X"3422_0bad",     -- ori     $1,$2,0xbad
+        X"0000_0000",
         X"3c03_A000",     -- lui     $3,0xA000
-        X"a062_0000",     -- sb      $3,0($4)
-        X"8064_0000",     -- lb      $3,0($4)
-        X"0800_0000"      -- j       0 <_start>
+        X"0000_0000",
+        X"a062_0000",     -- sb      $2,0($3)
+        X"0000_0000",
+        X"0000_0000",
+        X"8064_0000",     -- lb      $4,0($3)
+        X"0800_0000"    -- j       0 <_start>
     );
 
 begin
     use_bus_rom: if SINGLE_ADDRESS_SPACE generate
                     instr <= (others => 'Z');
         process(read_addr, top_dout, clk)
-            variable clks : natural := 0;
         begin
             if rising_edge(clk) then
                 instr <= top_dout;

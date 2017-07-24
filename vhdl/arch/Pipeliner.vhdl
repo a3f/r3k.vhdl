@@ -13,7 +13,7 @@ end;
 
 architecture behav of Pipeliner is
 begin
-    process (clk)
+    process (clk, rst)
         variable ticks : natural := 1;
         --constant CPI : natural := 8;
     begin
@@ -30,15 +30,15 @@ begin
             case ticks is
                 when 2 => IF_en  <= '1';
                           printf("===== IF  ===== \n");
-                when 5 => ID_en  <= '1';
+                when 3 => ID_en  <= '1';
                           printf("===== ID  ===== \n");
-                when 8 => EX_en  <= '1';
+                when 4 => EX_en  <= '1';
                           printf("===== EX  ===== \n");
-                when 9 => MEM_en <= '1';
+                when 5 => MEM_en <= '1';
                           printf("===== MEM ===== \n");
-                when 11 => WB_en  <= '1';
+                when 8 => WB_en  <= '1';
                           printf("===== WB  ===== \n");
-                when 15 => Instruction_done <= '1'; ticks := 0;
+                when 9 => Instruction_done <= '1'; ticks := 0;
               when others => null;
             end case;
             --if ticks = CPI then

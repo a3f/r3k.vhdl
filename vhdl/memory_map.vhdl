@@ -43,7 +43,7 @@ package body memory_map is
         variable addr: unsigned(31 downto 0) := unsigned(addr_vec);
         variable base: unsigned(31 downto 0) := unsigned(base_vec);
     begin
-        return base <= addr and addr <= base + len;
+        return base <= addr and addr < base + len;
     end inside;
 end memory_map;
 

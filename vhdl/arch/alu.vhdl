@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.utils.all;
 use work.overloads.all;
+use work.txt_utils.all;
 
 entity alu is
     port(Src1       : in word_t;
@@ -33,6 +34,7 @@ begin
         trap <= TRAP_NONE; -- rethink
         process (Src1, Src2, AluOp, immediate)
             variable result : word_t := X"8BAD_F00D";
+            alias shamt is Src2(5 downto 0); -- 0 <= shamt <= 31
         begin
             case AluOp is
                 -- Trapping not implemented
@@ -46,9 +48,9 @@ begin
                 when ALU_XOR => result := Src1 xor immediately_correct(Src2, immediate);
                 when ALU_LU  => result := half(Src2) & X"0000";
 
-                when ALU_SLL => result := Src1 sll vtou(Src2);
-                when ALU_SRL => result := Src1 srl vtou(Src2);
-                when ALU_SRA => result := Src1 sra vtou(Src2);
+                when ALU_SLL => result := Src1 sll vtou(shamt);
+                when ALU_SRL => result := Src1 srl vtou(shamt);
+                when ALU_SRA => result := Src1 sra vtou(shamt);
 
                 when ALU_MULT | ALU_MULTU | ALU_DIV | ALU_DIVU =>
                     -- Interesting read: http://yarchive.net/comp/mips_exceptions.html

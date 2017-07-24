@@ -21,8 +21,7 @@ begin
          mmap(4).chip_select when inside(A, mmap(4).base, mmap(4).size) else -- Pushbuttons
          mmap(5).chip_select when inside(A, mmap(5).base, mmap(5).size) else -- UART
          mmap(6).chip_select when inside(A, mmap(6).base, mmap(6).size) else -- VRAM
-         mmap(7).chip_select when inside(A, mmap(7).base, mmap(7).size) else -- Video configuration
-         (others => '0');
+         mmap(7).chip_select when inside(A, mmap(7).base, mmap(7).size);     -- Video configuration
 
          -- We need dual-ported RAM for the framebuffer,
          -- lest we've to deal with bus arbitration.

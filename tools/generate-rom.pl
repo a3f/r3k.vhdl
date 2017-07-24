@@ -20,7 +20,7 @@ for ($bin =~ /.{1,$size}/gs) {
     my $field = unpack $fmt, "$_\0\0\0";
 
     $whens .= ' ' x 8;
-    $whens .= sprintf 'when X"%04x_%04x" => z <= X"%0*x"; -- ',
+    $whens .= sprintf 'when X"%04x_%04x" => my_z <= X"%0*x"; -- ',
                         $addr >> 16, $addr & 0xFFFF, $nibbles, $field;
     for (split '') {
         $whens .= $escape_of{$_} ? $escape_of{$_}
@@ -42,20 +42,23 @@ library ieee;
 use ieee.std_logic_1164.all;
 entity rom is
     port ( a: in std_logic_vector(31 downto 0);
-           z: out std_logic_vector($msb downto 0)
+           z: out std_logic_vector($msb downto 0);
+           en: std_logic
          );
     attribute syn_romstyle : string;
     attribute syn_romstyle of z : signal is "select_rom";
 end rom;
 
 architecture rtl of rom is
+    signal my_z : std_logic_vector($msb downto 0);
     begin
+        z <= my_z when en = '1' else (others => 'Z');
     process(a)
         begin
         case a is
 
 $whens
-        when others => z <= X"$others";
+        when others => my_z <= X"$others";
         end case;
     end process;
 end rtl;

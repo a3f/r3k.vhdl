@@ -30,25 +30,26 @@ architecture rtl of rom is
         --X"8064_0000",     -- lb      a0,0(v1)
         X"0800_0000"      -- j       0 <_start>
     );
+    signal my_z : word_t;
     begin
+    z <= my_z when en = '1' else HI_Z;
     process(a)
     begin
-        z <= HI_Z;
         if en = '1' then
             printf("Address = %s\n", a);
             case a is
 
             -- _start:
-            when X"0000_0000" => z <= X"3421_f000"; -- ori $1, $1, 0xF000
-            when X"0000_0004" => z <= X"3422_0BAD"; -- ori $2, $1, 0x0BAD
-            --when X"0000_0008" => z <= X"3c03_a000"; -- lui     v1,0xa000
-            --when X"0000_0008" => z <= X"0000_0000"; -- lui     v1,0xa000
-            when X"0000_0008" => z <= X"0800_0000"; -- j       0 <_start>
-            --when X"0000_0010" => z <= X"a062_0000"; -- sb      v0,0(v1)
-            --when X"0000_0014" => z <= X"8064_0000"; -- lb      a0,0(v1)
-            --when X"0000_0018" => z <= X"0000_0000";
+            when X"0000_0000" => my_z <= X"3421_f000"; -- ori $1, $1, 0xF000
+            when X"0000_0004" => my_z <= X"3422_0BAD"; -- ori $2, $1, 0x0BAD
+            --when X"0000_0008" => my_z <= X"3c03_a000"; -- lui     v1,0xa000
+            --when X"0000_0008" => my_z <= X"0000_0000"; -- lui     v1,0xa000
+            when X"0000_0008" => my_z <= X"0800_0000"; -- j       0 <_start>
+            --when X"0000_0010" => my_z <= X"a062_0000"; -- sb      v0,0(v1)
+            --when X"0000_0014" => my_z <= X"8064_0000"; -- lb      a0,0(v1)
+            --when X"0000_0018" => my_z <= X"0000_0000";
 
-            when others => z <= X"DEADBEEF";
+            when others => my_z <= X"DEADBEEF";
             end case;
         end if;
     end process;
