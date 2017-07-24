@@ -154,7 +154,7 @@ begin
         rst <= '0';
         wait for 4 ns;
 
-        wait for 316 ns;
+        wait for 416 ns;
 
         rst <= '0';
         online <= false;
@@ -167,17 +167,18 @@ begin
                 ANSI_RED & "[r1] Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
         severity error;
 
-        test_readreg1 <= R1;
-        test_readreg2 <= R2;
+        test_readreg1 <= R2;
+        test_readreg2 <= R1;
         wait for 16 ns;
 
-        assert regReadData2 = X"0000_FBAD" report
-                ANSI_RED & "[r1] Failed to ori. 0xFBAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        assert regReadData2 = X"0000_F000" report
+                ANSI_RED & "[r1] Failed to ori. 0xF000 /= " & to_hstring(regReadData2) & ANSI_NONE
         severity error;
 
-        assert regReadData1 = X"0000_F000" report
-                ANSI_RED & "[r2] Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
+        assert regReadData1 = X"0000_FBAD" report
+                ANSI_RED & "[r2] Failed to ori. 0xFBAD /= " & to_hstring(regReadData1) & ANSI_NONE
         severity error;
+
 
         test_readreg1 <= R3;
         test_readreg2 <= R4;

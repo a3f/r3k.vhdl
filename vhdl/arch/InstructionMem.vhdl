@@ -27,8 +27,6 @@ architecture behav of InstructionMem is
     -- _start:
         X"3421_f000",     -- ori     $1,$1,0xf000
         X"0000_0000",
-        --X"3c02_0000",     -- lui     $2,0x1337
-        --X"3c02_1337",     -- lui     $2,0x1337
         X"0000_0000",
         X"3422_0bad",     -- ori     $1,$2,0xbad
         X"0000_0000",
