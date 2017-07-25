@@ -58,7 +58,8 @@ begin
             mem(vtou(b_addr)) := b_din;
         end if;
         -- FIXME
-        --b_dout <= mem(vtou(b_addr));
     end if;
+        -- If use synchronous RAM we would haveto run at double the VGA clock, I think
+        b_dout <= mem(vtou(b_addr));
 end process;
 end rtl;
