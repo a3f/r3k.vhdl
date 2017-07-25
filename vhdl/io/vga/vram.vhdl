@@ -30,7 +30,7 @@ architecture behavioral of vram is
     constant v_display  : integer := 480;
 
     type vram_t is array (0 to 7) of byte_t;
-    shared variable mem : vram_t;
+    signal mem : vram_t;
 
     signal first_byte : byte_t;
 begin
@@ -44,9 +44,9 @@ begin
             --color.r := x(9 downto 6);
             --color.g := y(8 downto 5);
             --color.b := "0000";
-            color.r := mem(0)(7 downto 5) & B"00000";
-            color.g := mem(0)(4 downto 2) & B"00000";
-            color.b := mem(0)(1 downto 0) & B"000000";
+            color.r := mem(0)(7 downto 5) & B"000";
+            color.g := mem(0)(4 downto 2) & B"000";
+            color.b := mem(0)(1 downto 0) & B"00";
 
             if x = "0000000000" or y = "000000000" or x = "1001111111" or y = "111011111" then
                 color := WHITE;
@@ -63,7 +63,7 @@ begin
         if(rising_edge(bus_clk)) then
             if(bus_wr = '1') then
                 printf(ANSI_GREEN & "writing %s to %s\n", bus_din, bus_addr);
-                mem(vtou(bus_addr)) := bus_din(7 downto 0);
+                mem(vtou(bus_addr)) <= bus_din(7 downto 0);
             end if;
             bus_dout(7 downto 0) <= mem(vtou(bus_addr));
         end if;
