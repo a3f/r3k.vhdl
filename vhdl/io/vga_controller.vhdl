@@ -97,34 +97,41 @@ constant modes : vga_mode_table_t := (
 
 signal mode_idx : std_logic_vector(1 downto 0) := "01";
 
-signal vram_addr : addr_t;
-signal vram_din, vram_dout : word_t;
+signal access_vram : std_logic := '0';
 
-signal data_out : word_t;
+signal vram_din, vram_dout, data_out : word_t;
+signal vram_addr : word_t;
+signal writing_vram : ctrl_t := '0';
 
 begin
     --  FIXME: make shader selectable
     --inst_sync_640_480:     sync     port map (clk => vgaclk, en => '1', hsync => hsync, vsync => vsync, retracing => retracing, col => col, row => row);
-    --inst_vram:     dualport_bram
---generic map(WORD_WIDTH => 32, ADDR_WIDTH => 8)
+    inst_vram:     dualport_bram
+generic map(WORD_WIDTH => 8, ADDR_WIDTH => 8)
 -- TODO ISE has a Block RAM generator, that generates VHDL. Generate the VHDL for the RAM with it and plug it in here
---port map (--clk => memclk, wr => wr, wraddr => addr, rdaddr => rdaddr, din => din, dout => video);
---            a_addr => vram_addr(ADDR_WIDTH-1 downto 0),
---            a_din => vram_din(WORD_WIDTH-1 downto 0),
---            a_dout => vram_dout(WORD_WIDTH-1 downto 0),
---            a_wr => wr,
---            a_clk => clk,
---
---            b_addr =>
---            b_din
---            b_dout
---            b_wr
---            b_clk
---    );
+--port map (clk => memclk, wr => wr, wraddr => addr, rdaddr => rdaddr, din => din, dout => video);
+port map(
+            a_addr => vram_addr(7 downto 0),
+            a_din => vram_din(7 downto 0),
+            a_dout => vram_dout(7 downto 0),
+            a_wr => writing_vram,
+            a_clk => memclk,
+
+            b_addr => X"00",
+            b_din => X"00",
+            b_dout => open,
+            b_wr => '0',
+            b_clk => vgaclk
+    );
+
+    writing_vram <= wr and access_vram and en;
+    vram_din <= din when access_vram = '1';
+    vram_addr <= addr when access_vram = '1';
 
 --inst_shader: shader
     --port map (col => col, row => row, retracing => retracing, r => r, g => g, b => b); --, memclk => memclk, addr => rdaddr, din, dout, size, wr);
-    dout <= data_out when en = '1' and wr = '0' else HI_Z;
+    dout <= data_out  when en = '1' and wr = '0' and access_vram = '0' else
+            vram_dout when en = '1' and wr = '0' and access_vram = '1' else HI_Z;
 
     process(memclk)
     begin
@@ -132,7 +139,9 @@ begin
             case addr(31 downto 24) is
                 -- 0x14xx_xxxx is IO configuration space
                 -- TODO use work.memory_map.mmap instead of hardcoded address base
-                when X"14"=> case addr(3 downto 0) is
+                when X"14"=>
+                    access_vram <= '0';
+                    case addr(3 downto 0) is
                     when X"0" => -- vga_mode
                         if wr = writing then
                             mode_idx <= din(mode_idx'High downto mode_idx'Low);
@@ -144,6 +153,7 @@ begin
                 end case;
                 -- 0x10xx_xxxx is IO memory space
                 when X"10" =>
+                    access_vram <= '1';
                 -- forward to BRAM
                     null;
                 when others => trap <= TRAP_SEGFAULT;

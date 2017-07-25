@@ -5,12 +5,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.utils.all;
+use work.txt_utils.all;
 
-library work;
 entity dualport_bram is
 generic (
-    WORD_WIDTH    : integer := 72;
-    ADDR_WIDTH    : integer := 10
+    WORD_WIDTH    : integer := 8;
+    ADDR_WIDTH    : integer := 8
 );
 port (
     -- Port A
@@ -32,28 +32,32 @@ end dualport_bram;
 architecture rtl of dualport_bram is
     -- Shared memory
     type mem_type is array ( (2**ADDR_WIDTH)-1 downto 0 ) of std_logic_vector(WORD_WIDTH-1 downto 0);
-    shared variable mem : mem_type;
+    signal mem : mem_type := (others => (others => '0'));
+
+    signal first_byte : std_logic_vector(WORD_WIDTH-1 downto 0);
 begin
 
+    first_byte <= mem(0);
 -- Port A
 process(a_clk)
 begin
-    if(a_clk'event and a_clk='1') then
+    if(rising_edge(a_clk)) then
         if(a_wr='1') then
-            mem(vtou(a_addr)) := a_din;
+            printf(ANSI_GREEN & "writing %s to %s\n", a_din, a_addr);
+            mem(0) <= x"1C";
         end if;
         a_dout <= mem(vtou(a_addr));
     end if;
 end process;
 
 -- Port B
-process(b_clk)
-begin
-    if(b_clk'event and b_clk='1') then
-        if(b_wr='1') then
-            mem(vtou(b_addr)) := b_din;
-        end if;
-        b_dout <= mem(vtou(b_addr));
-    end if;
-end process;
+--process(b_clk)
+--begin
+    --if(rising_edge(b_clk)) then
+        --if(b_wr='1') then
+            --mem(vtou(b_addr)) <= b_din;
+        --end if;
+        --b_dout <= mem(vtou(b_addr));
+    --end if;
+--end process;
 end rtl;

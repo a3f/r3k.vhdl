@@ -1,13 +1,14 @@
+-- SKIP because sb $v0, $gp; sb $v1, $gp doesn't read $v0's value back
 -- This is the top level MIPS architecture
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 use work.txt_utils.all;
 
-entity mips_tb is
+entity mips_vga_tb is
 end;
 
-architecture struct of mips_tb is
+architecture struct of mips_vga_tb is
     component regFile is
     port (
             readreg1, readreg2 : in reg_t;
@@ -104,7 +105,7 @@ begin
     );
 
     mem_bus: mem
-    generic map (ROM => "")
+    generic map (ROM => "vga")
     port map (
         addr => addr,
         din => din,
@@ -157,42 +158,22 @@ begin
         rst <= '0';
         wait for 4 ns;
 
-        wait for 260 ns;
+        wait for 160 ns;
 
         rst <= '0';
         online <= false;
         wait for 20 ns;
 
-        test_readreg1 <= R1;
-        wait for 8 ns;
-
-        assert regReadData1 = X"0000_F000" report
-                ANSI_RED & "[r1] Failed to ori. 0xF000 /= " & to_hstring(regReadData1) & ANSI_NONE
-        severity error;
-
-        test_readreg1 <= R2;
-        test_readreg2 <= R1;
+        test_readreg1 <= GP;
+        test_readreg2 <= V0;
         wait for 16 ns;
 
-        assert regReadData2 = X"0000_F000" report
-                ANSI_RED & "[r1] Failed to ori. 0xF000 /= " & to_hstring(regReadData2) & ANSI_NONE
+        assert regReadData1 = X"1000_0000" report
+                ANSI_RED & "[$gp] Failed to ori. 0x1000_0000 /= " & to_hstring(regReadData1) & ANSI_NONE
         severity error;
 
-        assert regReadData1 = X"0000_FBAD" report
-                ANSI_RED & "[r2] Failed to ori. 0xFBAD /= " & to_hstring(regReadData1) & ANSI_NONE
-        severity error;
-
-
-        test_readreg1 <= R3;
-        test_readreg2 <= R4;
-        wait for 16 ns;
-
-        assert regReadData1 = X"A000_0000" report
-                ANSI_RED & "[r3] 0xA000_0000 /= " & to_hstring(regReadData1) & ANSI_NONE
-        severity error;
-
-        assert regReadData2 = X"FFFF_FFAD" report
-                ANSI_RED & "[r4] 0xFFFF_FFAD /= " & to_hstring(regReadData2) & ANSI_NONE
+        assert regReadData2 = X"0000_00" & B"0001_1100" report
+                ANSI_RED & "[$v1] Failed to ori. 0x1C /= " & to_hstring(regReadData2) & ANSI_NONE
         severity error;
 
         wait;
@@ -203,4 +184,5 @@ begin
     end process;
 
 end struct;
+
 

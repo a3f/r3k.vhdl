@@ -37,6 +37,7 @@ architecture struct of mips is
     end component;
 
     component mem is
+    generic (ROM : string := "");
     port (
         addr : in addr_t;
         din : in word_t;
@@ -106,7 +107,9 @@ begin
         regWrite => regWrite
     );
 
-    mem_bus: mem port map (
+    mem_bus: mem
+    generic map (ROM => "")
+    port map (
         addr => addr,
         din => din,
         dout => dout,

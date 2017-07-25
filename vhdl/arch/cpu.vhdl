@@ -34,7 +34,7 @@ architecture struct of cpu is
     component Pipeliner is
     port(
         clk, rst : in std_logic;
-        ID_en, IF_en, EX_en, MEM_en, WB_en : out std_logic;
+        ID_en, IF_en, EX_en, MEM_en, MEM_read, WB_en : out std_logic;
         Instruction_done : out std_logic
     );
     end component;
@@ -172,12 +172,13 @@ architecture struct of cpu is
         new_pc : out addr_t);
     end component;
 
-    signal IF_en  : std_logic := '0';
-    signal ID_en  : std_logic := '0';
-    signal EX_en  : std_logic := '0';
-    signal MEM_en : std_logic := '0';
-    signal WB_en  : std_logic := '0';
-    signal Instruction_done  : std_logic := '0';
+    signal IF_en            :  std_logic := '0';
+    signal ID_en            :  std_logic := '0';
+    signal EX_en            :  std_logic := '0';
+    signal MEM_en           :  std_logic := '0';
+    signal MEM_read         :  std_logic := '0';
+    signal WB_en            :  std_logic := '0';
+    signal Instruction_done :  std_logic := '0';
     signal regwrite_no_wb : std_logic := '0';
 
     signal regwrite_pre_reg : ctrl_t;
@@ -307,6 +308,7 @@ begin
         ID_en => ID_en,
         EX_en => EX_en,
         MEM_en => MEM_en,
+        MEM_read => MEM_read,
         WB_en => WB_en,
         Instruction_done => Instruction_done
     );

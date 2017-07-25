@@ -6,10 +6,10 @@ G_SRCS = $(wildcard *.vhdl)
 G_OBJS = $(G_SRCS:.vhdl=.o)
 
 .PHONY: all
-all: arch io
+all: arch roms io
 
 .PHONY: test 
-test: arch io tb
+test: arch roms io tb
 
 .PHONY: globals
 globals: $(G_OBJS)
@@ -20,6 +20,10 @@ arch: globals
 
 .PHONY: io
 io: globals
+	$(MAKE) -C $@
+
+.PHONY: roms
+roms: globals
 	$(MAKE) -C $@
 
 .PHONY: tb

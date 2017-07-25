@@ -6,7 +6,7 @@ use work.txt_utils.all;
 entity Pipeliner is
     port(
         clk, rst : in std_logic;
-        IF_en, ID_en, EX_en, MEM_en, WB_en : out std_logic;
+        IF_en, ID_en, EX_en, MEM_en, MEM_read, WB_en : out std_logic;
         Instruction_done : out std_logic
     );
 end;
@@ -20,11 +20,12 @@ begin
         if rst = '1' then
             ticks := 1;
         elsif rising_edge(clk) then
-            IF_en  <= '0';
-            ID_en  <= '0';
-            EX_en  <= '0';
-            MEM_en <= '0';
-            WB_en  <= '0';
+            IF_en    <= '0';
+            ID_en    <= '0';
+            EX_en    <= '0';
+            MEM_en   <= '0';
+            MEM_read <= '0';
+            WB_en    <= '0';
             Instruction_done <= '0';
 
             case ticks is
@@ -36,9 +37,10 @@ begin
                           printf("===== EX  ===== \n");
                 when 5 => MEM_en <= '1';
                           printf("===== MEM ===== \n");
-                when 8 => WB_en  <= '1';
+                when 9 => MEM_read <= '1';
+                when 10 => WB_en  <= '1';
                           printf("===== WB  ===== \n");
-                when 9 => Instruction_done <= '1'; ticks := 0;
+                when 11 => Instruction_done <= '1'; ticks := 0;
               when others => null;
             end case;
             --if ticks = CPI then

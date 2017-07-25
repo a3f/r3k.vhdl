@@ -7,7 +7,7 @@ use work.txt_utils.all;
 use work.utils.all;
 
 entity mem is
-    generic (RAMSIZE : positive := 32);
+    generic (ROM : string := ""; RAMSIZE : positive := 32);
     port(
             addr : in addr_t;
             din : in word_t;
@@ -37,12 +37,8 @@ architecture struct of mem is
          cs : out memchipsel_t);
     end component;
 
-    component rom is
-    port ( a: in std_logic_vector(31 downto 0);
-           z: out std_logic_vector(31 downto 0);
-           en : in std_logic
-         );
-    end component;
+    component rom_default is port (a: in addr_t; z: out word_t; en: in ctrl_t); end component;
+    component rom_vga is port (a: in addr_t; z: out word_t; en: in ctrl_t); end component;
 
     signal cs : memchipsel_t;
     signal instr : instruction_t;
@@ -145,11 +141,20 @@ architecture struct of mem is
          );
    end component;
 
+   signal vga_en : ctrl_t := '0';
 begin
     addrdec_instance : addrdec port map(addr, cs);
 
-    instruction_mem : rom
-        port map(addr, dout, cs(mmap_rom));
+    vga_rom_selector: if ROM = "VGA" or ROM = "vga" generate
+    begin
+        instruction_mem : rom_vga
+            port map(addr, dout, cs(mmap_rom));
+    end generate;
+     default_rom_selector: if ROM = "" generate
+    begin
+        instruction_mem : rom_default
+            port map(addr, dout, cs(mmap_rom));
+    end generate;
 
     -- It's possible that this isn't interferrable. If so, maybe use synchronous RAM instead?
     working_ram : async_ram
@@ -161,14 +166,16 @@ begin
                  en => cs(mmap_ram)
          );
 
+    vga_en <= cs(mmap_vram) or cs(mmap_videocfg);
+
     vga : mmio_vga
         port map(addr => addr,
                  din  => din,
                  dout => dout,
                  size => size,
                  wr   => wr,
-                 en   => '0',
-                 memclk => '0',
+                 en   => vga_en,
+                 memclk => clk,
                  trap => open,
                  
                  vgaclk => vgaclk,
@@ -183,8 +190,8 @@ begin
                  dout => dout,
                  size => size,
                  wr   => wr,
-                 en   => '0',
-                 clk => '0',
+                 en   => cs(mmap_led),
+                 clk => clk,
                  trap => open,
 
                  leds => leds
@@ -196,8 +203,8 @@ begin
                  dout => dout,
                  size => size,
                  wr   => wr,
-                 en   => '0',
-                 clk => '0',
+                 en   => cs(mmap_push),
+                 clk => clk,
                  trap => open,
 
                  buttons => buttons
@@ -209,8 +216,8 @@ begin
              dout => dout,
              size => size,
              wr   => wr,
-             en   => '0',
-             clk => '0',
+             en   => cs(mmap_tsc),
+             clk => clk,
              trap => open
         );
 
@@ -220,8 +227,8 @@ begin
              dout => dout,
              size => size,
              wr   => wr,
-             en   => '0',
-             clk => '0',
+             en   => cs(mmap_dipswitch),
+             clk => clk,
              trap => open,
              switch => switch
          );

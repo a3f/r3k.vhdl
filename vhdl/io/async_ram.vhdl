@@ -54,7 +54,7 @@ begin
         variable index : natural;
     begin
         index := vtou(address and not mmap(mmap_ram).base);
-        printf(ANSI_GREEN & " iNDEX is %d\n", index);
+        -- printf(ANSI_GREEN & " iNDEX is %d\n", index);
         if en = '1' and wr = '0' then
            case size is
                when WIDTH_BYTE => data_out <= NOCARE & NOCARE & NOCARE & mem(0);
