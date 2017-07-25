@@ -11,7 +11,7 @@ A MIPS R3000 softcore written in VHDL with memory mapped 16550-class UART and VG
 
 ![MIPS R3000 single-cycle datapath][datapath]
 
-The VHDL code is located in `vhdl/`. Build and run tests with `make test`. Never mind the build failing at the moment. The GHDL version on the CI server is for some reason crashing on (my otherwise perfect!) code.
+The VHDL93 code is located in `vhdl/`. Build and run tests by executing `make test` in that directory. The test system was written for use with GHDL. The subdirectory `ise/` contains the project files for use with ISE. We used version 14.7.
 
 ## BIOS
 

@@ -1,0 +1,40 @@
+NET "clk" LOC = F13;
+NET "vgaclk" LOC = P26;
+
+NET "vsync" LOC = K25;
+NET "hsync" LOC = K26;
+
+NET "leds[7]" LOC = D25;
+NET "leds[6]" LOC = D24;
+NET "leds[5]" LOC = G21;
+NET "leds[4]" LOC = H20;
+NET "leds[3]" LOC = K22;
+NET "leds[2]" LOC = N19;
+NET "leds[1]" LOC = P25;
+NET "leds[0]" LOC = P18;
+
+NET "r[3]" LOC = F24;
+NET "r[2]" LOC = F25;
+NET "r[1]" LOC = K20;
+NET "r[0]" LOC = L20;
+NET "g[3]" LOC = J22;
+NET "g[2]" LOC = J23;
+NET "g[1]" LOC = M18;
+NET "g[0]" LOC = M19;
+NET "b[0]" LOC = L22;
+NET "b[1]" LOC = K21;
+NET "b[2]" LOC = G23;
+NET "b[3]" LOC = G24;
+
+NET "buttons[0]" LOC = J10;
+NET "buttons[1]" LOC = J13;
+NET "buttons[2]" LOC = J15;
+NET "buttons[3]" LOC = J17;
+
+NET "switch[6]" LOC = G16;
+NET "switch[5]" LOC = E9;
+NET "switch[4]" LOC = D15;
+NET "switch[3]" LOC = D19;
+NET "switch[2]" LOC = B24;
+NET "switch[0]" LOC = A23;
+NET "switch[1]" LOC = A5;

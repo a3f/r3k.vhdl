@@ -3,7 +3,6 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
 use work.utils.all;
---use work.shader.all;
 
 entity mmio_vga is
 port(
@@ -105,7 +104,8 @@ signal writing_vram : ctrl_t := '0';
 
 begin
     --  FIXME: make shader selectable
-    --inst_sync_640_480:     sync     port map (clk => vgaclk, en => '1', hsync => hsync, vsync => vsync, retracing => retracing, col => col, row => row);
+    inst_sync_640_480:     sync     port map (clk => vgaclk, en => '1', hsync => hsync, vsync => vsync, retracing => retracing, col => col, row => row);
+
     inst_vram:     dualport_bram
 generic map(WORD_WIDTH => 8, ADDR_WIDTH => 8)
 -- TODO ISE has a Block RAM generator, that generates VHDL. Generate the VHDL for the RAM with it and plug it in here
@@ -128,8 +128,8 @@ port map(
     vram_din <= din when access_vram = '1';
     vram_addr <= addr when access_vram = '1';
 
---inst_shader: shader
-    --port map (col => col, row => row, retracing => retracing, r => r, g => g, b => b); --, memclk => memclk, addr => rdaddr, din, dout, size, wr);
+inst_shader: shader
+    port map (x => col, y => row, retracing => retracing, r => r, g => g, b => b); --, memclk => memclk, addr => rdaddr, din, dout, size, wr);
     dout <= data_out  when en = '1' and wr = '0' and access_vram = '0' else
             vram_dout when en = '1' and wr = '0' and access_vram = '1' else HI_Z;
 

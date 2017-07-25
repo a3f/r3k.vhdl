@@ -44,20 +44,20 @@ begin
     if(rising_edge(a_clk)) then
         if(a_wr='1') then
             printf(ANSI_GREEN & "writing %s to %s\n", a_din, a_addr);
-            mem(0) <= x"1C";
+            mem(vtou(a_addr)) <= a_din;
         end if;
         a_dout <= mem(vtou(a_addr));
     end if;
 end process;
 
 -- Port B
---process(b_clk)
---begin
-    --if(rising_edge(b_clk)) then
-        --if(b_wr='1') then
-            --mem(vtou(b_addr)) <= b_din;
-        --end if;
-        --b_dout <= mem(vtou(b_addr));
-    --end if;
---end process;
+process(b_clk)
+begin
+    if(rising_edge(b_clk)) then
+        if(b_wr='1') then
+            mem(vtou(b_addr)) <= b_din;
+        end if;
+        b_dout <= mem(vtou(b_addr));
+    end if;
+end process;
 end rtl;
