@@ -8,7 +8,7 @@ use work.txt_utils.all;
 use work.memory_map.all;
 
 entity vram is
-    generic ( SIZE : natural := 4*K );
+    generic ( SIZE : natural := 64 );
     port (
           x : in std_logic_vector (9 downto 0); -- 640 = 10_1000_0000b
           y : in std_logic_vector (8 downto 0); -- 480 = 1_1110_0000b

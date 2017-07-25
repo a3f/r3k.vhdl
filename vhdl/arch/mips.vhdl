@@ -37,7 +37,7 @@ architecture struct of mips is
     end component;
 
     component mem is
-    generic (ROM : string := "");
+    generic (ROM : string := "VGA");
     port (
         addr : in addr_t;
         din : in word_t;
@@ -142,7 +142,9 @@ begin
         switch => switch
     );
 
-    cpu_inst: cpu port map (
+    cpu_inst: cpu 
+    generic map (SINGLE_ADDRESS_SPACE => false)
+    port map (
         clk => clk,
         rst => rst,
 
