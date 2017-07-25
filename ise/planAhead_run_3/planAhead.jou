@@ -1,0 +1,13 @@
+#-----------------------------------------------------------
+# PlanAhead v14.7
+# Build 321239 by xbuild on Fri Sep 27 19:24:55 MDT 2013
+# Start of session at: Tue Jul 25 19:57:26 2017
+# Process ID: 26162
+# Log file: /home/capplab02/r3k.vhdl/r3k.vhdl/ise/planAhead_run_3/planAhead.log
+# Journal file: /home/capplab02/r3k.vhdl/r3k.vhdl/ise/planAhead_run_3/planAhead.jou
+#-----------------------------------------------------------
+start_gui
+source /home/capplab02/r3k.vhdl/r3k.vhdl/ise/pa.fromHdl.tcl
+update_compile_order -fileset sim_1
+set_property package_pin "" [get_ports [list  {switch[7]}]]
+save_constraints

@@ -1,0 +1,246 @@
+
+****** PlanAhead v14.7
+  **** Build 321239 by xbuild on Fri Sep 27 19:24:55 MDT 2013
+    ** Copyright 1986-1999, 2001-2013 Xilinx, Inc. All Rights Reserved.
+
+INFO: [Common 17-78] Attempting to get a license: PlanAhead
+INFO: [Common 17-290] Got license for PlanAhead
+INFO: [Common 17-86] Your PlanAhead license expires in -328 day(s)
+INFO: [Device 21-36] Loading parts and site information from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/arch.xml
+Parsing RTL primitives file [/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+Finished parsing RTL primitives file [/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+start_gui
+INFO: [Common 17-81] Feature available: PartialReconfiguration
+source /home/capplab02/r3k.vhdl/r3k.vhdl/ise/pa.fromHdl.tcl
+# create_project -name r3k.vhdl -dir "/home/capplab02/r3k.vhdl/r3k.vhdl/ise/planAhead_run_3" -part xc3sd1800afg676-4
+# set_param project.pinAheadLayout yes
+# set srcset [get_property srcset [current_run -impl]]
+# set_property target_constrs_file "mips.ucf" [current_fileset -constrset]
+Adding file '/home/capplab02/r3k.vhdl/r3k.vhdl/ise/mips.ucf' to fileset 'constrs_1'
+# set hdlfile [add_files [list {../vhdl/arch_defs.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/utils.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/txt_utils.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/overloads.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/memory_map.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/vga/color_util.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/vga/vram.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/vga/sync.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/shiftMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/ShiftLeftImm.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/returnAddrMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/regDstMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/RegCaster.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/PC.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/memToRegMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/maindec.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/linkMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/JumpRegMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/JumpDirMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/InstructionMem.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/BranchMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/ALUSrcMux.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/alu.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/Adder.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/roms/vga.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/roms/default.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/vga_controller.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/tsc.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/leds.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/dipswitch.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/buttons.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/async_ram.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/addrdec.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/WB.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/PipeReg.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/Pipeliner.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/MUX1bit.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/MUX.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/MEM.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/IF.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/ID.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/EX.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/CtrlReg.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/AluOpReg.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/io/mem.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/regFile.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/cpu.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/clkdivider.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set hdlfile [add_files [list {../vhdl/arch/mips.vhdl}]]
+# set_property file_type VHDL $hdlfile
+# set_property library work $hdlfile
+# set_property top mips $srcset
+# add_files [list {mips.ucf}] -fileset [get_property constrset [current_run]]
+# open_rtl_design -part xc3sd1800afg676-4
+Using Verific elaboration
+Parsing VHDL file "/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/rtl/lib/synplify/synattr.vhd" into library synplify
+Parsing VHDL file "/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/rtl/lib/synplify/synattr.vhd" into library synplify
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch_defs.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/utils.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/txt_utils.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/overloads.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/memory_map.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/vga/color_util.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/vga/vram.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/vga/sync.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/shiftMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/ShiftLeftImm.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/returnAddrMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/regDstMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/RegCaster.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/PC.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/memToRegMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/maindec.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/linkMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/JumpRegMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/JumpDirMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/InstructionMem.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/BranchMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/ALUSrcMux.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/alu.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/Adder.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/roms/vga.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/roms/default.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/vga_controller.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/tsc.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/leds.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/dipswitch.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/buttons.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/async_ram.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/addrdec.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/WB.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/PipeReg.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/Pipeliner.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/MUX1bit.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/MUX.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/MEM.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/IF.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/ID.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/EX.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/CtrlReg.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/AluOpReg.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/io/mem.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/regFile.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/cpu.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/clkdivider.vhdl" into library work
+Parsing VHDL file "/home/capplab02/r3k.vhdl/r3k.vhdl/vhdl/arch/mips.vhdl" into library work
+INFO: [Designutils 20-910] Reading macro library /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/./parts/xilinx/spartan3adsp/hd_int_macros.edn
+Parsing EDIF File [/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/./parts/xilinx/spartan3adsp/hd_int_macros.edn]
+Finished Parsing EDIF File [/Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/./parts/xilinx/spartan3adsp/hd_int_macros.edn]
+Loading clock regions from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/xc3sd1800a/ClockRegion.xml
+Loading clock buffers from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/xc3sd1800a/ClockBuffers.xml
+Loading package from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/xc3sd1800a/fg676/Package.xml
+Loading io standards from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/./parts/xilinx/spartan3adsp/IOStandards.xml
+INFO: [Device 21-19] Loading pkg sso from /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/xc3sd1800a/fg676/SSORules.xml
+Loading list of drcs for the architecture : /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/./parts/xilinx/spartan3adsp/drc.xml
+INFO: [Timing 38-77] Reading timing library /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/spartan3adsp-4.lib.
+INFO: [Timing 38-34] Done reading timing library /Software/xilinx/14.7_2013.3/14.7/ISE_DS/PlanAhead/data/parts/xilinx/spartan3adsp/spartan3adsp/spartan3adsp-4.lib.
+Parsing UCF File [/home/capplab02/r3k.vhdl/r3k.vhdl/ise/mips.ucf]
+Finished Parsing UCF File [/home/capplab02/r3k.vhdl/r3k.vhdl/ise/mips.ucf]
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Phase 0 | Netlist Checksum: b904c6ad
+open_rtl_design: Time (s): cpu = 00:00:21 ; elapsed = 00:00:18 . Memory (MB): peak = 1109.285 ; gain = 80.797
+update_compile_order -fileset sim_1
+set_property package_pin "" [get_ports [list  {switch[7]}]]
+save_constraints
+exit
+ERROR: [Common 17-39] 'stop_gui' failed due to earlier errors.
+INFO: [Common 17-206] Exiting PlanAhead at Tue Jul 25 19:59:20 2017...
+INFO: [Common 17-83] Releasing license: PlanAhead

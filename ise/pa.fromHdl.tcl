@@ -1,7 +1,7 @@
 
 # PlanAhead Launch Script for Pre-Synthesis Floorplanning, created by Project Navigator
 
-create_project -name r3k.vhdl -dir "/home/capplab02/r3k.vhdl/r3k.vhdl/ise/planAhead_run_2" -part xc3sd1800afg676-4
+create_project -name r3k.vhdl -dir "/home/capplab02/r3k.vhdl/r3k.vhdl/ise/planAhead_run_3" -part xc3sd1800afg676-4
 set_param project.pinAheadLayout yes
 set srcset [get_property srcset [current_run -impl]]
 set_property target_constrs_file "mips.ucf" [current_fileset -constrset]
@@ -20,7 +20,13 @@ set_property library work $hdlfile
 set hdlfile [add_files [list {../vhdl/memory_map.vhdl}]]
 set_property file_type VHDL $hdlfile
 set_property library work $hdlfile
-set hdlfile [add_files [list {../vhdl/io/dualport_bram.vhdl}]]
+set hdlfile [add_files [list {../vhdl/io/vga/color_util.vhdl}]]
+set_property file_type VHDL $hdlfile
+set_property library work $hdlfile
+set hdlfile [add_files [list {../vhdl/io/vga/vram.vhdl}]]
+set_property file_type VHDL $hdlfile
+set_property library work $hdlfile
+set hdlfile [add_files [list {../vhdl/io/vga/sync.vhdl}]]
 set_property file_type VHDL $hdlfile
 set_property library work $hdlfile
 set hdlfile [add_files [list {../vhdl/arch/shiftMux.vhdl}]]
@@ -138,6 +144,9 @@ set hdlfile [add_files [list {../vhdl/arch/regFile.vhdl}]]
 set_property file_type VHDL $hdlfile
 set_property library work $hdlfile
 set hdlfile [add_files [list {../vhdl/arch/cpu.vhdl}]]
+set_property file_type VHDL $hdlfile
+set_property library work $hdlfile
+set hdlfile [add_files [list {../vhdl/arch/clkdivider.vhdl}]]
 set_property file_type VHDL $hdlfile
 set_property library work $hdlfile
 set hdlfile [add_files [list {../vhdl/arch/mips.vhdl}]]

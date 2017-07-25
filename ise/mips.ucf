@@ -1,4 +1,4 @@
-NET "clk" LOC = F13;
+NET "sysclk" LOC = F13;
 NET "vgaclk" LOC = P26;
 
 NET "vsync" LOC = K25;
