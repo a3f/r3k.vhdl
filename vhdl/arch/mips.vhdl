@@ -143,17 +143,17 @@ begin
         port map (
             addr => addr, din => din, dout => dout, size => size, wr => wr, clk => clk,
             vgaclk => vgaclk, rst => rst, r => r, g => g, b => b, hsync => hsync, vsync => vsync,
-            leds => open, buttons => buttons, switch => switch
+            leds => leds, buttons => buttons, switch => switch
         );
     end generate;
 
-    connect_leds_to_instruction: if not DEMO generate
+    connect_leds_to_instruction: if DEMO generate
         mem_bus: mem
         generic map (ROM => "VGA")
         port map (
             addr => addr, din => din, dout => dout, size => size, wr => wr, clk => clk,
             vgaclk => vgaclk, rst => rst, r => r, g => g, b => b, hsync => hsync, vsync => vsync,
-            leds => leds, buttons => buttons, switch => switch
+            leds => open, buttons => buttons, switch => switch
         );
 
         leds(7) <= wr;
