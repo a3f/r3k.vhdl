@@ -57,7 +57,7 @@ begin
         if(b_wr='1') then
             mem(vtou(b_addr)) <= b_din;
         end if;
-        b_dout <= mem(vtou(b_addr));
+        --b_dout <= mem(vtou(b_addr));
     end if;
 end process;
 end rtl;
