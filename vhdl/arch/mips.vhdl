@@ -80,7 +80,10 @@ architecture struct of mips is
         top_dout : in word_t;
         top_din : out word_t;
         top_size : out ctrl_memwidth_t;
-        top_wr : out ctrl_t
+        top_wr : out ctrl_t;
+
+        -- Debug info
+        instruction : out instruction_t
     );
     end component;
 
@@ -107,6 +110,8 @@ architecture struct of mips is
     signal wr : std_logic;
 
     signal clk : std_logic := '0';
+
+    signal instruction : instruction_t;
 begin
     clkdivider1: clkdivider port map (
         ticks => 2*1000*1000, bigclk => sysclk, rst => rst, smallclk => clk
@@ -160,7 +165,10 @@ begin
         top_dout => dout,
         top_din => din,
         top_size => size,
-        top_wr => wr
+        top_wr => wr,
+
+        -- Debug info
+        instruction => instruction
     );
 end struct;
 

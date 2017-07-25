@@ -111,6 +111,8 @@ package arch_defs is
 
     function toreg(i : integer) return reg_t;
 
+    constant VGA_PIXELFREQ : natural := 25175*1000;
+
 end arch_defs;
 
 package body arch_defs is

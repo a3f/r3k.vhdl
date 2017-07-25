@@ -1,14 +1,29 @@
--- SKIP because sb $v0, $gp; sb $v1, $gp doesn't read $v0's value back
--- This is the top level MIPS architecture
+-- Demonstrator. see mips.vhdl for the main arch
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
-use work.txt_utils.all;
 
-entity mips_vga_tb is
+entity mips_demo is
+    port (
+        sysclk : in std_logic;
+        rst : in std_logic;
+
+        -- VGA I/O
+        vgaclk : in std_logic;
+        r, g, b : out std_logic_vector (3 downto 0);
+
+        hsync, vsync : out std_logic;
+
+        -- LEDs
+        leds : out std_logic_vector(7 downto 0);
+        -- Push buttons
+        buttons : in std_logic_vector(3 downto 0);
+        -- DIP Switch IO
+        switch : in std_logic_vector(7 downto 0)
+    );
 end;
 
-architecture struct of mips_vga_tb is
+architecture struct of mips_demo is
     component regFile is
     port (
             readreg1, readreg2 : in reg_t;
@@ -22,7 +37,7 @@ architecture struct of mips_vga_tb is
     end component;
 
     component mem is
-    generic (ROM : string := "");
+    generic (ROM : string := "VGA");
     port (
         addr : in addr_t;
         din : in word_t;
@@ -48,7 +63,7 @@ architecture struct of mips_vga_tb is
 
     component cpu is
     generic(PC_ADD : natural := 4;
-               SINGLE_ADDRESS_SPACE : boolean := true);
+            SINGLE_ADDRESS_SPACE : boolean := true);
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -72,6 +87,16 @@ architecture struct of mips_vga_tb is
     );
     end component;
 
+    component clkdivider is
+        port (
+            ticks : in natural;
+            bigclk : in std_logic;
+            rst : in std_logic;
+
+            smallclk : out std_logic
+        );
+    end component;
+
     signal readreg1, readreg2 : reg_t;
     signal writereg: reg_t;
     signal regWriteData: word_t;
@@ -84,33 +109,27 @@ architecture struct of mips_vga_tb is
     signal size : ctrl_memwidth_t;
     signal wr : std_logic;
 
-    signal sysclk : std_logic := '0';
-    signal regrst : std_logic := '0';
-    signal rst : std_logic := '0';
-    signal online : boolean := true;
-    signal cpu_regWrite  : std_logic;
-    signal cpu_readreg1  : reg_t;
-    signal cpu_readreg2  : reg_t;
-    signal test_readreg1  : reg_t;
-    signal test_readreg2  : reg_t;
+    signal clk : std_logic := '0';
 
-    alias clk is sysclk;
-
-    -- VGA
-    -- nothing yet
+    signal instruction : instruction_t;
 begin
+    -- One instruction every two seconds
+    clkdivider1: clkdivider port map (
+        ticks => 2 * VGA_PIXELFREQ, bigclk => vgaclk, rst => rst, smallclk => clk
+    );
+
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         writeData => regWriteData,
         readData1 => regReadData1, readData2 => regReadData2,
         clk => clk,
-        rst => regrst,
+        rst => rst,
         regWrite => regWrite
     );
 
     mem_bus: mem
-    generic map (ROM => "vga")
+    generic map (ROM => "")
     port map (
         addr => addr,
         din => din,
@@ -119,30 +138,30 @@ begin
         wr => wr,
         clk => clk,
 
-        vgaclk => '0', rst => '1',
-        r => open, g => open, b => open,
+        vgaclk => vgaclk, rst => rst,
+        r => r, g => g, b => b,
 
-        hsync => open, vsync => open,
+        hsync => hsync, vsync => vsync,
 
         leds => open,
-        -- Push buttons
-        buttons => B"0000",
-        -- DIP Switch IO
-        switch => B"1010_1010"
+        buttons => buttons,
+        switch => switch
     );
 
-    cpu_inst: cpu
-    generic map(SINGLE_ADDRESS_SPACE => true)
+    leds <= instruction(31 downto 24);
+
+    cpu_inst: cpu 
+    generic map (SINGLE_ADDRESS_SPACE => false)
     port map (
         clk => clk,
         rst => rst,
 
         -- Register File
-        readreg1 => cpu_readreg1, readreg2 => cpu_readreg2,
+        readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
         regWriteData => regWriteData,
         regReadData1 => regReadData1, regReadData2 => regReadData2,
-        regWrite => cpu_RegWrite,
+        regWrite => regWrite,
 
         -- Memory
         top_addr => addr,
@@ -152,45 +171,7 @@ begin
         top_wr => wr,
 
         -- Debug info
-        instruction => open
+        instruction => instruction
     );
-
-    regwrite <= cpu_RegWrite when online else '0';
-    readreg1 <= cpu_readreg1 when online else test_readreg1;
-    readreg2 <= cpu_readreg2 when online else test_readreg2;
-
-    test: process begin
-        wait for 4 ns;
-        rst <= '1';
-        wait for 4 ns;
-        rst <= '0';
-        wait for 4 ns;
-
-        wait for 160 ns;
-
-        rst <= '0';
-        online <= false;
-        wait for 20 ns;
-
-        test_readreg1 <= GP;
-        test_readreg2 <= V0;
-        wait for 16 ns;
-
-        assert regReadData1 = X"1000_0000" report
-                ANSI_RED & "[$gp] Failed to ori. 0x1000_0000 /= " & to_hstring(regReadData1) & ANSI_NONE
-        severity error;
-
-        assert regReadData2 = X"0000_00" & B"0001_1100" report
-                ANSI_RED & "[$v1] Failed to ori. 0x1C /= " & to_hstring(regReadData2) & ANSI_NONE
-        severity error;
-
-        wait;
-    end process;
-
-    clkproc: process begin
-        sysclk <= not sysclk; wait for 1 ns; if not online then sysclk <= '0'; wait; end if;
-    end process;
-
 end struct;
-
 

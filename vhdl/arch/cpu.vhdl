@@ -26,7 +26,10 @@ entity cpu is
     top_dout : in word_t;
     top_din : out word_t;
     top_size : out ctrl_memwidth_t;
-    top_wr : out ctrl_t
+    top_wr : out ctrl_t;
+
+    -- Debug info
+    instruction : out instruction_t
 );
 end;
 
@@ -254,6 +257,8 @@ begin
 		clk => clk,
 		output => instr
 		);
+
+    instruction <= instr;
 
     id1: InstructionDecode
     port map(

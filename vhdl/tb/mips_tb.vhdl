@@ -76,7 +76,10 @@ architecture struct of mips_tb is
         top_dout : in word_t;
         top_din : out word_t;
         top_size : out ctrl_memwidth_t;
-        top_wr : out ctrl_t
+        top_wr : out ctrl_t;
+
+        -- Debug info
+        instruction : out instruction_t
     );
     end component;
 
@@ -163,7 +166,10 @@ begin
         top_dout => dout,
         top_din => din,
         top_size => size,
-        top_wr => wr
+        top_wr => wr,
+
+        -- Debug info
+        instruction => open
     );
 
     regwrite <= cpu_RegWrite when online else '0';
