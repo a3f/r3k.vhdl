@@ -30,6 +30,7 @@ package txt_utils is
   -----------------------------------------------------------------------------
   -- Type and constant definitions used to map STD_ULOGIC values
   -- into/from character values.
+  --pragma synthesis_off
   type MVL9plus is ('U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-', error);
   type char_indexed_by_MVL9 is array (STD_ULOGIC) of CHARACTER;
   type MVL9_indexed_by_char is array (CHARACTER) of STD_ULOGIC;
@@ -43,6 +44,7 @@ package txt_utils is
      'W' => 'W', 'L' => 'L', 'H' => 'H', '-' => '-', others => error);
 
   constant NBSP : CHARACTER      := CHARACTER'val(160);  -- space character
+  --pragma synthesis_on
   constant NUS  : STRING(2 to 1) := (others => ' ');     -- null STRING
 
   -- File: debugio_h.vhd
@@ -94,13 +96,16 @@ end txt_utils;
 
 package body txt_utils is
 
+  --synth
   -----------------------------------------------------------------------------
   -- New string functions for vhdl-200x fast track
   -----------------------------------------------------------------------------
     function to_string (value     : STD_ULOGIC) return STRING is
-        variable result : STRING (1 to 1);
+        variable result : STRING (1 to 1) := "!";
     begin
+        --pragma synthesis_off
         result (1) := MVL9_to_char (value);
+        --pragma synthesis_on
         return result;
     end function to_string;
   -------------------------------------------------------------------
@@ -110,6 +115,7 @@ package body txt_utils is
         alias ivalue    : STD_ULOGIC_VECTOR(1 to value'length) is value;
         variable result : STRING(1 to value'length);
     begin
+        --pragma synthesis_off
         if value'length < 1 then
             return NUS;
         else
@@ -118,6 +124,8 @@ package body txt_utils is
             end loop;
             return result;
         end if;
+        --pragma synthesis_on
+        return NUS;
     end function to_string;
 
     -- ISE chokes on function aliases, so duplicating the code here
@@ -125,6 +133,7 @@ package body txt_utils is
         alias ivalue    : STD_LOGIC_VECTOR(1 to value'length) is value;
         variable result : STRING(1 to value'length);
     begin
+        --pragma synthesis_off
         if value'length < 1 then
             return NUS;
         else
@@ -133,6 +142,8 @@ package body txt_utils is
             end loop;
             return result;
         end if;
+        --pragma synthesis_on
+        return NUS;
     end function to_bstring;
   -------------------------------------------------------------------
   -- TO_HSTRING
@@ -144,6 +155,7 @@ package body txt_utils is
     variable result : STRING(1 to ne);
     variable quad   : STD_ULOGIC_VECTOR(0 to 3);
     begin
+        --pragma synthesis_off
         if value'length < 1 then
             return NUS;
         else
@@ -178,6 +190,8 @@ package body txt_utils is
             end loop;
             return result;
         end if;
+        --pragma synthesis_on
+        return NUS;
     end function to_hstring;
 
     function to_hstring (VALUE : UNSIGNED) return STRING is
@@ -195,6 +209,7 @@ package body txt_utils is
     variable result : STRING(1 to ne);
     variable tri    : STD_ULOGIC_VECTOR(0 to 2);
     begin
+        --pragma synthesis_off
         if value'length < 1 then
             return NUS;
         else
@@ -221,6 +236,8 @@ package body txt_utils is
             end loop;
             return result;
         end if;
+        --pragma synthesis_on
+        return NUS;
     end function to_ostring;
 
     function to_string (value     : STD_LOGIC_VECTOR) return STRING is
@@ -241,6 +258,7 @@ package body txt_utils is
     function sprintf(fmt: string; s0, s1, s2, s3: string; i0: integer) return string is
     variable W: line; variable i, fi, di: integer:=0;
   begin loop
+      --pragma synthesis_off
       --write(W, string'("n=")); write(W, s0'length);
       --write(W, string'(" L=")); write(W, s0'left);
       --write(W, string'(" R=")); write(W, s0'right);
@@ -289,12 +307,15 @@ package body txt_utils is
       end if;
   end loop;
   return W.all;
+        --pragma synthesis_off
+  return "";
   end sprintf;
 
   procedure printf(fmt: string; s0, s1, s2, s3: string; i0: integer) is
     variable W: line;
     variable lastch : string(1 to 2) := fmt(fmt'high-1 to fmt'high);
   begin
+      --pragma synthesis_off
       Write(W, ANSI_BLUE);
       Write(W, sprintf(fmt(fmt'low to fmt'high-1), s0, s1, s2, s3, i0));
       if not (fmt(fmt'high) = 'n' and fmt(fmt'high -1) = '\') then
@@ -302,6 +323,7 @@ package body txt_utils is
       end if;
       Write(W, ANSI_NONE);
       writeline(output, W);
+      --pragma synthesis_on
   end printf;
 
   procedure printf(fmt: string) is
