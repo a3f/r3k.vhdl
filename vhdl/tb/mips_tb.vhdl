@@ -149,7 +149,7 @@ begin
     );
 
     cpu_inst: cpu
-    generic map(SINGLE_ADDRESS_SPACE => false)
+    generic map(SINGLE_ADDRESS_SPACE => true)
     port map (
         clk => clk,
         rst => rst,

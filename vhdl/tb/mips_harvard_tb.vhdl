@@ -1,3 +1,4 @@
+-- SKIP because its out of sync with the current code in InstructionMem.vhdl
 -- This is the top level MIPS architecture
 -- With the instruction memory not mapped on the Data/IO memory bus
 library ieee;

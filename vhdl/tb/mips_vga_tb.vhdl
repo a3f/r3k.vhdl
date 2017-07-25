@@ -48,7 +48,7 @@ architecture struct of mips_vga_tb is
 
     component cpu is
     generic(PC_ADD : natural := 4;
-               SINGLE_ADDRESS_SPACE : boolean := true);
+            SINGLE_ADDRESS_SPACE : boolean := false);
     port(
         clk : in std_logic;
         rst : in std_logic;

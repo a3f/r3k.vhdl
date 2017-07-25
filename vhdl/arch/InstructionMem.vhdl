@@ -24,19 +24,27 @@ end InstructionMem;
 architecture behav of InstructionMem is
     type code_t is array (natural range <>) of instruction_t;
     constant example_code : code_t := (
+
+        X"00000000",       -- nop
+        X"3c1c1000",       -- lui     gp,0x1000
+        X"00001025",       -- move    v0,zero
+        X"3442001c",       -- ori     v0,v0,0x1c
+        X"a3820000",       -- sb      v0,0(gp)
+        X"83820000",       -- lb      v1,0(gp)
+        X"08000000"       -- j       0 <_start>
     -- _start:
-        X"3421_f000",     -- ori     $1,$1,0xf000
-        X"0000_0000",
-        X"0000_0000",
-        X"3422_0bad",     -- ori     $1,$2,0xbad
-        X"0000_0000",
-        X"3c03_A000",     -- lui     $3,0xA000
-        X"0000_0000",
-        X"a062_0000",     -- sb      $2,0($3)
-        X"0000_0000",
-        X"0000_0000",
-        X"8064_0000",     -- lb      $4,0($3)
-        X"0800_0000"    -- j       0 <_start>
+        --X"3421_f000",     -- ori     $1,$1,0xf000
+        --X"0000_0000",
+        --X"0000_0000",
+        --X"3422_0bad",     -- ori     $1,$2,0xbad
+        --X"0000_0000",
+        --X"3c03_A000",     -- lui     $3,0xA000
+        --X"0000_0000",
+        --X"a062_0000",     -- sb      $2,0($3)
+        --X"0000_0000",
+        --X"0000_0000",
+        --X"8064_0000",     -- lb      $4,0($3)
+        --X"0800_0000"    -- j       0 <_start>
     );
 
 begin
