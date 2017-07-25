@@ -4,6 +4,7 @@ use ieee.std_logic_1164.all;
 use work.arch_defs.all;
 
 entity mips is
+    generic ( DEMO : boolean := false);
     port (
         sysclk : in std_logic;
         rst : in std_logic;
@@ -37,7 +38,7 @@ architecture struct of mips is
     end component;
 
     component mem is
-    generic (ROM : string := "VGA");
+    generic (ROM : string := "");
     port (
         addr : in addr_t;
         din : in word_t;
@@ -113,9 +114,18 @@ architecture struct of mips is
 
     signal instruction : instruction_t;
 begin
-    clkdivider1: clkdivider port map (
-        ticks => 2*1000*1000, bigclk => sysclk, rst => rst, smallclk => clk
-    );
+    normal_clk: if not DEMO generate
+        clkdivider1: clkdivider port map (
+            ticks => 10, bigclk => sysclk, rst => rst, smallclk => clk
+        );
+    end generate;
+    clk_is_6hz: if DEMO generate
+        clkdivider1: clkdivider port map (
+            ticks => VGA_PIXELFREQ / 6, bigclk => sysclk, rst => rst, smallclk => clk
+        );
+    end generate;
+
+    -- One instruction every two seconds
 
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
@@ -127,25 +137,29 @@ begin
         regWrite => regWrite
     );
 
+    connect_leds_to_bus: if not DEMO generate
     mem_bus: mem
-    generic map (ROM => "")
-    port map (
-        addr => addr,
-        din => din,
-        dout => dout,
-        size => size,
-        wr => wr,
-        clk => clk,
+        generic map (ROM => "VGA")
+        port map (
+            addr => addr, din => din, dout => dout, size => size, wr => wr, clk => clk,
+            vgaclk => vgaclk, rst => rst, r => r, g => g, b => b, hsync => hsync, vsync => vsync,
+            leds => open, buttons => buttons, switch => switch
+        );
+    end generate;
 
-        vgaclk => vgaclk, rst => rst,
-        r => r, g => g, b => b,
+    connect_leds_to_instruction: if not DEMO generate
+        mem_bus: mem
+        generic map (ROM => "VGA")
+        port map (
+            addr => addr, din => din, dout => dout, size => size, wr => wr, clk => clk,
+            vgaclk => vgaclk, rst => rst, r => r, g => g, b => b, hsync => hsync, vsync => vsync,
+            leds => leds, buttons => buttons, switch => switch
+        );
 
-        hsync => hsync, vsync => vsync,
-
-        leds => leds,
-        buttons => buttons,
-        switch => switch
-    );
+        leds(7) <= wr;
+        leds(6) <= clk;
+        leds(5 downto 0) <= instruction(31 downto 26);
+    end generate;
 
     cpu_inst: cpu 
     generic map (SINGLE_ADDRESS_SPACE => false)
