@@ -81,7 +81,7 @@ architecture struct of mips_vga_tb is
     signal size : ctrl_memwidth_t;
     signal wr : std_logic;
 
-    signal clk : std_logic := '0';
+    signal sysclk : std_logic := '0';
     signal regrst : std_logic := '0';
     signal rst : std_logic := '0';
     signal online : boolean := true;
@@ -90,6 +90,8 @@ architecture struct of mips_vga_tb is
     signal cpu_readreg2  : reg_t;
     signal test_readreg1  : reg_t;
     signal test_readreg2  : reg_t;
+
+    alias clk is sysclk;
 
     -- VGA
     -- nothing yet
@@ -180,7 +182,7 @@ begin
     end process;
 
     clkproc: process begin
-        clk <= not clk; wait for 1 ns; if not online then clk <= '0'; wait; end if;
+        sysclk <= not sysclk; wait for 1 ns; if not online then sysclk <= '0'; wait; end if;
     end process;
 
 end struct;

@@ -41,6 +41,7 @@ begin
                 when X"0000_0024" => my_z <= X"0000_0000";
                 when X"0000_0028" => my_z <= X"8064_0000";    -- lb      $4,0($3)
                 when X"0000_002C" => my_z <= X"0800_0000";  -- j       0 <_start>
+                when X"0000_0030" => my_z <= X"0000_0000";  -- j       0 <_start>
 
                 when others => null;
             end case;

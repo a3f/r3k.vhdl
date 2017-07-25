@@ -5,7 +5,7 @@ use work.arch_defs.all;
 
 entity mips is
     port (
-        clk : in std_logic;
+        sysclk : in std_logic;
         rst : in std_logic;
 
         -- VGA I/O
@@ -84,6 +84,16 @@ architecture struct of mips is
     );
     end component;
 
+    component clkdivider is
+        port (
+            ticks : in natural;
+            bigclk : in std_logic;
+            rst : in std_logic;
+
+            smallclk : out std_logic
+        );
+    end component;
+
     signal readreg1, readreg2 : reg_t;
     signal writereg: reg_t;
     signal regWriteData: word_t;
@@ -96,7 +106,12 @@ architecture struct of mips is
     signal size : ctrl_memwidth_t;
     signal wr : std_logic;
 
+    signal clk : std_logic := '0';
 begin
+    clkdivider1: clkdivider port map (
+        ticks => 2*1000*1000, bigclk => sysclk, rst => rst, smallclk => clk
+    );
+
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,

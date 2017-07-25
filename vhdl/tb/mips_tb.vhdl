@@ -1,4 +1,6 @@
 -- This is the top level MIPS architecture
+-- FIXME Looping doesn't work.
+-- Check if this was the case with previous versions too (Travis)
 library ieee;
 use ieee.std_logic_1164.all;
 use work.arch_defs.all;
@@ -8,6 +10,16 @@ entity mips_tb is
 end;
 
 architecture struct of mips_tb is
+    component clkdivider is
+        port (
+            ticks : in natural;
+            bigclk : in std_logic;
+            rst : in std_logic;
+
+            smallclk : out std_logic
+        );
+    end component;
+
     component regFile is
     port (
             readreg1, readreg2 : in reg_t;
@@ -47,7 +59,7 @@ architecture struct of mips_tb is
 
     component cpu is
     generic(PC_ADD : natural := 4;
-               SINGLE_ADDRESS_SPACE : boolean := true);
+               SINGLE_ADDRESS_SPACE : boolean := false);
     port(
         clk : in std_logic;
         rst : in std_logic;
@@ -80,7 +92,7 @@ architecture struct of mips_tb is
     signal size : ctrl_memwidth_t;
     signal wr : std_logic;
 
-    signal clk : std_logic := '0';
+    signal sysclk : std_logic := '0';
     signal regrst : std_logic := '0';
     signal rst : std_logic := '0';
     signal online : boolean := true;
@@ -90,9 +102,17 @@ architecture struct of mips_tb is
     signal test_readreg1  : reg_t;
     signal test_readreg2  : reg_t;
 
+    signal clk : std_logic := '0';
+    --alias clk is sysclk;
+
     -- VGA
     -- nothing yet
 begin
+
+    clkdivider1: clkdivider port map (
+        ticks => 8, bigclk => sysclk, rst => rst, smallclk => clk
+    );
+
     regfile_inst: regFile port map (
         readreg1 => readreg1, readreg2 => readreg2,
         writereg => writereg,
@@ -126,7 +146,7 @@ begin
     );
 
     cpu_inst: cpu
-    generic map(SINGLE_ADDRESS_SPACE => true)
+    generic map(SINGLE_ADDRESS_SPACE => false)
     port map (
         clk => clk,
         rst => rst,
@@ -157,7 +177,7 @@ begin
         rst <= '0';
         wait for 4 ns;
 
-        wait for 260 ns;
+        wait for 5200 ns;
 
         rst <= '0';
         online <= false;
@@ -199,7 +219,7 @@ begin
     end process;
 
     clkproc: process begin
-        clk <= not clk; wait for 1 ns; if not online then clk <= '0'; wait; end if;
+        sysclk <= not sysclk; wait for 1 ns; if not online then sysclk <= '0'; wait; end if;
     end process;
 
 end struct;
