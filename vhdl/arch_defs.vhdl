@@ -1,6 +1,5 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
 
 package arch_defs is
 
@@ -9,7 +8,7 @@ package arch_defs is
     subtype half_t          is std_logic_vector(15 downto 0);
     subtype word_t          is std_logic_vector(31 downto 0);
     subtype addr_t          is std_logic_vector(31 downto 0);
-    subtype intaddr_t       is unsigned(31 downto 0);
+    subtype intaddr_t       is std_logic_vector(31 downto 0);
     subtype addrdiff_t      is std_logic_vector(31 downto 0);
     subtype ctrl_t          is std_logic;
     subtype ctrl_memwidth_t is std_logic_vector(1 downto 0);
@@ -29,8 +28,6 @@ package arch_defs is
     function word(w : word_t) return word_t;
     function half(w : word_t) return half_t;
     function byte(w : word_t) return byte_t;
-    function itow(i : integer) return word_t;
-    function utow(u : natural) return word_t;
 
     constant WIDTH_NONE : ctrl_memwidth_t := "00";
     constant WIDTH_BYTE : ctrl_memwidth_t := "01";
@@ -109,7 +106,6 @@ package arch_defs is
     constant R30 : reg_t := B"1_1110"; alias fp is R30;
     constant R31 : reg_t := B"1_1111"; alias ra is R31;
 
-    function toreg(i : integer) return reg_t;
 
     constant VGA_PIXELFREQ : natural := 25175*1000;
 
@@ -156,20 +152,6 @@ package body arch_defs is
     function byte(w : word_t) return byte_t is
     begin
         return w( 7 downto 0);
-    end function;
-
-    function itow(i : integer) return word_t is
-    begin 
-        return std_logic_vector(to_signed(i, 32));
-    end function;
-    function utow(u : natural) return word_t is
-    begin
-        return std_logic_vector(to_unsigned(u, 32));
-    end function;
-
-    function toreg(i : integer) return reg_t is
-    begin
-        return std_logic_vector(to_unsigned(i, 5));
     end function;
 
     -- ALU

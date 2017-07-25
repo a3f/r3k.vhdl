@@ -3,6 +3,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arch_defs.all;
+use work.utils.all;
 
 entity InstructionFetch is
     -- NOTE I think, too high a CPI may lead to the same instruction

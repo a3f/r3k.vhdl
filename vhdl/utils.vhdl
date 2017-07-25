@@ -15,6 +15,10 @@ package utils is
 
     function vtoi(v : std_logic_vector) return integer;
     function vtou(v : std_logic_vector) return natural;
+
+    function toreg(i : integer) return std_logic_vector;
+    function itow(i : integer) return std_logic_vector;
+    function utow(u : natural) return std_logic_vector;
 end utils;
 
 package body utils is
@@ -54,6 +58,21 @@ package body utils is
     begin
         return to_integer(unsigned(v));
     end;
+
+    function itow(i : integer) return std_logic_vector is
+    begin 
+        return std_logic_vector(to_signed(i, 32));
+    end function;
+    function utow(u : natural) return std_logic_vector is
+    begin
+        return std_logic_vector(to_unsigned(u, 32));
+    end function;
+
+    function toreg(i : integer) return std_logic_vector is
+    begin
+        return std_logic_vector(to_unsigned(i, 5));
+    end function;
+
 
 end utils;
 

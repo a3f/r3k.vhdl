@@ -132,7 +132,7 @@ begin
     );
 
     cpu_inst: cpu
-    generic map(SINGLE_ADDRESS_SPACE => true)
+    generic map(SINGLE_ADDRESS_SPACE => false)
     port map (
         clk => clk,
         rst => rst,
@@ -166,7 +166,7 @@ begin
         rst <= '0';
         wait for 4 ns;
 
-        wait for 160 ns;
+        wait for 1600 ns;
 
         rst <= '0';
         online <= false;
