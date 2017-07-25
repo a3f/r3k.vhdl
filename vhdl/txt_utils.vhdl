@@ -257,8 +257,9 @@ package body txt_utils is
 
     function sprintf(fmt: string; s0, s1, s2, s3: string; i0: integer) return string is
     variable W: line; variable i, fi, di: integer:=0;
-  begin loop
+  begin
       --pragma synthesis_off
+      loop
       --write(W, string'("n=")); write(W, s0'length);
       --write(W, string'(" L=")); write(W, s0'left);
       --write(W, string'(" R=")); write(W, s0'right);
@@ -307,7 +308,7 @@ package body txt_utils is
       end if;
   end loop;
   return W.all;
-        --pragma synthesis_off
+        --pragma synthesis_on
   return "";
   end sprintf;
 
