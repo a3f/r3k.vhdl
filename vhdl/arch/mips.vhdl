@@ -63,7 +63,7 @@ architecture struct of mips is
 
     component cpu is
     generic(PC_ADD : natural := 4;
-               SINGLE_ADDRESS_SPACE : boolean := true);
+            SINGLE_ADDRESS_SPACE : boolean := true);
     port(
         clk : in std_logic;
         rst : in std_logic;

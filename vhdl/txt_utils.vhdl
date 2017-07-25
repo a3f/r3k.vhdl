@@ -8,12 +8,9 @@ package txt_utils is
     function to_string (value : STD_ULOGIC_VECTOR) return STRING;
     function to_string (value : STD_LOGIC_VECTOR) return STRING;
 
-    alias TO_BSTRING is TO_STRING [STD_LOGIC_VECTOR return STRING];
-    alias TO_BINARY_STRING is TO_STRING [STD_LOGIC_VECTOR return STRING];
+    function TO_BSTRING (value : STD_LOGIC_VECTOR) return STRING;
     function TO_OSTRING (VALUE : STD_LOGIC_VECTOR) return STRING;
-    alias TO_OCTAL_STRING is TO_OSTRING [STD_LOGIC_VECTOR return STRING];
     function TO_HSTRING (VALUE : STD_LOGIC_VECTOR) return STRING;
-    alias TO_HEX_STRING is TO_HSTRING [STD_LOGIC_VECTOR return STRING];
 
     -- can't resolve overload for function call, slice or indexed name, otherwise
 
@@ -123,6 +120,20 @@ package body txt_utils is
         end if;
     end function to_string;
 
+    -- ISE chokes on function aliases, so duplicating the code here
+    function to_bstring (value     : STD_LOGIC_VECTOR) return STRING is
+        alias ivalue    : STD_LOGIC_VECTOR(1 to value'length) is value;
+        variable result : STRING(1 to value'length);
+    begin
+        if value'length < 1 then
+            return NUS;
+        else
+            for i in ivalue'range loop
+                result(i) := MVL9_to_char(iValue(i));
+            end loop;
+            return result;
+        end if;
+    end function to_bstring;
   -------------------------------------------------------------------
   -- TO_HSTRING
   -------------------------------------------------------------------
