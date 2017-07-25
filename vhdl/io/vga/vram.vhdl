@@ -44,8 +44,8 @@ begin
             --color.r := x(9 downto 6);
             --color.g := y(8 downto 5);
             --color.b := "0000";
-            color.r := mem(0)(7 downto 5) & B"000";
-            color.g := mem(0)(4 downto 2) & B"000";
+            color.r := mem(0)(7 downto 5) & B"0";
+            color.g := mem(0)(4 downto 2) & B"0";
             color.b := mem(0)(1 downto 0) & B"00";
 
             if x = "0000000000" or y = "000000000" or x = "1001111111" or y = "111011111" then
