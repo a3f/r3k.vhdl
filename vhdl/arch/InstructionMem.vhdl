@@ -38,6 +38,13 @@ architecture behav of InstructionMem is
        X"240200e0", -- li      v0,224
        X"a382012b", -- sb      v0,299(gp)
        X"00000000", -- nop
+
+       X"3c011400", -- lui     at,0x1400
+       X"3c1a1400", -- lui     k0,0x1400
+       X"375a0002", -- ori     k0,k0,0x2
+       X"83420000", -- lb      v0,0(k0)
+       X"a0220000", -- sb      v0,0(at)
+
        X"08000000", -- j       0 <_start>
        X"00000000" -- nop
     );
