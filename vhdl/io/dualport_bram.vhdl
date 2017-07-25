@@ -32,7 +32,7 @@ end dualport_bram;
 architecture rtl of dualport_bram is
     -- Shared memory
     type mem_type is array ( (2**ADDR_WIDTH)-1 downto 0 ) of std_logic_vector(WORD_WIDTH-1 downto 0);
-    signal mem : mem_type := (others => (others => '0'));
+    shared variable mem : mem_type;
 
     signal first_byte : std_logic_vector(WORD_WIDTH-1 downto 0);
 begin
@@ -44,7 +44,7 @@ begin
     if(rising_edge(a_clk)) then
         if(a_wr='1') then
             printf(ANSI_GREEN & "writing %s to %s\n", a_din, a_addr);
-            mem(vtou(a_addr)) <= a_din;
+            mem(vtou(a_addr)) := a_din;
         end if;
         a_dout <= mem(vtou(a_addr));
     end if;
@@ -55,8 +55,9 @@ process(b_clk)
 begin
     if(rising_edge(b_clk)) then
         if(b_wr='1') then
-            mem(vtou(b_addr)) <= b_din;
+            mem(vtou(b_addr)) := b_din;
         end if;
+        -- FIXME
         --b_dout <= mem(vtou(b_addr));
     end if;
 end process;
