@@ -14,7 +14,7 @@ Implementation of the datapath in the below image. None-pipelined with 12 CPI.
 
 ### • Register File
 
-The MIPS' 32 registers are kept out of the top level module, so testbenches can drive them with different clocks and test them independently from the CPU running.
+The MIPS' 32 registers are kept out of the top level module, so testbenches can drive them with different clocks and test them independently of the CPU running.
 
 ### • Memory bus
 
@@ -37,10 +37,12 @@ The memory map is specified in [`vhdl/memory_map.vhdl`](https://github.com/a3f/r
 
 The VHDL93 code is located in `vhdl/`. Build and run tests by executing `make test` in that directory. The build and test system was written for use with GHDL. But usage with ModelSim is also possible. You can start it out of ISE with the xISE project file provided.
 
+GHDL 0.34dev or newer is suggested. Run `./install-ghdl.sh` on Debian/Ubuntu to install and add it to `PATH`.
+
 ## C Toolchain
 
 `toolchain/` contains Linux i686 and x86-64 cross MIPS toolchain binaries.
-Add them to your PATH with `source toolchain/setenv.sh`
+Add them to your `PATH` with `source setenv.sh`
 
 Prebuilt binutils and cross GCC are available out-of-tree [here](https://github.com/a3f/Cross-mips-elf-gcc-for-macOS).
 

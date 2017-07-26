@@ -5,7 +5,7 @@ The correct one is automatically chosen when the `setenv.sh` script is run.
 
 ## Setup details
 
-Run the `setenv.sh` script to configure your PATH:
+Run the `setenv.sh` script one directory above to configure your PATH:
 
     $ . setenv.sh
 

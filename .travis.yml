@@ -8,21 +8,15 @@ services:
 compiler:
   - gcc
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.9
-    - g++-4.9
-
 install:
-  - ./install-deps.sh
+  - ./install-ghdl.sh
+  - source setenv.sh
   - ghdl --version
+  - ghdl1-llvm --version
 
 script:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-  - source toolchain/setenv.sh
+  - source setenv.sh
+  - export GHDL=ghdl1-llvm
   - make bios
   - make -C vhdl all
   - make -C vhdl test

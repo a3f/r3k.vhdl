@@ -8,6 +8,8 @@ no warnings 'uninitialized';
 @only = split ' ', $ENV{TEST} if defined $ENV{TEST};
 @skip = split ' ', $ENV{SKIP} if defined $ENV{SKIP};
 
+$ghdl = $ENV{GHDL} // 'ghdl';
+
 for (@ARGV) {
     /^-/ and push @opts, $_ or $tests{$_} = 0;
 }
@@ -30,9 +32,9 @@ sub run { print "@_ \n"; 0 == system @_ }
 
 for (keys %tests) {
     do { $skipped++; next } unless defined $tests{$_};
-    run 'ghdl', '-a', @aopts, "$_.vhdl" or next;
-    run 'ghdl', '-e', '-g', @eopts, $_, or next;
-    @out = qx(ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-);
+    run $ghdl, '-a', @aopts, "$_.vhdl" or next;
+    run $ghdl, '-e', '-g', @eopts, $_, or next;
+    @out = qx($ghdl -r @ropts $_ --vcd=$_.vcd 3>&1 1>&2 2>&3 3>&-);
     for $line (@out) {
         $tests{$_} = -1 if $line =~ /:\(assertion error\):/;
         print $line if !$ENV{NO_WARN_NUMERIC_STD} || $line !~ /:\(assertion warning\): NUMERIC_STD/ 
