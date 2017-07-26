@@ -1,3 +1,4 @@
+ghdl/
 build/
 *.sw*
 *.elf

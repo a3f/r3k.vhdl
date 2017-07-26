@@ -12,11 +12,9 @@ install:
   - ./install-ghdl.sh
   - source setenv.sh
   - ghdl --version
-  - ghdl1-llvm --version
 
 script:
   - source setenv.sh
-  - export GHDL=ghdl1-llvm
   - make bios
   - make -C vhdl all
   - make -C vhdl test
