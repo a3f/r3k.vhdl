@@ -40,7 +40,7 @@
 % unten in der preamble.tex sind noch weitere default-werte
 
 \subtitle{Basispraktikum Technische Informatik}
-\date{05.06.2017}
+\date{15.08.2017}
 
 % Um das blaue Titel-Bild zu entfernen
 %\titleimage{nogo}
@@ -56,7 +56,7 @@
 
 \begin{frame}{Der MIPS R3000}
 \begin{itemize}
-       \item 1988 auf dem Markt gekommen
+       \item 1988 auf den Markt gekommen
        \item 32-bit, RISC Architektur
 		\item 32 Register
 		\item 5-Stufige Pipeline
@@ -69,46 +69,9 @@
 \end{frame}
 
 
-\begin{frame}{Was wird weg gelassen ?}
-\begin{itemize}
-       \item Traps
-       \item Interrupts 
-		\item Overflow
-		\item Syscall
-        \item Betriebsmodi (Kernel/User)
- 		\item MMU
- 		\item Caching
-
-\end{itemize}
-\end {frame}
-\begin{frame}{MIPS Befehlssatz}
-\begin{center}
-\includegraphics[keepaspectratio=true,width=0.85\paperwidth]{ISA.png}
-\end{center}
-
-\end{frame}
-
-\begin{frame}{MIPS Befehlsformate}
-%% some quote about real-time systems
-\begin{itemize}
-		\item R-Type -- Arithmetik and Logik
-       \item I-Type -- Laden/Speichern, Verzweigen, Direktwert
-       \item J-Format -- Jump
-\end{itemize}
-
-\begin{center}
-\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{instruction-formats.jpeg}
-\end{center}
-\end{frame}
-\begin{frame}{MIPS Pipeline}
-%% leakage currents
-\begin{center}
-
-\includegraphics[keepaspectratio=true,width=0.83\paperwidth]{pipeline.png}
-\end{center}
+%% Original Diagram MIPS von Hannesy and Patterson
 
 
-\end{frame}
 
 \begin{frame}{Wie werden wir das Ganze implementieren? Bsp.: ALU}
 
@@ -121,15 +84,21 @@
 \end{frame}
 \section{Unser MIPS System}
 
-\begin{frame}{Hardware-Komponenten}
+\begin{frame}{Bus-Teilnehmer}
 
 \begin{itemize}
-	\item MIPS R3000
-	\item 32bit
+	\item ROM
+	\item RAM
+	\item VGA
+	\item 8250 UART
+	\pause
+	\item DIP-Switch \& Buttons
+	\item LEDs
 \end{itemize}
 
+
 \begin{center}
-\includegraphics[scale=0.40]{bus.jpeg} %%Grafik s. WA
+\includegraphics[scale=0.25]{bus.jpeg} %%Grafik s. WA
 \end{center}
 
 \end{frame}
@@ -139,25 +108,34 @@
 \begin{itemize}
 	\item Universal Asynchronous Receiver Transmitter
 	\item NS8250 Class 
-	\item Adresse: 0x1fd00x3f8
-	\item Eingabe
 	\item Priorität -> Erlaubt debugging
 	\item keine interrupts
+	\pause
+	\item Implementiert; aber wegen Zeit/Personalmangel nicht in Betrieb genommen
 \end{itemize}
 \begin{center}
-%%In deiner voice message klingst als hättest du ne schöne grafik. Falls ja > hier rein. Sonst erklär ichs bloß
 \end{center}
 
 
 \end{frame}
 
-\begin{frame}{VGA Frame Puffer}
+\begin{frame}{VGA Frame Puffer (VRAM)}
 	\begin{itemize}
-		\item Adresse: 0x1fd0????
 		\item C Programm schreibt schreibt in Array
 		\item Array wird aus Speicher gelesen
 		\item VGA Clock
 	\end{itemize}
+	\pause
+	Realisierung:
+	\begin{itemize}
+		\item Dual ported memory: Parallele E/A ports mit separaten Clocks
+		\item Eine Seite wird über den Memory Bus vom Maschinencode beschrieben
+		\item Die andere Seite wird vom VGA Controller gelesen
+		\item Separierung in VRAM und VGA Controller
+		\item Tupel von VRAM und Controller ist VGA mode. Nur ein Mode implementiert
+		\item Überpixel: 32x32 pixel \& 8 bit Farben $\rightarrow$ VRAM-Größe von 300 byte
+	\end{itemize}
+
 \end{frame}
 
 \begin{frame}{VGA}
@@ -170,51 +148,6 @@
 
 
 \section{Wie kommt die Software auf den FPGA?}
-
-\begin{frame}{Strom da. Was nun?}
-
-Reset Vektor wird angesprungen. Assembler Code verantwortlich für
-
-\begin{itemize}
-\item Globale Variablen (.BSS) nullen
-\item Daten von ROM in den RAM kopieren
-\item Stack initialisieren
-\item main() im C Code anspringen
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{BIOS (Basic Input/Output System)}
-
-Verantwortlich für
-
-\begin{itemize}
-\item Initialisiert UART
-\item Startet Kommandozeilen Interpreter auf UART
-\item Startet Applikationen
-\item Interrupts und Traps?
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{C-Toolchain}
-
-\begin{itemize}
-\item GCC 6.2.0 MIPS Barebones Cross-Compiler
-\item \texttt{-ffreestanding -nostdlib -nostartfiles}
-\item Wie kommt das Programm in den Speicher?
-\begin{itemize}
-    \item Linker Script: Spezifiziert Addressvergabe an Symbole
-    \item objcopy: Extrahiert rohen Maschinen Code
-    \item iMPACT: Spielt extrahierte Binärdatei auf ROM
-\end{itemize}
-\end{itemize}
-\begin{center}
-\includegraphics[scale=0.10]{gcc.png}
-\end{center}
-
-
-\end{frame}
 
 \begin{frame}{Komplexität im Griff behalten?}
 
@@ -229,8 +162,6 @@ Verantwortlich für
 \begin{center}
 \includegraphics[scale=0.85]{qemu.png}
 \end{center}
-
-
 
 \end{frame}
 
@@ -248,36 +179,22 @@ Verantwortlich für
 
 \end{frame}
 
+\begin{frame}{Case Study: DOOM}
+\begin{itemize}
+	\item ROM: 4 MB benötigt
+	\item RAM: Block-RAM in Größe von bis zu 19KB verfügbar. DDR-RAM 128MB. 4MB benötigt
+	\item VRAM: 64,256 byte (320*200, 8 bit Farb Palette)
+	\item Datentransfer: 5 Minuten bei 115200 baud, wenn keine Bitfehler
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}{Doom?}
 \begin{center}
 \includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
 \end{center}
  
-
 \end{frame}
 
-\begin{frame}{Aufgaben}
-\begin{itemize}
-\item ALU (Aicha)
-\item Instruction Decoder (Ahmad)
-\item UART (Niklas)
-\item Address decoder
-\item ROM
-\item RAM
-\item VGA frame buffer
-\item Register File
-\item Pipeline (Data path)
-\end{itemize}	
-\end{frame}
-
-\begin{frame}{Fragen? Anregungen?} %%Solche Folien macht man nicht. Besser wäre Zusammenfassung.
-\begin{center}
-\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
-\end{center}
- 
-
-
-\end{frame}
 
 \end{document}
