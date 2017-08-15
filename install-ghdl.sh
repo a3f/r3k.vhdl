@@ -17,7 +17,7 @@ echo "Downloading and installing libmpc2 0.9-4"
     wget 'http://ftp.de.debian.org/debian/pool/main/m/mpclib/libmpc2_0.9-4_amd64.deb' -O/tmp/libmpc2.deb && sudo dpkg -i /tmp/libmpc2.deb
 
 echo "Downloading and installing GHDL 0.34dev"
-    wget 'https://github.com/tgingold/ghdl/releases/download/2017-03-01/ghdl-0.34-dev-llvm-3.5-2017-03-01-ubu1404.tgz' -O/tmp/ghdl.tar.gz
-    mkdir ghdl && tar xzf /tmp/ghdl.tar.gz -C ghdl
+    wget 'https://github.com/tgingold/ghdl/releases/download/v0.34/ghdl-v0.34-mcode-ubuntu.tgz' -O/tmp/ghdl.tar.gz
+    mkdir -p ghdl && tar xzf /tmp/ghdl.tar.gz -C ghdl
 
 sudo ldconfig
