@@ -120,9 +120,9 @@
 \end{center} 
 \end{frame}
 
-\begin{frame}{Button to LED}
+\begin{frame}{Beispiel C-Code}
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.80\paperwidth]{buttonToLed.png}
+\includegraphics[keepaspectratio=true,width=0.80\paperwidth]{c_code.png}
 \end{center} 
 \end{frame}
 
@@ -171,40 +171,21 @@
 \end{itemize}
 \begin{center}
 \end{center}
+	\end{frame}
 
-
-\end{frame}
-
-\begin{frame}{UART}
-
-\begin{itemize}
-	\item Universal Asynchronous Receiver Transmitter
-	\item NS8250 Class 
-	\item Priorität -> Erlaubt debugging
-	\item keine interrupts
-	\pause
-	\item Implementiert; aber wegen Zeit/Personalmangel nicht in Betrieb genommen
-\end{itemize}
-\begin{center}
-\end{center}
-
-
-\end{frame}
 
 \section{Verifikation}
 
-\begin{frame}{Testbenches}
-
+\begin{frame}{Testen}
 \begin{itemize}
-\item Emulation:
-\begin{itemize}
-    \item QEMU mit R3000, UART und VGA
-    \item Code lokal Testebar vor Auspielen auf den FPGA
-\end{itemize}
-    \item Simulation: Testbenches: z.B. ALU und Instruktionsdecoder. Alleinstehend, gut testbar.
+    \item ghdl
+    \item Simulation mit testbenches
+	\item CPU, ROM, Regfile einzeln in mips.vhdl
+	\item testbenches $\rightarrow$ perl script/make
+	\item travis CI
 \end{itemize}
 \begin{center}
-\includegraphics[scale=0.85]{qemu.png}
+\includegraphics[scale=0.2]{travis.png}
 \end{center}
 
 \end{frame}
