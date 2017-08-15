@@ -22,6 +22,7 @@
 \definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
 \definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
 \definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
 
 \lstset{language=C,
 	basicstyle=\tiny\ttfamily,
@@ -184,15 +185,6 @@
 
 \end{frame}
 
-\begin{frame}{VGA}
-	\begin{itemize}		
-		\item 255 Farben
-		\item Größe: 160*120 -> 19k byte
-		\item klein anfangen, feststellen ob der Speicher reicht
-	\end{itemize}
-\end{frame}
-
-
 \section{Wie kommt die Software auf den FPGA?}
 
 \begin{frame}{Komplexität im Griff behalten?}
@@ -225,22 +217,22 @@
 
 \end{frame}
 
-\begin{frame}{Case Study: DOOM}
-\begin{itemize}
-	\item ROM: 4 MB benötigt
-	\item RAM: Block-RAM in Größe von bis zu 19KB verfügbar. DDR-RAM 128MB. 4MB benötigt
-	\item VRAM: 64,256 byte (320*200, 8 bit Farb Palette)
-	\item Datentransfer: 5 Minuten bei 115200 baud, wenn keine Bitfehler
-\end{itemize}
+\begin{frame}{Fallstudie: DOOM}
+       \begin{tabular}{lc}  
+         \begin{tabular}{l}
+          \parbox{0.5\linewidth}{
+          \tabitem ROM: 4 MB benötigt \\
+	\tabitem RAM: Block-RAM in Größe von bis zu 19KB verfügbar. DDR-RAM 128MB. 4MB benötigt \\
+	\tabitem VRAM: 64,256 byte (320*200, 8 bit Farb Palette) \\
+	\tabitem Datentransfer: 5 Minuten bei 115200 baud, wenn keine Bitfehler \\
+	\tabitem E/A: Über UART?
+}
+           \end{tabular}
+           & \begin{tabular}{c}
+   \includegraphics[keepaspectratio=true,width=0.38\paperwidth]{doom.png}
+
+         \end{tabular}  \\
+\end{tabular}
 \end{frame}
-
-
-\begin{frame}{Doom?}
-\begin{center}
-\includegraphics[keepaspectratio=true,width=0.40\paperwidth]{doom.png}
-\end{center}
- 
-\end{frame}
-
 
 \end{document}
