@@ -53,31 +53,58 @@
 \end{frame}
 
 
-\section{MIPS I ISA}
+\section{Unser toller MIPS}
 
-\begin{frame}{Data Path alt}
+\begin{frame}{Der MIPS R3000}
+\begin{itemize}
+       \item 1988 auf den Markt gekommen
+       \item 32-bit, RISC Architektur
+		\item 32 Register
+		\item 5-Stufige Pipeline
+\end{itemize}
+
+
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.75\paperwidth]{datapath-old.png}
+\includegraphics[scale=0.22]{R3000.jpg}
 \end{center}
+
 \end{frame}
 
-\begin{frame}{Data Path neu}
+
+\begin{frame}[plain]
+\includegraphics[keepaspectratio=true,width=0.95\paperwidth]{datapath-old.png}
+\end{frame}
+
+\begin{frame}[plain]
+\includegraphics[keepaspectratio=true,width=0.95\paperwidth]{datapath-new.png}
+\end{frame}
+
+\begin{frame}{Bus-Teilnehmer}
+\begin{itemize}
+	\item ROM
+	\item RAM
+	\item VGA
+	\item 8250 UART
+	\pause
+	\item DIP-Switch \& Buttons
+	\item LEDs
+\end{itemize}
+
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.9\paperwidth]{datapath-new.png}
-\end{center} 
+\includegraphics[scale=0.25]{bus.jpeg} %%Grafik s. WA
+\end{center}
+
 \end{frame}
 
-
-
-\begin{frame}{LED Entity}
-\begin{center}
-\includegraphics[keepaspectratio=true,width=1.2\paperwidth]{ledsEntity.png}
-\end{center} 
-\end{frame}
-
-\begin{frame}{Memory Mapping}
+\begin{frame}{Memory Map}
 \begin{center}
 \includegraphics[keepaspectratio=true,width=0.95\paperwidth]{memoryMapPackage.png}
+\end{center} 
+\end{frame}
+
+\begin{frame}{Memory Interface (Entity)}
+\begin{center}
+\includegraphics[keepaspectratio=true,width=0.9\paperwidth]{ledsEntity.png}
 \end{center} 
 \end{frame}
 
@@ -87,15 +114,15 @@
 \end{center} 
 \end{frame}
 
-\begin{frame}{Button to LED}
+\begin{frame}{DIP-Switch Architecture}
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.80\paperwidth]{buttonToLed.png}
+\includegraphics[keepaspectratio=true,width=0.95\paperwidth]{dipswitchArchitecture.png}
 \end{center} 
 \end{frame}
 
-\begin{frame}{DipSwitch Architecture}
+\begin{frame}{Button to LED}
 \begin{center}
-\includegraphics[keepaspectratio=true,width=0.95\paperwidth]{dipswitchArchitecture.png}
+\includegraphics[keepaspectratio=true,width=0.80\paperwidth]{buttonToLed.png}
 \end{center} 
 \end{frame}
 
@@ -111,60 +138,7 @@
 \end{center} 
 \end{frame}
 
-\begin{frame}{Der MIPS R3000}
-\begin{itemize}
-       \item 1988 auf den Markt gekommen
-       \item 32-bit, RISC Architektur
-		\item 32 Register
-		\item 5-Stufige Pipeline
-\end{itemize}
-
-\begin{center}
-\includegraphics[scale=0.22]{R3000.jpg}
-\end{center}
-
-\end{frame}
-
-
-%% Original Diagram MIPS von Hannesy and Patterson
-
-
 \section{Unser MIPS System}
-
-\begin{frame}{Bus-Teilnehmer}
-
-\begin{itemize}
-	\item ROM
-	\item RAM
-	\item VGA
-	\item 8250 UART
-	\pause
-	\item DIP-Switch \& Buttons
-	\item LEDs
-\end{itemize}
-
-
-\begin{center}
-\includegraphics[scale=0.25]{bus.jpeg} %%Grafik s. WA
-\end{center}
-
-\end{frame}
-
-\begin{frame}{UART}
-
-\begin{itemize}
-	\item Universal Asynchronous Receiver Transmitter
-	\item NS8250 Class 
-	\item Priorität -> Erlaubt debugging
-	\item keine interrupts
-	\pause
-	\item Implementiert; aber wegen Zeit/Personalmangel nicht in Betrieb genommen
-\end{itemize}
-\begin{center}
-\end{center}
-
-
-\end{frame}
 
 \begin{frame}{VGA Frame Puffer (VRAM)}
 	\begin{itemize}
@@ -185,9 +159,41 @@
 
 \end{frame}
 
-\section{Wie kommt die Software auf den FPGA?}
+\begin{frame}{UART}
 
-\begin{frame}{Komplexität im Griff behalten?}
+\begin{itemize}
+	\item Universal Asynchronous Receiver Transmitter
+	\item NS8250 Class 
+	\item Priorität $\leftarrow$ Erlaubt debugging
+	\item keine interrupts
+	\pause
+	\item Implementiert; aber wegen Zeit/Personalmangel nicht in Betrieb genommen
+\end{itemize}
+\begin{center}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}{UART}
+
+\begin{itemize}
+	\item Universal Asynchronous Receiver Transmitter
+	\item NS8250 Class 
+	\item Priorität -> Erlaubt debugging
+	\item keine interrupts
+	\pause
+	\item Implementiert; aber wegen Zeit/Personalmangel nicht in Betrieb genommen
+\end{itemize}
+\begin{center}
+\end{center}
+
+
+\end{frame}
+
+\section{Verifikation}
+
+\begin{frame}{Testbenches}
 
 \begin{itemize}
 \item Emulation:
