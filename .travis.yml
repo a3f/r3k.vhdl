@@ -8,6 +8,14 @@ services:
 compiler:
   - gcc
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.9
+
+
 install:
   - ./install-ghdl.sh
   - source setenv.sh

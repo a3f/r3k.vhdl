@@ -7,16 +7,17 @@ if [ $? -ne 0 ]; then
 fi
 
 set -e
-echo "Downloading and installing GNAT 4.8"
-    sudo apt-get install gnat-4.8-base ||
-         ( wget 'http://de.archive.ubuntu.com/ubuntu/pool/universe/g/gnat-4.8/gnat-4.8-base_4.8.2-8ubuntu3_amd64.deb' -O/tmp/gnat-4.8-base.deb && sudo dpkg -i /tmp/gnat-4.8-base.deb)
-    sudo apt-get install libgnat-4.8 || 
-         ( wget 'http://de.archive.ubuntu.com/ubuntu/pool/universe/g/gnat-4.8/libgnat-4.8_4.8.2-8ubuntu3_amd64.deb' -O/tmp/libgnat.deb && sudo dpkg -i /tmp/libgnat.deb)
+echo "Downloading and installing GNAT 4.9"
+    sudo apt-get install gnat-4.9-base ||
+         ( wget 'http://ftp.de.debian.org/debian/pool/main/g/gnat-4.9/gnat-4.9-base_4.9.2-1_amd64.deb' -O/tmp/gnat-4.9-base.deb && sudo dpkg -i /tmp/gnat-4.9-base.deb)
+    sudo apt-get install libgnat-4.9 || 
+         ( wget http://ftp.de.debian.org/debian/pool/main/g/gnat-4.9/libgnat-4.9_4.9.2-1_amd64.deb -O/tmp/libgnat.deb && sudo dpkg -i /tmp/libgnat.deb)
+
 
 echo "Downloading and installing libmpc2 0.9-4"
     wget 'http://ftp.de.debian.org/debian/pool/main/m/mpclib/libmpc2_0.9-4_amd64.deb' -O/tmp/libmpc2.deb && sudo dpkg -i /tmp/libmpc2.deb
 
-echo "Downloading and installing GHDL 0.34dev"
+echo "Downloading and installing GHDL 0.34"
     wget 'https://github.com/tgingold/ghdl/releases/download/v0.34/ghdl-v0.34-mcode-ubuntu.tgz' -O/tmp/ghdl.tar.gz
     mkdir -p ghdl && tar xzf /tmp/ghdl.tar.gz -C ghdl
 

@@ -37,7 +37,7 @@ The memory map is specified in [`vhdl/memory_map.vhdl`](https://github.com/a3f/r
 
 The VHDL93 code is located in `vhdl/`. Build and run tests by executing `make test` in that directory. The build and test system was written for use with GHDL. But usage with ModelSim is also possible. You can start it out of ISE with the xISE project file provided.
 
-GHDL 0.34dev or newer is suggested. Run `./install-ghdl.sh` on Debian/Ubuntu to install and add it to `PATH`.
+GHDL 0.34 or newer is suggested. Run `./install-ghdl.sh` on Debian/Ubuntu to install and add it to `PATH`.
 
 ## C Toolchain
 
